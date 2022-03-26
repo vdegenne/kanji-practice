@@ -8,6 +8,9 @@ export class KanjiFrame extends LitElement {
   @property({type:Boolean, reflect:true})
   private open = false
 
+  @property({type:Boolean, reflect:true}) happy = false
+
+
   @property({ type: Array }) kanji!: Kanji;
 
   static styles = css`
@@ -29,6 +32,10 @@ export class KanjiFrame extends LitElement {
     font-family: 'Sawarabi Mincho', serif;
     width: 100%;
     text-align: center;
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   :host([open]) #kanji {
     opacity: 1
@@ -46,11 +53,22 @@ export class KanjiFrame extends LitElement {
     background-color: #78909c;
     color: white;
   }
+  img {
+    position: absolute;
+    z-index: -1;
+    display: none;
+    /* border: 1px solid black; */
+    width: 300px;
+    /* height: 65%; */
+  }
+  :host([happy]) img { display: initial }
   `
   render () {
     return html`
     <div class="tag" id="jlpt-tag">JLPT ${this.kanji[2]}</div>
-    <div id=kanji>${this.kanji[1]}</div>
+    <div id=kanji>
+      <img src="./img/yeh.gif"/>
+      ${this.kanji[1]}</div>
     <div style="margin-bottom:3px"><span class=tag style="background-color:#870000;padding:3px 11px;margin-right:5px">On</span>${this.kanji[3]}</div>
     <div><span class=tag style="background-color:crimson;margin-right:5px;">Kun</span>${this.kanji[4]}</div>
     `
@@ -62,5 +80,6 @@ export class KanjiFrame extends LitElement {
   }
   close () {
     this.open =false
+    this.happy = false
   }
 }
