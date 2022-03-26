@@ -1,6 +1,7 @@
-import { css, html, LitElement } from 'lit';
+import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Kanji } from './types';
+import { mdbg } from './util';
 
 
 @customElement('kanji-frame')
@@ -20,11 +21,13 @@ export class KanjiFrame extends LitElement {
     justify-content: center;
     align-items: flex-start;
     border: 1px solid #eeeeee;
-    border-radius: 4px;
+    border-radius: 6px;
     padding: 24px;
     padding-top: 0px;
     min-width: 300px;
     position: relative;
+    background-color: white;
+    box-shadow: 0 3px 2px -2px #00000063;
   }
   #kanji {
     font-size: 12em;
@@ -49,26 +52,44 @@ export class KanjiFrame extends LitElement {
   #jlpt-tag {
     position: absolute;
     top: 2px;
-    right: 2px;
-    background-color: #78909c;
+    left: 2px;
+    background-color: #455a64;
     color: white;
   }
   img {
     position: absolute;
     z-index: -1;
-    display: none;
+    /* display: none; */
     /* border: 1px solid black; */
     width: 300px;
     /* height: 65%; */
   }
-  :host([happy]) img { display: initial }
+  /* :host([happy]) img { display: initial } */
+
+  #details-strip {
+    position: absolute;
+    top: 0; right: 0;
+  }
   `
   render () {
     return html`
     <div class="tag" id="jlpt-tag">JLPT ${this.kanji[2]}</div>
     <div id=kanji>
+      ${this.happy ? html`
       <img src="./img/yeh.gif"/>
-      ${this.kanji[1]}</div>
+      ` : nothing}
+      ${this.kanji[1]}
+    </div>
+
+    ${this.open ? html`
+    <div id=details-strip>
+      <mwc-icon-button icon=info
+        @click=${_=>mdbg(this.kanji[1])}></mwc-icon-button>
+      <mwc-icon-button icon="playlist_add"
+        @click=${_=>{new Audio('./audio/bip1.mp3').play(); window.toast('feature coming soon')}}></mwc-icon-button>
+    </div>
+    ` : nothing}
+
     <div style="margin-bottom:3px"><span class=tag style="background-color:#870000;padding:3px 11px;margin-right:5px">On</span>${this.kanji[3]}</div>
     <div><span class=tag style="background-color:crimson;margin-right:5px;">Kun</span>${this.kanji[4]}</div>
     `

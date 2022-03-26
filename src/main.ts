@@ -1,4 +1,4 @@
-import { LitElement, html, css, PropertyValueMap } from 'lit'
+import { LitElement, html, css, PropertyValueMap, nothing } from 'lit'
 import { customElement, query, state } from 'lit/decorators.js'
 import '@material/mwc-snackbar'
 import '@material/mwc-button'
@@ -12,6 +12,7 @@ import { Kanji } from './types'
 import { TextField } from '@material/mwc-textfield'
 import { KanjiFrame } from './kanji-frame'
 import { Button } from '@material/mwc-button'
+import { mdbg } from './util'
 
 declare global {
   interface Window {
@@ -27,7 +28,7 @@ resetData()
 
 @customElement('app-container')
 export class AppContainer extends LitElement {
-  private _jlpt = 4;
+  private _jlpt = 5;
 
   @state() kanji: Kanji = this.pickNewKanji()
 
@@ -40,7 +41,7 @@ export class AppContainer extends LitElement {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    /* justify-content: center; */
     align-items: center;
   }
   `
@@ -60,7 +61,7 @@ export class AppContainer extends LitElement {
     <div style="position:relative">
       <mwc-textfield label="answer"
         @keypress=${(e) => { this.onTextFieldPress(e)}  }
-        helper="input and press enter to see the kanji"
+        helper="input and press enter"
         helperPersistent
         iconTrailing="remove_red_eye">
       </mwc-textfield>
@@ -68,6 +69,12 @@ export class AppContainer extends LitElement {
         id=submit-button
         style="position:absolute;bottom:23px;right:4px"
         @click=${()=>this.submitAnswer()}></mwc-icon-button>
+
+      ${this.kanjiFrame && this.kanjiFrame.open && this.textfield.value.trim() !== this.kanji[1] ? html`
+      <mwc-icon-button
+        style="position:absolute;right:-55px;top:7px;background-color:#0000000a;border-radius:50%"
+        @click=${() => { mdbg(this.textfield.value)} }>${this.textfield.value}</mwc-icon-button>
+      ` :nothing}
     </div>
     `
   }
@@ -107,6 +114,7 @@ export class AppContainer extends LitElement {
       }
       else {
         this.playFailureSound()
+        this.requestUpdate()
         // window.toast(':(')
       }
     } else {
@@ -116,6 +124,9 @@ export class AppContainer extends LitElement {
 
   private _successAudio = new Audio('./audio/success.mp3')
   private _failureAudio = new Audio('./audio/wrong.mp3')
-  playSuccessSound() { this._successAudio.play() }
+  playSuccessSound() {
+    const _successAudio = new Audio('./audio/success.mp3')
+    _successAudio.play()
+  }
   playFailureSound() { this._failureAudio.play() }
 }
