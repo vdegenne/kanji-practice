@@ -733,7 +733,7 @@ const pi=ae`.mdc-floating-label{-moz-osx-font-smoothing:grayscale;-webkit-font-s
         style="position:absolute;bottom:23px;right:4px"
         @click=${()=>this.submitAnswer()}></mwc-icon-button>
     </div>
-    `}async firstUpdated(e){await this.textfield.updateComplete,this.textfield.shadowRoot.querySelector("i").style.color="transparent"}onCasinoButtonClick(){this.kanjiFrame.close(),this.textfield.value="",this.kanji=this.pickNewKanji()}onTextFieldPress(e){"Enter"===e.key&&this.submitButton.click()}pickNewKanji(){const e=mi.filter((e=>e[2]===this._jlpt));return e[Math.random()*e.length|0]}submitAnswer(){if(this.kanjiFrame.show(),this.textfield.value===this.kanji[1])return this.kanjiFrame.happy=!0,this.playSuccessSound(),void mi.splice(mi.indexOf(this.kanji),1);this.playFailureSound()}playSuccessSound(){this._successAudio.play()}playFailureSound(){this._failureAudio.play()}};fi.styles=ae`
+    `}async firstUpdated(e){await this.textfield.updateComplete,this.textfield.shadowRoot.querySelector("i").style.color="transparent"}onCasinoButtonClick(){this.kanjiFrame.close(),this.textfield.value="",this.kanji=this.pickNewKanji()}onTextFieldPress(e){"Enter"===e.key&&this.submitButton.click()}pickNewKanji(){const e=mi.filter((e=>e[2]===this._jlpt));return e[Math.random()*e.length|0]}submitAnswer(){if(this.kanjiFrame.open)this.onCasinoButtonClick();else{if(this.kanjiFrame.show(),this.textfield.value===this.kanji[1])return this.kanjiFrame.happy=!0,this.playSuccessSound(),void mi.splice(mi.indexOf(this.kanji),1);this.playFailureSound()}}playSuccessSound(){this._successAudio.play()}playFailureSound(){this._failureAudio.play()}};fi.styles=ae`
   :host {
     height: 100vh;
     display: flex;

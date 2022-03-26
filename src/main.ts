@@ -96,17 +96,21 @@ export class AppContainer extends LitElement {
   }
 
   submitAnswer () {
-    this.kanjiFrame.show()
-    if (this.textfield.value === this.kanji[1]) {
-      this.kanjiFrame.happy = true
-      this.playSuccessSound()
-      // window.toast('CORRECT ! :)')
-      data.splice(data.indexOf(this.kanji), 1)
-      return
-    }
-    else {
-      this.playFailureSound()
-      // window.toast(':(')
+    if (!this.kanjiFrame.open) {
+      this.kanjiFrame.show()
+      if (this.textfield.value === this.kanji[1]) {
+        this.kanjiFrame.happy = true
+        this.playSuccessSound()
+        // window.toast('CORRECT ! :)')
+        data.splice(data.indexOf(this.kanji), 1)
+        return
+      }
+      else {
+        this.playFailureSound()
+        // window.toast(':(')
+      }
+    } else {
+      this.onCasinoButtonClick()
     }
   }
 

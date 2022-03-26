@@ -6,7 +6,7 @@ import { Kanji } from './types';
 @customElement('kanji-frame')
 export class KanjiFrame extends LitElement {
   @property({type:Boolean, reflect:true})
-  private open = false
+  public open = false
 
   @property({type:Boolean, reflect:true}) happy = false
 
