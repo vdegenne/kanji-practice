@@ -28,7 +28,7 @@ resetData()
 
 @customElement('app-container')
 export class AppContainer extends LitElement {
-  private _jlpt = 5;
+  private _jlpt = 4;
 
   @state() kanji: Kanji = this.pickNewKanji()
 
