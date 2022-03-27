@@ -58,7 +58,7 @@ export class KanjiFrame extends LitElement {
   }
   img {
     position: absolute;
-    z-index: -1;
+    z-index: 1;
     /* display: none; */
     /* border: 1px solid black; */
     width: 300px;
@@ -78,7 +78,7 @@ export class KanjiFrame extends LitElement {
       ${this.happy ? html`
       <img src="./img/yeh.gif"/>
       ` : nothing}
-      ${this.kanji[1]}
+      <span style="z-index:2">${this.kanji[1]}</span>
     </div>
 
     ${this.open ? html`
