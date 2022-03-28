@@ -4,6 +4,7 @@
     "@material/mwc-button": "^0.25.3",
     "@material/mwc-checkbox": "^0.25.3",
     "@material/mwc-dialog": "^0.25.3",
+    "@material/mwc-formfield": "^0.25.3",
     "@material/mwc-icon-button": "^0.25.3",
     "@material/mwc-select": "^0.25.3",
     "@material/mwc-snackbar": "^0.25.3",
@@ -25,7 +26,5 @@
     "watch:server": "pm2 start pm2.config.js",
     "browser-sync:static": "browser-sync docs --files docs/app.js --no-notify",
     "browser-sync": "browser-sync start --proxy http://localhost:%port%/ --files docs/app.js --no-notify"
-  },
-  "dependencies": {
   }
 }

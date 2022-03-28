@@ -3,9 +3,10 @@ import { customElement, query, state } from 'lit/decorators.js'
 import '@material/mwc-snackbar'
 import '@material/mwc-button'
 import '@material/mwc-icon-button'
-// import '@material/mwc-dialog'
+import '@material/mwc-dialog'
 import '@material/mwc-textfield'
-// import '@material/mwc-checkbox'
+import '@material/mwc-formfield'
+import '@material/mwc-checkbox'
 import './kanji-frame'
 import _data from '../docs/data.json'
 import { Kanji } from './types'
@@ -13,10 +14,13 @@ import { TextField } from '@material/mwc-textfield'
 import { KanjiFrame } from './kanji-frame'
 import { Button } from '@material/mwc-button'
 import { mdbg } from './util'
+import './options-manager'
+import { OptionsManager } from './options-manager'
 
 declare global {
   interface Window {
     app: AppContainer;
+    optionsManager: OptionsManager;
     toast: (labelText: string, timeoutMs?: number) => void;
   }
 }
@@ -43,22 +47,25 @@ export class AppContainer extends LitElement {
     flex-direction: column;
     /* justify-content: center; */
     align-items: center;
+    padding: 0 12px;
   }
   `
 
   render () {
     return html`
-    <header>
-      <div style="font-size: 0.8em;color: #bdbdbd;">kanji left: ${data.filter(row => row[2] === this._jlpt).length}</div>
+    <header style="display:flex;justify-content:space-between;align-items:center;width:101.5%;margin: 0 -12px">
+      <div style="font-size: 0.8em;color: #bdbdbd;">kanji left: ${this.kanjisLeft.length}</div>
+      <mwc-icon-button icon=settings
+        @click=${_=>window.optionsManager.open()}></mwc-icon-button>
     </header>
 
     <kanji-frame .kanji=${this.kanji}></kanji-frame>
 
-    <mwc-button unelevated icon="casino"
+    <!-- <mwc-button unelevated icon="casino"
       style="margin:12px 0"
-      @click=${() => this.onCasinoButtonClick()}>pick new Kanji</mwc-button>
+      @click=${() => this.onCasinoButtonClick()}>pick new Kanji</mwc-button> -->
 
-    <div style="position:relative">
+    <div style="position:relative;margin-top:18px;">
       <mwc-textfield label="answer"
         @keypress=${(e) => { this.onTextFieldPress(e)}  }
         helper="input and press enter"
@@ -70,13 +77,17 @@ export class AppContainer extends LitElement {
         style="position:absolute;bottom:23px;right:4px"
         @click=${()=>this.submitAnswer()}></mwc-icon-button>
 
-      ${this.kanjiFrame && this.kanjiFrame.open && this.textfield.value.trim() !== this.kanji[1] ? html`
+      ${this.kanjiFrame && this.kanjiFrame.open && this.textfield.value.trim() !== '' && this.textfield.value.trim() !== this.kanji[1] ? html`
       <mwc-icon-button
         style="position:absolute;right:-55px;top:7px;background-color:#0000000a;border-radius:50%"
         @click=${() => { mdbg(this.textfield.value)} }>${this.textfield.value}</mwc-icon-button>
       ` :nothing}
     </div>
     `
+  }
+
+  get kanjisLeft () {
+    return data.filter(row => Object.entries(window.optionsManager._jlpts).filter(([j,b])=>b).map(([j,b])=>j).includes(`jlpt${row[2]}`))
   }
 
   protected async firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
@@ -98,8 +109,8 @@ export class AppContainer extends LitElement {
   }
 
   pickNewKanji (): Kanji {
-    const filter = data.filter(row => row[2] === this._jlpt) as Kanji[]
-    return filter[Math.random() * filter.length|0] as Kanji
+    const kanjisLeft = this.kanjisLeft
+    return kanjisLeft[~~(Math.random() * kanjisLeft.length)]
   }
 
   submitAnswer () {

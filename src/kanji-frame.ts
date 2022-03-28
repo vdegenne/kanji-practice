@@ -73,7 +73,7 @@ export class KanjiFrame extends LitElement {
   `
   render () {
     return html`
-    <div class="tag" id="jlpt-tag">JLPT ${this.kanji[2]}</div>
+    <div class="tag" id="jlpt-tag">jlpt${this.kanji[2]}</div>
     <div id=kanji>
       ${this.happy ? html`
       <img src="./img/yeh.gif"/>
