@@ -1,7 +1,7 @@
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Kanji } from './types';
-import { mdbg } from './util';
+import { jisho, mdbg, tatoeba } from './util';
 
 
 @customElement('kanji-frame')
@@ -56,7 +56,7 @@ export class KanjiFrame extends LitElement {
     background-color: #455a64;
     color: white;
   }
-  img {
+  #kanji > img {
     position: absolute;
     z-index: 1;
     /* display: none; */
@@ -67,6 +67,8 @@ export class KanjiFrame extends LitElement {
   /* :host([happy]) img { display: initial } */
 
   #details-strip {
+    display: flex;
+    flex-direction: column;
     position: absolute;
     top: 0; right: 0;
   }
@@ -84,9 +86,11 @@ export class KanjiFrame extends LitElement {
     ${this.open ? html`
     <div id=details-strip>
       <mwc-icon-button icon=info
-        @click=${_=>mdbg(this.kanji[1])}></mwc-icon-button>
+        @click=${_=>jisho(this.kanji[1])}></mwc-icon-button>
       <mwc-icon-button icon="playlist_add"
         @click=${_=>{new Audio('./audio/bip1.mp3').play(); window.toast('feature coming soon')}}></mwc-icon-button>
+      <mwc-icon-button><img src="./img/tatoeba.svg" width=24 height=24
+        @click=${()=>tatoeba(this.kanji[1])}></mwc-icon-button>
     </div>
     ` : nothing}
 
