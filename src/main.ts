@@ -19,12 +19,15 @@ import { OptionsManager } from './options-manager'
 import './collections-selector'
 import { CollectionsSelector } from './collections-selector'
 import { mainStyles } from './styles/mainStyles'
+import './collections-manager'
+import { CollectionsManager } from './collections-manager'
 
 declare global {
   interface Window {
     app: AppContainer;
     optionsManager: OptionsManager;
     collectionsSelector: CollectionsSelector;
+    collectionsManager: CollectionsManager;
     toast: (labelText: string, timeoutMs?: number) => void;
   }
 }
@@ -90,6 +93,8 @@ export class AppContainer extends LitElement {
         <span>${this.mode === 'discovery' ? 'discovery' : this.collectionName}</span>
       </div>
       <div style="font-size: 0.8em;color: #bdbdbd;">kanji left: ${this.kanjisLeft.length}</div>
+      <mwc-icon-button icon=inventory
+        @click=${()=>{window.collectionsManager.show()}}></mwc-icon-button>
       <mwc-icon-button icon=settings
         @click=${_=>window.optionsManager.open()}></mwc-icon-button>
     </header>
