@@ -6,14 +6,15 @@ import { JlptWordEntry } from './types';
 import lemmas from '../docs/data/lemmas.json'
 import { TextField } from '@material/mwc-textfield';
 import { wordsManagerStyles } from './styles/wordsManagerStyles';
+import { naver } from './util';
 
 import '@material/mwc-tab-bar'
 
 import jlpt5 from'../docs/data/jlpt5-words.json'
 import jlpt4 from '../docs/data/jlpt4-words.json'
 import jlpt3 from '../docs/data/jlpt3-words.json'
-import _kanjis from '../docs/data/kanjis.json'
-import { naver } from './util';
+import jlpt2 from '../docs/data/jlpt2-words.json'
+import jlpt1 from '../docs/data/jlpt1-words.json'
 const jlpts: JlptWordEntry[][] = [
   jlpt5 as JlptWordEntry[],
   // [],
@@ -24,11 +25,11 @@ const jlpts: JlptWordEntry[][] = [
   jlpt3 as JlptWordEntry[],
   // [],
 
-  // jlpt2 as JlptWordEntry[],
-  [],
+  jlpt2 as JlptWordEntry[],
+  // [],
 
-  // jlpt1 as JlptWordEntry[],
-  [],
+  jlpt1 as JlptWordEntry[],
+  // [],
 ]
 // const data: {[dictionary:string]: JlptWordEntry[]|LemmaEntry[]} = {
 //   'jlpt4': jlpt4 as JlptWordEntry[]
@@ -72,6 +73,7 @@ export class WordsManager extends LitElement {
               <span class=word
                 @click=${()=>naver(i.word)}>${i.word}</span>
               ${i.hiragana ? html`<span class=hiragana>${i.hiragana}</span>` : nothing}
+              ${i.frequency ? html`<span class=lemma>${i.frequency}</span>` : nothing}
               <span class=dictionary>${i.dictionary}</span>
             </div>
             <span class=english>${i.english}</span>
@@ -90,7 +92,7 @@ export class WordsManager extends LitElement {
       const result: SearchItem[] = jlpts[n].filter(e=>e[0].includes(this.query!)).map(r=>{
         return this.attachFrequencyValue({
           type: 'words',
-          dictionary: `jlpt n${n+1}`,
+          dictionary: `jlpt n${5 - n}`,
           word: r[0],
           english: r[2],
           hiragana: r[1] || undefined
@@ -99,7 +101,6 @@ export class WordsManager extends LitElement {
       searchResult.push(...result)
     })
     console.log(searchResult)
-    console.log(_kanjis[0])
     // should include Lemmas in the search ?
     this.result = searchResult
   }

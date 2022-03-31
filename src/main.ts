@@ -166,6 +166,7 @@ export class AppContainer extends LitElement {
   onCasinoButtonClick() {
     this.kanjiFrame.conceal()
     this.textfield.value =''
+    this.textfield.focus()
     this.kanji = this.pickNewKanji()
   }
 
