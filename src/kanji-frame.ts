@@ -38,10 +38,12 @@ export class KanjiFrame extends LitElement {
 
     ${this.revealed ? html`
     <div id=details-strip>
-      <mwc-icon-button icon=info
-        @click=${_=>jisho(this.kanji[1])}></mwc-icon-button>
       <mwc-icon-button icon="playlist_add"
         @click=${_=>{window.collectionsSelector.open(this.kanji[1])}}></mwc-icon-button>
+      <mwc-icon-button icon=info
+        @click=${_=>jisho(this.kanji[1])}></mwc-icon-button>
+      <mwc-icon-button icon=search
+        @click=${()=>{window.wordsManager.open(this.kanji[1])}}></mwc-icon-button>
       <mwc-icon-button><img src="./img/tatoeba.svg" width=24 height=24
         @click=${()=>tatoeba(this.kanji[1])}></mwc-icon-button>
     </div>

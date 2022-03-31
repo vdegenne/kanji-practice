@@ -9,3 +9,7 @@ export function mdbg (word) {
 export function tatoeba (word) {
   window.open(`https://tatoeba.org/en/sentences/search?from=jpn&query=${encodeURIComponent(word)}&to=`, '_blank')
 }
+
+export function naver (word) {
+  window.open(`https://ja.dict.naver.com/#/search?range=example&query=${encodeURIComponent(word)}`, '_blank')
+}

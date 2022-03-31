@@ -8,7 +8,7 @@ import '@material/mwc-textfield'
 import '@material/mwc-formfield'
 import '@material/mwc-checkbox'
 import './kanji-frame'
-import _data from '../docs/data.json'
+import _kanjis from '../docs/data/kanjis.json'
 import { Collection, Kanji, Mode } from './types'
 import { TextField } from '@material/mwc-textfield'
 import { KanjiFrame } from './kanji-frame'
@@ -21,6 +21,8 @@ import { CollectionsSelector } from './collections-selector'
 import { mainStyles } from './styles/mainStyles'
 import './collections-manager'
 import { CollectionsManager } from './collections-manager'
+import './words-manager'
+import { WordsManager } from './words-manager'
 
 declare global {
   interface Window {
@@ -28,12 +30,13 @@ declare global {
     optionsManager: OptionsManager;
     collectionsSelector: CollectionsSelector;
     collectionsManager: CollectionsManager;
+    wordsManager: WordsManager;
     toast: (labelText: string, timeoutMs?: number) => void;
   }
 }
 
 export let data: Kanji[];
-function resetData () { data = _data as Kanji[] }
+function resetData () { data = _kanjis as Kanji[] }
 resetData()
 
 
@@ -131,11 +134,11 @@ export class AppContainer extends LitElement {
   initializeData () {
     switch (this.mode) {
       case 'discovery':
-        this.data = _data as Kanji[];
+        this.data = _kanjis as Kanji[];
         break
       case 'practice':
         // console.log(this.collection?.kanjis.map(k1 => (_data as Kanji[]).find(k2 => k2[1] === k1)))
-        this.data = this.collection!.kanjis.map(k1 => (_data as Kanji[]).find(k2 => k2[1] === k1)!)
+        this.data = this.collection!.kanjis.map(k1 => (_kanjis as Kanji[]).find(k2 => k2[1] === k1)!)
         break
     }
   }
