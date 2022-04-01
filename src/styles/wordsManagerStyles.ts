@@ -12,13 +12,18 @@ mwc-textfield {
 }
 .item .hiragana {
   font-family: 'Sawarabi Mincho', serif;
-  flex: 1;
-  padding: 0 0 0 4px;
+  /* flex: 1; */
+  margin: 0 0 0 12px;
 }
-.item .dictionary {
+.item .dictionary, .item .lemma {
   background: rgb(255, 235, 59);
   color: black;
   padding: 0px 14px;
   border-radius: 12px;
+}
+.item .lemma {
+  background-color: black;
+  color: white;
+  margin-right: 5px;
 }
 `

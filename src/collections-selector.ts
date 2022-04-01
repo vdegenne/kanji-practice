@@ -1,5 +1,6 @@
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, query, state } from 'lit/decorators.js';
+import {live} from 'lit/directives/live.js'
 import { Dialog } from '@material/mwc-dialog';
 import { Collection } from './types';
 
@@ -33,7 +34,7 @@ export class CollectionsSelector extends LitElement {
     return html`
     <mwc-dialog>
       <header>
-        <div>Save to...</div>
+        <div>Save ${this.kanji} to...</div>
         <mwc-icon-button icon=close
           dialogAction=close></mwc-icon-button>
       </header>
@@ -42,7 +43,7 @@ export class CollectionsSelector extends LitElement {
       ${this.kanji ? collections.map(c => {
         return html`
         <mwc-formfield label=${c.name}>
-          <mwc-checkbox ?checked=${c.kanjis.includes(this.kanji)}
+          <mwc-checkbox ?checked=${live(c.kanjis.includes(this.kanji))}
             @change=${e=>{this.onCheckboxClick(c, e)}}></mwc-checkbox>
         </mwc-formfield>
         `

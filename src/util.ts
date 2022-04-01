@@ -13,3 +13,9 @@ export function tatoeba (word) {
 export function naver (word) {
   window.open(`https://ja.dict.naver.com/#/search?range=example&query=${encodeURIComponent(word)}`, '_blank')
 }
+
+
+export function playJapaneseAudio (word) {
+  const audio = new Audio(`https://assiets.vdegenne.com/data/japanese/audio/${encodeURIComponent(word)}`)
+  audio.play()
+}
