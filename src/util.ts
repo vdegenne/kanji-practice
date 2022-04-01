@@ -19,3 +19,6 @@ export function playJapaneseAudio (word) {
   const audio = new Audio(`https://assiets.vdegenne.com/data/japanese/audio/${encodeURIComponent(word)}`)
   audio.play()
 }
+
+
+export function

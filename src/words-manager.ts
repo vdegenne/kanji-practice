@@ -17,6 +17,7 @@ import jlpt4 from '../docs/data/jlpt4-words.json'
 import jlpt3 from '../docs/data/jlpt3-words.json'
 import jlpt2 from '../docs/data/jlpt2-words.json'
 import jlpt1 from '../docs/data/jlpt1-words.json'
+import { sharedStyles } from './styles/sharedStyles';
 const jlpts: JlptWordEntry[][] = [
   jlpt5 as JlptWordEntry[],
   // [],
@@ -62,7 +63,7 @@ export class WordsManager extends LitElement {
   @queryAll('concealable-span') concealableSpans!: ConcealableSpan[];
   @queryAll('concealable-span[concealed]') concealedSpans!: ConcealableSpan[];
 
-  static styles = wordsManagerStyles;
+  static styles = [wordsManagerStyles, sharedStyles];
 
   constructor () {
     super()
@@ -102,7 +103,7 @@ export class WordsManager extends LitElement {
               <div style="flex:1"></div>
               ${i.frequency ? html`
               <span class=lemma>${i.frequency}</span>` : nothing}
-              <span class=dictionary>${i.dictionary}</span>
+              <span class="dictionary ${i.dictionary.replace(' n', '')}-color">${i.dictionary}</span>
             </div>
             <concealable-span class=english>${i.english}</concealable-span>
           </div>

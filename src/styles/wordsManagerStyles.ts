@@ -15,15 +15,18 @@ mwc-textfield {
   /* flex: 1; */
   margin: 0 0 0 12px;
 }
-.item .dictionary, .item .lemma {
+.item .dictionary {
   background: rgb(255, 235, 59);
   color: black;
   padding: 0px 14px;
   border-radius: 12px;
 }
 .item .lemma {
-  background-color: black;
-  color: white;
+  border: 1px solid rgb(117, 117, 117);
+  background-color: transparent;
+  color: black;
+  padding: 0px 7px;
+  border-radius: 12px;
   margin-right: 5px;
 }
 `
