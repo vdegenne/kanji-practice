@@ -26,7 +26,6 @@
     "watch:server": "pm2 start pm2.config.js",
     "browser-sync:static": "browser-sync docs --files docs/app.js --no-notify",
     "browser-sync": "browser-sync start --proxy http://localhost:%port%/ --files docs/app.js --no-notify",
-    "deploy": "git add . && git commit -m \"$(./fruit.js)\" && git push",
-    "test": "echo $(./fruit.js)"
+    "deploy": "git add . && git commit -m \"$(./fruit.js)\" && git push"
   }
 }
