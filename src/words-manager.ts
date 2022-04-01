@@ -127,7 +127,12 @@ export class WordsManager extends LitElement {
   }
 
   onSpeakerClick(e) {
-    playJapaneseAudio(e.target.nextElementSibling.innerText.trim())
+    const target = e.target as HTMLElement;
+    let el: HTMLSpanElement|null = target.parentElement!.querySelector('.hiragana')
+    if (el === null) {
+      el = target.parentElement!.querySelector('.word')!
+    }
+    playJapaneseAudio(el.innerText.trim())
   }
 
   search (query: string) {
