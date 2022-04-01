@@ -88,7 +88,7 @@ export class WordsManager extends LitElement {
         <mwc-tab label=kanji></mwc-tab>
       </mwc-tab-bar>
       <mwc-textfield value="${this.query}"
-        @keypress=${e=>{console.log(e); if (e.key === 'Enter') {this.search(this.textfield.value)}}}></mwc-textfield>
+        @keypress=${e=>{if (e.key === 'Enter') {this.search(this.textfield.value)}}}></mwc-textfield>
       <div id=results>
         ${this.result.map(i=>{
           return html`
@@ -96,14 +96,14 @@ export class WordsManager extends LitElement {
             <div style="display:flex;justify-content:space-between;margin:12px 0 5px 0;">
               <mwc-icon-button icon=volume_up style="--mdc-icon-button-size: 24px;margin-right:5px;"
                 @click=${e=>this.onSpeakerClick(e)}></mwc-icon-button>
-              <span class="word"
-                @click=${()=>naver(i.word)}>${i.word}</span>
+              <span class="word">${i.word}</span>
               ${i.hiragana ? html`
               <concealable-span class=hiragana>${i.hiragana}</concealable-span>` : nothing}
               <div style="flex:1"></div>
               ${i.frequency ? html`
               <span class=lemma>${i.frequency}</span>` : nothing}
-              <span class="dictionary ${i.dictionary.replace(' n', '')}-color">${i.dictionary}</span>
+              <span class="dictionary ${i.dictionary.replace(' n', '')}-color"
+                @click=${()=>naver(i.word)}>${i.dictionary}</span>
             </div>
             <concealable-span class=english>${i.english}</concealable-span>
           </div>

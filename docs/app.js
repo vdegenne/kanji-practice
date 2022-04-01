@@ -1328,21 +1328,21 @@ const jr=re`.mdc-tab-bar{width:100%}.mdc-tab{height:48px}.mdc-tab--stacked{heigh
         <mwc-tab label=kanji></mwc-tab>
       </mwc-tab-bar>
       <mwc-textfield value="${this.query}"
-        @keypress=${e=>{console.log(e),"Enter"===e.key&&this.search(this.textfield.value)}}></mwc-textfield>
+        @keypress=${e=>{"Enter"===e.key&&this.search(this.textfield.value)}}></mwc-textfield>
       <div id=results>
         ${this.result.map((e=>L`
           <div class=item>
             <div style="display:flex;justify-content:space-between;margin:12px 0 5px 0;">
               <mwc-icon-button icon=volume_up style="--mdc-icon-button-size: 24px;margin-right:5px;"
                 @click=${e=>this.onSpeakerClick(e)}></mwc-icon-button>
-              <span class="word"
-                @click=${()=>{return t=e.word,void window.open(`https://ja.dict.naver.com/#/search?range=example&query=${encodeURIComponent(t)}`,"_blank");var t}}>${e.word}</span>
+              <span class="word">${e.word}</span>
               ${e.hiragana?L`
               <concealable-span class=hiragana>${e.hiragana}</concealable-span>`:N}
               <div style="flex:1"></div>
               ${e.frequency?L`
               <span class=lemma>${e.frequency}</span>`:N}
-              <span class="dictionary ${e.dictionary.replace(" n","")}-color">${e.dictionary}</span>
+              <span class="dictionary ${e.dictionary.replace(" n","")}-color"
+                @click=${()=>{return t=e.word,void window.open(`https://ja.dict.naver.com/#/search?range=example&query=${encodeURIComponent(t)}`,"_blank");var t}}>${e.dictionary}</span>
             </div>
             <concealable-span class=english>${e.english}</concealable-span>
           </div>
