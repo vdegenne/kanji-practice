@@ -14,6 +14,10 @@ export function naver (word) {
   window.open(`https://ja.dict.naver.com/#/search?range=example&query=${encodeURIComponent(word)}`, '_blank')
 }
 
+// export function mdbg (word) {
+//   window.open(`https://www.mdbg.net/chinese/dictionary?page=worddict&wdrst=0&wdqb=${encodeURIComponent(word)}`, '_blank")
+// }
+
 
 export function playJapaneseAudio (word) {
   const audio = new Audio(`https://assiets.vdegenne.com/data/japanese/audio/${encodeURIComponent(word)}`)

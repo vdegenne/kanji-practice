@@ -1,17 +1,18 @@
-import { html, LitElement, nothing } from 'lit'
+import { html, LitElement, nothing, PropertyValueMap } from 'lit'
 import { customElement, query, queryAll, state } from 'lit/decorators.js'
 import { Dialog } from '@material/mwc-dialog';
-import { JlptWordEntry } from './types';
+import { JlptWordEntry, Kanji } from './types';
 
 import lemmas from '../docs/data/lemmas.json'
 import { TextField } from '@material/mwc-textfield';
 import { wordsManagerStyles } from './styles/wordsManagerStyles';
-import { naver, playJapaneseAudio } from './util';
+import { mdbg, naver, playJapaneseAudio } from './util';
 
 import '@material/mwc-tab-bar'
 import './concealable-span'
 import { ConcealableSpan } from './concealable-span';
 
+import _kanjis from '../docs/data/kanjis.json'
 import jlpt5 from'../docs/data/jlpt5-words.json'
 import jlpt4 from '../docs/data/jlpt4-words.json'
 import jlpt3 from '../docs/data/jlpt3-words.json'
@@ -47,7 +48,8 @@ declare type SearchItem = {
   english?: string;
   frequency?: number;
 }
-declare type ViewType = 'words'|'kanji';
+const views = ['words', 'kanji'] as const
+declare type ViewType = typeof views[number];
 
 @customElement('words-manager')
 export class WordsManager extends LitElement {
@@ -79,24 +81,34 @@ export class WordsManager extends LitElement {
   }
 
   render () {
-    // const hi = this._hideInformationsOnSearch;
+    const wordsResult = this.result.filter(i=>i.type=='words')
+    const kanjiResult = this.result.filter(i=>i.type=='kanji')
 
     return html`
-    <mwc-dialog>
-      <mwc-tab-bar>
+    <mwc-dialog style="--mdc-dialog-min-width: calc(100vw - 32px);">
+      <mwc-tab-bar
+          @MDCTabBar:activated=${(e)=>this.view=views[e.detail.index]}>
         <mwc-tab label=words></mwc-tab>
         <mwc-tab label=kanji></mwc-tab>
       </mwc-tab-bar>
       <mwc-textfield value="${this.query}"
         @keypress=${e=>{if (e.key === 'Enter') {this.search(this.textfield.value)}}}></mwc-textfield>
-      <div id=results>
-        ${this.result.map(i=>{
+
+      <!-- WORDS RESULT -->
+      <div id="words-results" ?hide=${this.view !== 'words'}>
+        ${wordsResult.length === 0 ? html`no result` : nothing}
+        ${wordsResult.map(i=>{
           return html`
           <div class=item>
             <div style="display:flex;justify-content:space-between;margin:12px 0 5px 0;">
               <mwc-icon-button icon=volume_up style="--mdc-icon-button-size: 24px;margin-right:5px;"
                 @click=${e=>this.onSpeakerClick(e)}></mwc-icon-button>
-              <span class="word">${i.word}</span>
+              <div class="word">
+                ${i.word.split('').map(c=>{
+                  return html`<span class=character
+                    @click=${e=>{this.search(e.target.innerText.trim())}}>${c}</span>`
+                })}
+              </div>
               ${i.hiragana ? html`
               <concealable-span class=hiragana>${i.hiragana}</concealable-span>` : nothing}
               <div style="flex:1"></div>
@@ -110,6 +122,31 @@ export class WordsManager extends LitElement {
           `
         })}
       </div>
+
+      <!-- KANJI RESULT -->
+      <div id="kanji-results" ?hide=${this.view !== 'kanji'}>
+        ${kanjiResult.length === 0 ? html`no result` : nothing}
+        ${kanjiResult.map(i=>{
+          return html`
+          <div class=item>
+            <div style="display:flex;justify-content:space-between;margin:12px 0 5px 0;">
+              <!-- <mwc-icon-button icon=volume_up style="--mdc-icon-button-size: 24px;margin-right:5px;"
+                @click=${e=>this.onSpeakerClick(e)}></mwc-icon-button> -->
+              <span class="word">${i.word}</span>
+              ${i.hiragana ? html`
+              <concealable-span class=hiragana>${i.hiragana}</concealable-span>` : nothing}
+              <div style="flex:1"></div>
+              ${i.frequency ? html`
+              <span class=lemma>${i.frequency}</span>` : nothing}
+              <span class="dictionary ${i.dictionary.replace(' n', '')}-color"
+                @click=${()=>mdbg(i.word)}>${i.dictionary}</span>
+            </div>
+            <concealable-span class=english>${i.english}</concealable-span>
+          </div>
+          `
+        })}
+      </div>
+
       ${this.showShowAllInfoButton ? html`
       <mwc-button unelevated slot="secondaryAction" style="--mdc-theme-primary:grey"
         @click=${()=>{[...this.concealedSpans].forEach(e=>e.concealed = false);this.requestUpdate()}}>
@@ -119,6 +156,16 @@ export class WordsManager extends LitElement {
       <mwc-button outlined slot="secondaryAction" dialogAction="close">close</mwc-button>
     </mwc-dialog>
     `
+  }
+
+  protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    const dialogOpenedInitializingFct = () => {
+      const surface = this.dialog.shadowRoot!.querySelector('.mdc-dialog__surface')!
+      // @ts-ignore
+      surface.style.minHeight = 'calc(100% - 32px)'
+      this.dialog.removeEventListener('opened', dialogOpenedInitializingFct)
+    }
+    this.dialog.addEventListener('opened', dialogOpenedInitializingFct)
   }
 
   async updated () {
@@ -141,23 +188,40 @@ export class WordsManager extends LitElement {
     }
     this.query = query
     let searchResult: SearchItem[] = []
+
+    /** Words search */
     jlpts.forEach((entries, n) => {
-      const result: SearchItem[] = jlpts[n]
-        .filter(e=>{
-          return e[0].includes(this.query!) || e[2].includes(this.query!)
-        })
-        .map(r=>{
-          return this.attachFrequencyValue({
-            type: 'words',
-            dictionary: `jlpt n${5 - n}`,
-            word: r[0],
-            english: r[2],
-            hiragana: r[1] || undefined
+      const result: SearchItem[] =
+        jlpts[n]
+          .filter(e=>{
+            return e[0].includes(this.query!) || e[2].includes(this.query!)
           })
-        });
+          .map(r=>{
+            return this.attachFrequencyValue({
+              type: 'words',
+              dictionary: `jlpt n${5 - n}`,
+              word: r[0],
+              english: r[2],
+              hiragana: r[1] || undefined
+            })
+          });
       searchResult.push(...result)
-    })
-    console.log(searchResult)
+    });
+
+    /** Kanji search */
+    searchResult.push(...
+      (_kanjis as Kanji[])
+        .filter(e=>{
+          return this.query.includes(e[1]) || e[3].includes(this.query) || e[4].includes(this.query)
+        })
+        .map<SearchItem>(i=>({
+          type: 'kanji',
+          dictionary: `jlpt n${i[2]}`,
+          word: i[1],
+          english: `${i[3]}//${i[4]}`
+        }))
+    )
+
     this.concealableSpans.forEach(e=>e.concealed=true)
     // should include Lemmas in the search ?
     this.result = searchResult

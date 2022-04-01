@@ -1,6 +1,9 @@
 import { css } from 'lit';
 
 export const sharedStyles = css`
+[hide] {
+  display: none;
+}
 .jlpt5-color {
   background-color: #4caf50 !important;
   color: white !important;

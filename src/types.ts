@@ -1,6 +1,6 @@
 export type Mode = 'discovery'|'practice';
 
-export type Kanji = [id:number, symbol:string, jlpt:number, meaning1:string, meaning2:string];
+export type Kanji = [id:number, character:string, jlpt:number, meaning1:string, meaning2:string];
 
 export type Collection = {
   name: string;

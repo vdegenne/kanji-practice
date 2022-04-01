@@ -10,6 +10,12 @@ mwc-textfield {
   font-size: 1.3em;
   color: black;
 }
+.item .word .character {
+  cursor: pointer;
+}
+.item .word .character:hover {
+  color: grey;
+}
 .item .hiragana {
   font-family: 'Sawarabi Mincho', serif;
   /* flex: 1; */
