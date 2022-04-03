@@ -50,12 +50,15 @@ declare type SearchItem = {
 }
 const views = ['words', 'kanji'] as const
 declare type ViewType = typeof views[number];
+declare type SearchHistoryItem = { search: string, view: ViewType };
 
 @customElement('words-manager')
 export class WordsManager extends LitElement {
   @state() view: ViewType = 'words';
   @state() query: string = '';
   @state() result: SearchItem[] = []
+
+  private _searchHistory: SearchHistoryItem[] = [{search: 'test', view: 'words'}]
 
   private _hideInformationsOnSearchOption = true
   @state() showShowAllInfoButton = this._hideInformationsOnSearchOption
@@ -84,29 +87,31 @@ export class WordsManager extends LitElement {
     const wordsResult = this.result.filter(i=>i.type=='words')
     const kanjiResult = this.result.filter(i=>i.type=='kanji')
 
+    // @TODO here we change the view attribute in the currently used element in the search history list
+
     return html`
-    <mwc-dialog style="--mdc-dialog-min-width: calc(100vw - 32px);">
+    <mwc-dialog style="--mdc-dialog-min-width:calc(100vw - 32px);">
       <mwc-tab-bar
-          @MDCTabBar:activated=${(e)=>this.view=views[e.detail.index]}>
+          @MDCTabBar:activated=${(e)=>this.view=views[e.detail.index]}
+          activeIndex=${views.indexOf(this.view)}>
         <mwc-tab label=words></mwc-tab>
         <mwc-tab label=kanji></mwc-tab>
       </mwc-tab-bar>
       <mwc-textfield value="${this.query}"
         @keypress=${e=>{if (e.key === 'Enter') {this.search(this.textfield.value)}}}></mwc-textfield>
-
       <!-- WORDS RESULT -->
       <div id="words-results" ?hide=${this.view !== 'words'}>
         ${wordsResult.length === 0 ? html`no result` : nothing}
         ${wordsResult.map(i=>{
           return html`
           <div class=item>
-            <div style="display:flex;justify-content:space-between;margin:12px 0 5px 0;">
-              <mwc-icon-button icon=volume_up style="--mdc-icon-button-size: 24px;margin-right:5px;"
+            <div class=result-header>
+              <mwc-icon-button icon=volume_up style="margin-right:5px;"
                 @click=${e=>this.onSpeakerClick(e)}></mwc-icon-button>
               <div class="word">
                 ${i.word.split('').map(c=>{
                   return html`<span class=character
-                    @click=${e=>{this.search(e.target.innerText.trim())}}>${c}</span>`
+                    @click=${e=>{this.search(e.target.innerText.trim());this.view='kanji'}}>${c}</span>`
                 })}
               </div>
               ${i.hiragana ? html`
@@ -116,6 +121,7 @@ export class WordsManager extends LitElement {
               <span class=lemma>${i.frequency}</span>` : nothing}
               <span class="dictionary ${i.dictionary.replace(' n', '')}-color"
                 @click=${()=>naver(i.word)}>${i.dictionary}</span>
+              <mwc-icon-button icon=more_vert></mwc-icon-button>
             </div>
             <concealable-span class=english>${i.english}</concealable-span>
           </div>
@@ -141,7 +147,8 @@ export class WordsManager extends LitElement {
               <span class="dictionary ${i.dictionary.replace(' n', '')}-color"
                 @click=${()=>mdbg(i.word)}>${i.dictionary}</span>
             </div>
-            <concealable-span class=english>${i.english}</concealable-span>
+            <!-- <concealable-span class=english>${i.english}</concealable-span> -->
+            <span class=english>${i.english}</span>
           </div>
           `
         })}

@@ -59,4 +59,8 @@ export const kanjiFrameStyles = css`
   position: absolute;
   top: 0; right: 0;
 }
+
+mwc-icon-button[highlight] {
+  color: yellow;
+}
 `

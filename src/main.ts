@@ -50,12 +50,9 @@ export class AppContainer extends LitElement {
   /** selected kanji */
   @state() kanji: Kanji|null;
   /** collections */
-  public collections: Collection[];
-
+  // public collections: Collection[];
 
   /** Getters */
-  get collectionName () { return (new URLSearchParams(window.location.search).get('collection'))}
-  get collection () { return this.collections.find(c => this.collectionName) }
   get kanjisLeft () {
     return this.data.filter(row => Object.entries(window.optionsManager.jlpts).filter(([j,b])=>b).map(([j,b])=>j).includes(`jlpt${row[2]}`))
   }
@@ -70,15 +67,15 @@ export class AppContainer extends LitElement {
   constructor () {
     super()
 
-    // Mode of the interface (base on the url)
-    if (this.collectionName) {
+    // Mode of the interface (based on the url)
+    if (window.collectionsManager.selectedCollection) {
       this.mode = 'practice'
     }
 
     // Load the collections
-    this.collections = localStorage.getItem('kanji-practice:collections')
-      ? JSON.parse(localStorage.getItem('kanji-practice:collections')!)
-      : /* default */ [{name: 'collection 1', kanjis: []}];
+    // this.collections = localStorage.getItem('kanji-practice:collections')
+    //   ? JSON.parse(localStorage.getItem('kanji-practice:collections')!)
+    //   : /* default */ [{name: 'collection 1', kanjis: []}];
 
 
     // Initialize the data
@@ -93,13 +90,13 @@ export class AppContainer extends LitElement {
     <header>
       <div style="display:flex;align-items:center">
         <mwc-icon style="margin-right:8px">${this.mode === 'discovery' ? 'remove_red_eye' : 'repeat'}</mwc-icon>
-        <span>${this.mode === 'discovery' ? 'discovery' : this.collectionName}</span>
+        <span>${this.mode === 'discovery' ? 'discovery' : window.collectionsManager.selectedCollection}</span>
       </div>
       <div style="font-size: 0.8em;color: #bdbdbd;">kanji left: ${this.kanjisLeft.length}</div>
       <mwc-icon-button icon=inventory
         @click=${()=>{window.collectionsManager.show()}}></mwc-icon-button>
       <mwc-icon-button icon=settings
-        @click=${_=>window.optionsManager.open()}></mwc-icon-button>
+        @click=${()=>window.optionsManager.open()}></mwc-icon-button>
     </header>
 
     <kanji-frame .kanji=${this.kanji}></kanji-frame>
@@ -120,7 +117,7 @@ export class AppContainer extends LitElement {
         style="position:absolute;bottom:23px;right:4px"
         @click=${()=>this.submitAnswer()}></mwc-icon-button>
 
-      ${this.kanjiFrame && this.kanjiFrame.revealed && this.textfield.value.trim() !== '' && this.textfield.value.trim() !== this.kanji[1] ? html`
+      ${this.kanjiFrame && this.kanjiFrame.revealed && this.textfield.value.trim() !== '' && this.textfield.value.trim() !== this.kanji![1] ? html`
       <mwc-icon-button
         style="position:absolute;right:-55px;top:7px;background-color:#0000000a;border-radius:50%"
         @click=${() => { mdbg(this.textfield.value)} }>${this.textfield.value}</mwc-icon-button>
@@ -138,7 +135,7 @@ export class AppContainer extends LitElement {
         break
       case 'practice':
         // console.log(this.collection?.kanjis.map(k1 => (_data as Kanji[]).find(k2 => k2[1] === k1)))
-        this.data = this.collection!.kanjis.map(k1 => (_kanjis as Kanji[]).find(k2 => k2[1] === k1)!)
+        this.data = window.collectionsManager.collection!.kanjis.map(k1 => (_kanjis as Kanji[]).find(k2 => k2[1] === k1)!)
         break
     }
   }
@@ -181,11 +178,11 @@ export class AppContainer extends LitElement {
   submitAnswer () {
     if (!this.kanjiFrame.revealed) {
       this.kanjiFrame.reveal()
-      if (this.textfield.value === this.kanji[1]) {
+      if (this.textfield.value === this.kanji![1]) {
         this.kanjiFrame.happy = true
         this.playSuccessSound()
         // window.toast('CORRECT ! :)')
-        data.splice(data.indexOf(this.kanji), 1)
+        data.splice(data.indexOf(this.kanji!), 1)
         return
       }
       else {
@@ -206,7 +203,4 @@ export class AppContainer extends LitElement {
   }
   playFailureSound() { this._failureAudio.play() }
 
-  saveCollections () {
-    localStorage.setItem('kanji-practice:collections', JSON.stringify(this.collections))
-  }
 }

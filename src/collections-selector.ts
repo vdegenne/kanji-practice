@@ -24,12 +24,13 @@ export class CollectionsSelector extends LitElement {
   }
 
   mwc-checkbox {
-    --mdc-theme-secondary: #065fd4;
+    --mdc-theme-secondary:yellow;
+    --mdc-checkbox-ink-color: black;
   }
   `
 
   render() {
-    const collections = window.app.collections;
+    const collections = window.collectionsManager.collections;
 
     return html`
     <mwc-dialog>
@@ -65,7 +66,7 @@ export class CollectionsSelector extends LitElement {
       collection.kanjis.splice(collection.kanjis.indexOf(this.kanji), 1)
     }
 
-    window.app.saveCollections()
+    window.collectionsManager.saveCollections()
     window.toast(`Saved`, 2000)
   }
 

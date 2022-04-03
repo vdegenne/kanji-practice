@@ -22,6 +22,8 @@ export class KanjiFrame extends LitElement {
       return nothing
     }
 
+
+
     return html`
     <div class="tag" id="jlpt-tag">jlpt${this.kanji[2]}</div>
     <div id=kanji>
@@ -39,13 +41,14 @@ export class KanjiFrame extends LitElement {
     ${this.revealed ? html`
     <div id=details-strip>
       <mwc-icon-button icon="playlist_add"
-        @click=${_=>{window.collectionsSelector.open(this.kanji[1])}}></mwc-icon-button>
+        ?highlight=${window.collectionsManager.IsCharacterInACollection(this.kanji[1])}
+        @click=${_=>{window.collectionsSelector.open(this.kanji![1])}}></mwc-icon-button>
       <mwc-icon-button icon=info
-        @click=${_=>jisho(this.kanji[1])}></mwc-icon-button>
+        @click=${_=>jisho(this.kanji![1])}></mwc-icon-button>
       <mwc-icon-button icon=search
-        @click=${()=>{window.wordsManager.open(this.kanji[1])}}></mwc-icon-button>
+        @click=${()=>{window.wordsManager.open(this.kanji![1])}}></mwc-icon-button>
       <mwc-icon-button><img src="./img/tatoeba.svg" width=24 height=24
-        @click=${()=>tatoeba(this.kanji[1])}></mwc-icon-button>
+        @click=${()=>tatoeba(this.kanji![1])}></mwc-icon-button>
     </div>
     ` : nothing}
 
