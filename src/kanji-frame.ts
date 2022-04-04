@@ -46,7 +46,7 @@ export class KanjiFrame extends LitElement {
       <mwc-icon-button icon=info
         @click=${_=>jisho(this.kanji![1])}></mwc-icon-button>
       <mwc-icon-button icon=search
-        @click=${()=>{window.wordsManager.open(this.kanji![1])}}></mwc-icon-button>
+        @click=${()=>{window.searchManager.open(this.kanji![1])}}></mwc-icon-button>
       <mwc-icon-button><img src="./img/tatoeba.svg" width=24 height=24
         @click=${()=>tatoeba(this.kanji![1])}></mwc-icon-button>
     </div>

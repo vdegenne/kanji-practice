@@ -21,8 +21,8 @@ import { CollectionsSelector } from './collections-selector'
 import { mainStyles } from './styles/mainStyles'
 import './collections-manager'
 import { CollectionsManager } from './collections-manager'
-import './words-manager'
-import { WordsManager } from './words-manager'
+import './search-manager'
+import { SearchManager } from './search-manager'
 
 declare global {
   interface Window {
@@ -30,7 +30,7 @@ declare global {
     optionsManager: OptionsManager;
     collectionsSelector: CollectionsSelector;
     collectionsManager: CollectionsManager;
-    wordsManager: WordsManager;
+    searchManager: SearchManager;
     toast: (labelText: string, timeoutMs?: number) => void;
   }
 }
@@ -95,6 +95,8 @@ export class AppContainer extends LitElement {
       <div style="font-size: 0.8em;color: #bdbdbd;">kanji left: ${this.kanjisLeft.length}</div>
       <mwc-icon-button icon=inventory
         @click=${()=>{window.collectionsManager.show()}}></mwc-icon-button>
+      <mwc-icon-button icon=search
+        @click=${()=>{window.searchManager.open()}}></mwc-icon-button>
       <mwc-icon-button icon=settings
         @click=${()=>window.optionsManager.open()}></mwc-icon-button>
     </header>

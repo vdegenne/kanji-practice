@@ -1,5 +1,6 @@
 import { html, LitElement, nothing, PropertyValueMap } from 'lit'
 import { customElement, query, queryAll, state } from 'lit/decorators.js'
+import {live} from 'lit/directives/live.js'
 import { Dialog } from '@material/mwc-dialog';
 import { JlptWordEntry, Kanji } from './types';
 
@@ -52,8 +53,8 @@ const views = ['words', 'kanji'] as const
 declare type ViewType = typeof views[number];
 declare type SearchHistoryItem = { search: string, view: ViewType };
 
-@customElement('words-manager')
-export class WordsManager extends LitElement {
+@customElement('search-manager')
+export class SearchManager extends LitElement {
   @state() view: ViewType = 'words';
   @state() query: string = '';
   @state() result: SearchItem[] = []
@@ -89,6 +90,7 @@ export class WordsManager extends LitElement {
 
     // @TODO here we change the view attribute in the currently used element in the search history list
 
+    console.log(this.query)
     return html`
     <mwc-dialog style="--mdc-dialog-min-width:calc(100vw - 32px);">
       <mwc-tab-bar
@@ -97,8 +99,16 @@ export class WordsManager extends LitElement {
         <mwc-tab label=words></mwc-tab>
         <mwc-tab label=kanji></mwc-tab>
       </mwc-tab-bar>
-      <mwc-textfield value="${this.query}"
-        @keypress=${e=>{if (e.key === 'Enter') {this.search(this.textfield.value)}}}></mwc-textfield>
+
+      <!-- SEARCH BAR -->
+      <div style="display:flex;align-items:center;position:relative">
+        <mwc-textfield .value=${this.query}
+          @keypress=${e=>{if (e.key === 'Enter') {this.search(this.textfield.value)}}}
+          iconTrailing=close></mwc-textfield>
+        <mwc-icon-button icon=close style="position:absolute;top:4px;right:4px;"
+          @click=${()=>{this.query='';this.textfield.value = '';this.textfield.focus()}}></mwc-icon-button>
+      </div>
+
       <!-- WORDS RESULT -->
       <div id="words-results" ?hide=${this.view !== 'words'}>
         ${wordsResult.length === 0 ? html`no result` : nothing}
@@ -173,6 +183,9 @@ export class WordsManager extends LitElement {
       this.dialog.removeEventListener('opened', dialogOpenedInitializingFct)
     }
     this.dialog.addEventListener('opened', dialogOpenedInitializingFct)
+    this.textfield.updateComplete.then(()=>{
+      this.textfield.shadowRoot!.querySelector('i')!.style.color = 'transparent'
+    })
   }
 
   async updated () {
