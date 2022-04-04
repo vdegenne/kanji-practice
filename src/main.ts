@@ -120,10 +120,11 @@ export class AppContainer extends LitElement {
         style="position:absolute;bottom:23px;right:4px"
         @click=${()=>this.submitAnswer()}></mwc-icon-button>
 
+      <!-- wrong answer search button -->
       ${this.kanjiFrame && this.kanjiFrame.revealed && this.textfield.value.trim() !== '' && this.textfield.value.trim() !== this.kanji![1] ? html`
       <mwc-icon-button
         style="position:absolute;right:-55px;top:7px;background-color:#0000000a;border-radius:50%"
-        @click=${() => { mdbg(this.textfield.value)} }>${this.textfield.value}</mwc-icon-button>
+        @click=${() => { window.searchManager.open(this.textfield.value, 'kanji')} }>${this.textfield.value}</mwc-icon-button>
       ` :nothing}
     </div>
 

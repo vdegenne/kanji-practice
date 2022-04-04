@@ -10,6 +10,8 @@ import { googleImageSearch, jisho, mdbg, naver, playJapaneseAudio } from './util
 
 import '@material/mwc-tab-bar'
 import '@material/mwc-menu'
+
+import './search-item-element'
 import './concealable-span'
 import { ConcealableSpan } from './concealable-span';
 
@@ -42,7 +44,7 @@ const jlpts: JlptWordEntry[][] = [
 // }
 // const jlpts = [jlpt5, jlpt4, jlpt3]
 
-declare type SearchItem = {
+export type SearchItem = {
   type: ViewType;
   dictionary: string;
   word: string;
@@ -113,46 +115,7 @@ export class SearchManager extends LitElement {
       <!-- WORDS RESULT -->
       <div id="words-results" ?hide=${this.view !== 'words'}>
         ${wordsResult.length === 0 ? html`no result` : nothing}
-        ${wordsResult.map(i=>{
-          return html`
-          <div class=item>
-            <div class=result-header>
-              <mwc-icon-button icon=volume_up style="margin-right:5px;"
-                @click=${e=>this.onSpeakerClick(e)}></mwc-icon-button>
-              <div class="word">
-                ${i.word.split('').map(c=>{
-                  return html`<span class=character
-                    @click=${e=>{this.search(e.target.innerText.trim());this.view='kanji'}}>${c}</span>`
-                })}
-              </div>
-              ${i.hiragana ? html`
-              <concealable-span class=hiragana>${i.hiragana}</concealable-span>` : nothing}
-              <div style="flex:1"></div>
-              ${i.frequency ? html`
-              <span class=lemma>${i.frequency}</span>` : nothing}
-              <span class="dictionary ${i.dictionary.replace(' n', '')}-color"
-                @click=${()=>naver(i.word)}>${i.dictionary}</span>
-              <mwc-icon-button icon=more_vert
-                @click=${(e)=>{e.target.nextElementSibling.show()}}></mwc-icon-button>
-              <mwc-menu>
-                <!-- google images -->
-                <mwc-list-item graphic=icon @click=${()=>{googleImageSearch(i.word)}}>
-                  <span>Google Images</span>
-                  <mwc-icon slot=graphic>images</mwc-icon>
-                </mwc-list-item>
-                <!-- jisho -->
-                <mwc-list-item graphic=icon @click=${()=>{jisho(i.word)}}>
-                  <span>Jisho</span>
-                  <img src="./img/jisho.ico" slot="graphic">
-                </mwc-list-item>
-                <mwc-list-item>more coming soon</mwc-list-item>
-                <mwc-list-item>more coming soon</mwc-list-item>
-              </mwc-menu>
-            </div>
-            <concealable-span class=english>${i.english}</concealable-span>
-          </div>
-          `
-        })}
+        ${wordsResult.map(i=>html`<search-item-element .item=${i}></search-item-element>`)}
       </div>
 
       <!-- KANJI RESULT -->
@@ -162,8 +125,6 @@ export class SearchManager extends LitElement {
           return html`
           <div class=item>
             <div style="display:flex;justify-content:space-between;margin:12px 0 5px 0;">
-              <!-- <mwc-icon-button icon=volume_up style="--mdc-icon-button-size: 24px;margin-right:5px;"
-                @click=${e=>this.onSpeakerClick(e)}></mwc-icon-button> -->
               <span class="word">${i.word}</span>
               ${i.hiragana ? html`
               <concealable-span class=hiragana>${i.hiragana}</concealable-span>` : nothing}
@@ -195,9 +156,9 @@ export class SearchManager extends LitElement {
     await Promise.all([...this.concealableSpans].map(e=>e.updateComplete))
     this.showShowAllInfoButton = this.concealedSpans.length > 0
 
-    ;[...this.shadowRoot!.querySelectorAll('mwc-menu')].forEach<Menu>(el=>{
-      el.anchor = el.previousElementSibling
-    })
+    // ;[...this.shadowRoot!.querySelectorAll('mwc-menu')].forEach((el: Menu)=>{
+    //   el.anchor = el.previousElementSibling
+    // })
   }
 
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
@@ -213,14 +174,7 @@ export class SearchManager extends LitElement {
     })
   }
 
-  onSpeakerClick(e) {
-    const target = e.target as HTMLElement;
-    let el: HTMLSpanElement|null = target.parentElement!.querySelector('.hiragana')
-    if (el === null) {
-      el = target.parentElement!.querySelector('.word')!
-    }
-    playJapaneseAudio(el.innerText.trim())
-  }
+
 
   search (query: string) {
     if (query === this.query) {
@@ -275,9 +229,12 @@ export class SearchManager extends LitElement {
     return item
   }
 
-  open(query?: string) {
+  open(query?: string, view?: ViewType) {
     if (query) {
       this.search(query)
+    }
+    if (view) {
+      this.view = view
     }
     this.dialog.show()
   }
