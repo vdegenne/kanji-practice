@@ -1,15 +1,15 @@
 import { html, LitElement, nothing, PropertyValueMap } from 'lit'
 import { customElement, query, queryAll, state } from 'lit/decorators.js'
-import {live} from 'lit/directives/live.js'
 import { Dialog } from '@material/mwc-dialog';
 import { JlptWordEntry, Kanji } from './types';
 
 import lemmas from '../docs/data/lemmas.json'
 import { TextField } from '@material/mwc-textfield';
-import { wordsManagerStyles } from './styles/wordsManagerStyles';
-import { mdbg, naver, playJapaneseAudio } from './util';
+import { searchManagerStyles } from './styles/searchManagerStyles';
+import { googleImageSearch, jisho, mdbg, naver, playJapaneseAudio } from './util';
 
 import '@material/mwc-tab-bar'
+import '@material/mwc-menu'
 import './concealable-span'
 import { ConcealableSpan } from './concealable-span';
 
@@ -20,6 +20,7 @@ import jlpt3 from '../docs/data/jlpt3-words.json'
 import jlpt2 from '../docs/data/jlpt2-words.json'
 import jlpt1 from '../docs/data/jlpt1-words.json'
 import { sharedStyles } from './styles/sharedStyles';
+import { Menu } from '@material/mwc-menu';
 const jlpts: JlptWordEntry[][] = [
   jlpt5 as JlptWordEntry[],
   // [],
@@ -69,8 +70,6 @@ export class SearchManager extends LitElement {
   @queryAll('concealable-span') concealableSpans!: ConcealableSpan[];
   @queryAll('concealable-span[concealed]') concealedSpans!: ConcealableSpan[];
 
-  static styles = [wordsManagerStyles, sharedStyles];
-
   constructor () {
     super()
     this.addEventListener('click', (e) => {
@@ -84,13 +83,15 @@ export class SearchManager extends LitElement {
     })
   }
 
+  static styles = [searchManagerStyles, sharedStyles];
+
   render () {
     const wordsResult = this.result.filter(i=>i.type=='words')
     const kanjiResult = this.result.filter(i=>i.type=='kanji')
 
     // @TODO here we change the view attribute in the currently used element in the search history list
 
-    console.log(this.query)
+    // console.log(this.query)
     return html`
     <mwc-dialog style="--mdc-dialog-min-width:calc(100vw - 32px);">
       <mwc-tab-bar
@@ -102,7 +103,7 @@ export class SearchManager extends LitElement {
 
       <!-- SEARCH BAR -->
       <div style="display:flex;align-items:center;position:relative">
-        <mwc-textfield .value=${this.query}
+        <mwc-textfield .value=${this.query} dialogInitialFocus
           @keypress=${e=>{if (e.key === 'Enter') {this.search(this.textfield.value)}}}
           iconTrailing=close></mwc-textfield>
         <mwc-icon-button icon=close style="position:absolute;top:4px;right:4px;"
@@ -131,7 +132,22 @@ export class SearchManager extends LitElement {
               <span class=lemma>${i.frequency}</span>` : nothing}
               <span class="dictionary ${i.dictionary.replace(' n', '')}-color"
                 @click=${()=>naver(i.word)}>${i.dictionary}</span>
-              <mwc-icon-button icon=more_vert></mwc-icon-button>
+              <mwc-icon-button icon=more_vert
+                @click=${(e)=>{e.target.nextElementSibling.show()}}></mwc-icon-button>
+              <mwc-menu>
+                <!-- google images -->
+                <mwc-list-item graphic=icon @click=${()=>{googleImageSearch(i.word)}}>
+                  <span>Google Images</span>
+                  <mwc-icon slot=graphic>images</mwc-icon>
+                </mwc-list-item>
+                <!-- jisho -->
+                <mwc-list-item graphic=icon @click=${()=>{jisho(i.word)}}>
+                  <span>Jisho</span>
+                  <img src="./img/jisho.ico" slot="graphic">
+                </mwc-list-item>
+                <mwc-list-item>more coming soon</mwc-list-item>
+                <mwc-list-item>more coming soon</mwc-list-item>
+              </mwc-menu>
             </div>
             <concealable-span class=english>${i.english}</concealable-span>
           </div>
@@ -175,6 +191,15 @@ export class SearchManager extends LitElement {
     `
   }
 
+  async updated () {
+    await Promise.all([...this.concealableSpans].map(e=>e.updateComplete))
+    this.showShowAllInfoButton = this.concealedSpans.length > 0
+
+    ;[...this.shadowRoot!.querySelectorAll('mwc-menu')].forEach<Menu>(el=>{
+      el.anchor = el.previousElementSibling
+    })
+  }
+
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
     const dialogOpenedInitializingFct = () => {
       const surface = this.dialog.shadowRoot!.querySelector('.mdc-dialog__surface')!
@@ -186,11 +211,6 @@ export class SearchManager extends LitElement {
     this.textfield.updateComplete.then(()=>{
       this.textfield.shadowRoot!.querySelector('i')!.style.color = 'transparent'
     })
-  }
-
-  async updated () {
-    await Promise.all([...this.concealableSpans].map(e=>e.updateComplete))
-    this.showShowAllInfoButton = this.concealedSpans.length > 0
   }
 
   onSpeakerClick(e) {

@@ -1,6 +1,6 @@
 import { css } from 'lit';
 
-export const wordsManagerStyles = css`
+export const searchManagerStyles = css`
 mwc-textfield {
   width: 100%;
 }
@@ -55,6 +55,7 @@ mwc-tab-bar {
   justify-content: space-between;
   align-items: flex-start;
   margin: 12px 0 5px 0;
+  position: relative;
 }
 .result-header mwc-icon-button {
   --mdc-icon-button-size: 24px;

@@ -107,14 +107,15 @@ export class AppContainer extends LitElement {
       style="margin:12px 0"
       @click=${() => this.onCasinoButtonClick()}>pick new Kanji</mwc-button> -->
 
+    <!-- TEXTFIELD -->
     <div style="display:inline-block;position:relative;margin-top:18px;">
       <mwc-textfield label="answer"
-        @keypress=${(e) => { this.onTextFieldPress(e)}  }
+        @keypress=${(e) => {this.onTextFieldPress(e)}  }
         helper="input and press enter"
         helperPersistent
         iconTrailing="remove_red_eye">
       </mwc-textfield>
-      <mwc-icon-button icon="remove_red_eye"
+      <mwc-icon-button icon=${this.kanjiFrame?.revealed ? 'skip_next' : 'remove_red_eye'}
         id=submit-button
         style="position:absolute;bottom:23px;right:4px"
         @click=${()=>this.submitAnswer()}></mwc-icon-button>
