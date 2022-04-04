@@ -34,8 +34,8 @@ export class CollectionsManager extends LitElement {
   }
 
   IsCharacterInACollection (character: string) {
-    console.log(this.collections)
-    console.log(this.collections.some(c=>c.kanjis.includes(character)))
+    // console.log(this.collections)
+    // console.log(this.collections.some(c=>c.kanjis.includes(character)))
     return this.collections.some(c => c.kanjis.includes(character))
   }
 

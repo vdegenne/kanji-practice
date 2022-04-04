@@ -3,9 +3,11 @@ import { css } from 'lit';
 export const mainStyles = css`
 :host {
   display: block;
+  display: flex;
+  flex-direction: column;
   height: 100vh;
-  /* justify-content: center; */
-  align-items: center;
+  align-items: flex-start;
+  justify-content: center;
   padding: 0 12px;
 }
 header {
@@ -18,7 +20,7 @@ header {
   /* box-sizing: border-box; */
 }
 header > div:first-child {
-  padding: 3px 6px;
+  padding: 3px 11px;
   border-radius: 4px;
 }
 :host([mode=discovery]) header > div:first-child {

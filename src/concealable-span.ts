@@ -3,7 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 
 @customElement('concealable-span')
 export class ConcealableSpan extends LitElement {
-  @property({type:Boolean, reflect:true}) concealed = true;
+  @property({type:Boolean, reflect:true}) concealed;
 
   // @state() content: string = ''
 

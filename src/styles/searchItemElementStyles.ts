@@ -20,7 +20,7 @@ export const searchItemStyles = css`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin: 12px 0 5px 0;
+  margin: 0px 0 5px 0;
   position: relative;
 }
 :host .header mwc-icon-button {
@@ -28,7 +28,7 @@ export const searchItemStyles = css`
 }
 :host .word {
   font-family: 'Sawarabi Mincho', serif;
-  font-size: 1.3em;
+  font-size: 1.5em;
   color: black;
 }
 :host .word .character {

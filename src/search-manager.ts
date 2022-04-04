@@ -23,6 +23,7 @@ import jlpt2 from '../docs/data/jlpt2-words.json'
 import jlpt1 from '../docs/data/jlpt1-words.json'
 import { sharedStyles } from './styles/sharedStyles';
 import { Menu } from '@material/mwc-menu';
+import { SearchItemElement } from './search-item-element';
 const jlpts: JlptWordEntry[][] = [
   jlpt5 as JlptWordEntry[],
   // [],
@@ -69,8 +70,9 @@ export class SearchManager extends LitElement {
 
   @query('mwc-dialog') dialog!: Dialog;
   @query('mwc-textfield') textfield!: TextField;
-  @queryAll('concealable-span') concealableSpans!: ConcealableSpan[];
-  @queryAll('concealable-span[concealed]') concealedSpans!: ConcealableSpan[];
+  @queryAll('#words-results search-item-element') searchItemElements!: SearchItemElement[];
+  // @queryAll('concealable-span') concealableSpans!: ConcealableSpan[];
+  // @queryAll('concealable-span[concealed]') concealedSpans!: ConcealableSpan[];
 
   constructor () {
     super()
@@ -85,8 +87,10 @@ export class SearchManager extends LitElement {
     })
   }
 
+  /** STYLES **/
   static styles = [searchManagerStyles, sharedStyles];
 
+  /** RENDER **/
   render () {
     const wordsResult = this.result.filter(i=>i.type=='words')
     const kanjiResult = this.result.filter(i=>i.type=='kanji')
@@ -122,6 +126,7 @@ export class SearchManager extends LitElement {
       <div id="kanji-results" ?hide=${this.view !== 'kanji'}>
         ${kanjiResult.length === 0 ? html`no result` : nothing}
         ${kanjiResult.map(i=>{
+          return html`<search-item-element .item=${i} revealed></search-item-element>`
           return html`
           <div class=item>
             <div style="display:flex;justify-content:space-between;margin:12px 0 5px 0;">
@@ -143,7 +148,7 @@ export class SearchManager extends LitElement {
 
       ${this.showShowAllInfoButton ? html`
       <mwc-button unelevated slot="secondaryAction" style="--mdc-theme-primary:grey"
-        @click=${()=>{[...this.concealedSpans].forEach(e=>e.concealed = false);this.requestUpdate()}}>
+        @click=${()=>{[...this.searchItemElements].forEach(e=>e.revealed = true);this.requestUpdate()}}>
         <mwc-icon>remove_red_eye</mwc-icon>
       </mwc-button>
       ` : nothing}
@@ -153,8 +158,8 @@ export class SearchManager extends LitElement {
   }
 
   async updated () {
-    await Promise.all([...this.concealableSpans].map(e=>e.updateComplete))
-    this.showShowAllInfoButton = this.concealedSpans.length > 0
+    await Promise.all([...this.searchItemElements].map(e=>e.updateComplete))
+    this.showShowAllInfoButton = [...this.searchItemElements].some(el => el.hasConcealedSpans())
 
     // ;[...this.shadowRoot!.querySelectorAll('mwc-menu')].forEach((el: Menu)=>{
     //   el.anchor = el.previousElementSibling
@@ -216,7 +221,7 @@ export class SearchManager extends LitElement {
         }))
     )
 
-    this.concealableSpans.forEach(e=>e.concealed=true)
+    this.searchItemElements.forEach(e=>e.revealed=false)
     // should include Lemmas in the search ?
     this.result = searchResult
   }
@@ -238,4 +243,15 @@ export class SearchManager extends LitElement {
     }
     this.dialog.show()
   }
+}
+
+
+export function firstWordFoundFromCharacter (character: string) {
+  for (const jlpt of jlpts) {
+    const result = jlpt.find(w=>w[0].includes(character))
+    if (result) {
+      return result
+    }
+  }
+  return null
 }

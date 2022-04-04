@@ -1,21 +1,25 @@
 import { html, LitElement, nothing, PropertyValueMap } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
+import { customElement, property, query, queryAll, state } from 'lit/decorators.js';
 import { searchItemStyles } from './styles/searchItemElementStyles';
-import { googleImageSearch, jisho, naver, playJapaneseAudio } from './util';
+import { googleImageSearch, jisho, mdbg, naver, playJapaneseAudio, tatoeba } from './util';
 import {SearchItem} from './search-manager'
 
 import '@material/mwc-menu'
 
 import './concealable-span'
 import { Menu } from '@material/mwc-menu';
+import { ConcealableSpan } from './concealable-span';
 
 
 @customElement('search-item-element')
 export class SearchItemElement extends LitElement {
   @property({type: Object }) item!: SearchItem;
 
+  @property({type: Boolean, reflect:true}) revealed = false;
+
   @query('#anchor') anchor!: HTMLDivElement;
   @query('mwc-menu') menu!: Menu;
+  @queryAll('concealable-span[concealed]') concealedSpans!: ConcealableSpan[];
 
   static styles = searchItemStyles;
 
@@ -32,6 +36,10 @@ export class SearchItemElement extends LitElement {
           <span>${this.item.word}</span>
         </mwc-list-item>
         <li divider role="separator"></li>
+        <mwc-list-item graphic=icon @click=${()=>{playJapaneseAudio(this.item.hiragana || this.item.word)}}>
+          <span>Listen</span>
+          <mwc-icon slot=graphic>volume_up</mwc-icon>
+        </mwc-list-item>
         <!-- google images -->
         <mwc-list-item graphic=icon @click=${()=>{googleImageSearch(this.item.word)}}>
           <span>Google Images</span>
@@ -42,14 +50,24 @@ export class SearchItemElement extends LitElement {
           <span>Jisho</span>
           <img src="./img/jisho.ico" slot="graphic">
         </mwc-list-item>
-        <mwc-list-item>more coming soon</mwc-list-item>
-        <mwc-list-item>more coming soon</mwc-list-item>
+        <mwc-list-item graphic=icon @click=${()=>{tatoeba(this.item.word)}}>
+          <span>Tatoeba</span>
+          <img src="./img/tatoeba.ico" slot="graphic">
+        </mwc-list-item>
+        <mwc-list-item graphic=icon @click=${()=>{naver(this.item.word)}}>
+          <span>Naver</span>
+          <img src="./img/naver.ico" slot="graphic">
+        </mwc-list-item>
+        <mwc-list-item graphic=icon @click=${()=>{mdbg(this.item.word)}}>
+          <span>MDBG</span>
+          <img src="./img/mdbg.ico" slot="graphic">
+        </mwc-list-item>
       </mwc-menu>
     </div>
 
     <div class=header>
-      <mwc-icon-button icon=volume_up style="margin-right:5px;"
-        @click=${e=>this.onSpeakerClick(e)}></mwc-icon-button>
+      <!-- <mwc-icon-button icon=volume_up style="margin-right:5px;"
+        @click=${e=>this.onSpeakerClick(e)}></mwc-icon-button> -->
       <div class="word">
         ${this.item.word.split('').map(c=>{
           return html`<span class=character
@@ -57,25 +75,28 @@ export class SearchItemElement extends LitElement {
         })}
       </div>
       ${this.item.hiragana ? html`
-      <concealable-span class=hiragana>${this.item.hiragana}</concealable-span>` : nothing}
+      <concealable-span class=hiragana ?concealed=${!this.revealed}>${this.item.hiragana}</concealable-span>` : nothing}
       <div style="flex:1"></div>
       ${this.item.frequency ? html`
-      <span class=lemma>${this.item.frequency}</span>` : nothing}
+      <span class=lemma>${this.item.frequency}</span>
+      ` : nothing}
       <span class="dictionary ${this.item.dictionary.replace(' n', '')}-color"
         @click=${()=>naver(this.item.word)}>${this.item.dictionary}</span>
       <!-- three dots menu -->
       <mwc-icon-button icon=more_vert
-        @click=${(e)=>{e.target.nextElementSibling.show()}}></mwc-icon-button>
+        @click=${(e)=>{/* simulate right click to open the menu */this.onRightClick(e)}}></mwc-icon-button>
     </div>
 
 
     <!-- ENGLISH -->
-    <concealable-span class=english>${this.item.english}</concealable-span>
+    <concealable-span class=english ?concealed=${!this.revealed}>${this.item.english}</concealable-span>
     `
   }
 
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
     this.addEventListener('contextmenu', e=>e.preventDefault())
+
+    this.menu.anchor = this.anchor
 
     this.addEventListener('pointerdown', (e)=>{
       if (e.button === 2) {
@@ -92,11 +113,7 @@ export class SearchItemElement extends LitElement {
 
     // Move the anchor to the pointer position
     this.moveAnchorTo(x, y)
-    // await new Promise(resolve => setTimeout(resolve, 1000)
-    this.menu.anchor = this.anchor
-    // setTimeout(()=>{
-      this.menu.show()
-    // }, 1000)
+    this.menu.show()
 
     // Open the menu
   }
@@ -113,5 +130,9 @@ export class SearchItemElement extends LitElement {
       el = target.parentElement!.querySelector('.word')!
     }
     playJapaneseAudio(el.innerText.trim())
+  }
+
+  hasConcealedSpans () {
+    return this.concealedSpans.length > 0
   }
 }

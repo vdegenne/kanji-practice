@@ -13,7 +13,7 @@ import { Collection, Kanji, Mode } from './types'
 import { TextField } from '@material/mwc-textfield'
 import { KanjiFrame } from './kanji-frame'
 import { Button } from '@material/mwc-button'
-import { mdbg } from './util'
+import { mdbg, playJapaneseAudio } from './util'
 import './options-manager'
 import { OptionsManager } from './options-manager'
 import './collections-selector'
@@ -22,7 +22,7 @@ import { mainStyles } from './styles/mainStyles'
 import './collections-manager'
 import { CollectionsManager } from './collections-manager'
 import './search-manager'
-import { SearchManager } from './search-manager'
+import { firstWordFoundFromCharacter, SearchManager } from './search-manager'
 
 declare global {
   interface Window {
@@ -101,7 +101,7 @@ export class AppContainer extends LitElement {
         @click=${()=>window.optionsManager.open()}></mwc-icon-button>
     </header>
 
-    <kanji-frame .kanji=${this.kanji}></kanji-frame>
+    <kanji-frame .kanji=${this.kanji} style="width:-webkit-fill-available"></kanji-frame>
 
     <!-- <mwc-button unelevated icon="casino"
       style="margin:12px 0"
@@ -128,7 +128,7 @@ export class AppContainer extends LitElement {
       ` :nothing}
     </div>
 
-    <div style="height:100px;margin:50px 0;padding:50px 0;"></div>
+    <!-- <div style="height:100px;margin:50px 0;padding:50px 0;"></div> -->
     `
   }
 
@@ -154,7 +154,12 @@ export class AppContainer extends LitElement {
     else {
       window.toast('', 0)
     }
-    return kanjisLeft[~~(Math.random() * kanjisLeft.length)]
+    const kanji = kanjisLeft[~~(Math.random() * kanjisLeft.length)]
+    const firstWordFound = firstWordFoundFromCharacter(kanji[1])
+    if (firstWordFound) {
+      playJapaneseAudio(firstWordFound[1] || firstWordFound[0])
+    }
+    return kanji
   }
 
 

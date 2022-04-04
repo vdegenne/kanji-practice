@@ -20,8 +20,9 @@ mwc-tab-bar {
 }
 
 search-item-element {
-  padding-bottom: 15px;
-  margin-bottom: 15px;
+  padding: 15px 0;
+  /* padding-bottom: 15px;
+  margin-bottom: 15px; */
   border-bottom: 1px solid #eeeeee;
 }
 `
