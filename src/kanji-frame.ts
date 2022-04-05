@@ -1,6 +1,7 @@
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { kanjiFrameStyles } from './styles/kanjiFrameStyles';
+import { sharedStyles } from './styles/sharedStyles';
 import { Kanji } from './types';
 import { jisho, mdbg, tatoeba } from './util';
 
@@ -14,7 +15,7 @@ export class KanjiFrame extends LitElement {
 
   @property({ type: Array }) kanji: Kanji|null = null;
 
-  static styles = kanjiFrameStyles;
+  static styles = [kanjiFrameStyles, sharedStyles]
 
   render () {
     if (this.kanji === null) {
@@ -25,7 +26,7 @@ export class KanjiFrame extends LitElement {
 
 
     return html`
-    <div class="tag" id="jlpt-tag">jlpt${this.kanji[2]}</div>
+    <div class="tag jlpt${this.kanji[2]}-color" id="jlpt-tag">jlpt${this.kanji[2]}</div>
     <div id=kanji>
       ${this.happy ? html`
       <img src="./img/yeh.gif"/>
@@ -43,10 +44,10 @@ export class KanjiFrame extends LitElement {
       <mwc-icon-button icon="playlist_add"
         ?highlight=${window.collectionsManager.IsCharacterInACollection(this.kanji[1])}
         @click=${_=>{window.collectionsSelector.open(this.kanji![1])}}></mwc-icon-button>
-      <mwc-icon-button icon=info
-        @click=${_=>jisho(this.kanji![1])}></mwc-icon-button>
+      <!-- <mwc-icon-button icon=info
+        @click=${_=>jisho(this.kanji![1])}></mwc-icon-button> -->
       <mwc-icon-button icon=search
-        @click=${()=>{window.searchManager.open(this.kanji![1])}}></mwc-icon-button>
+        @click=${()=>{window.searchManager.open(this.kanji![1], 'words')}}></mwc-icon-button>
       <!-- <mwc-icon-button><img src="./img/tatoeba.svg" width=24 height=24
         @click=${()=>tatoeba(this.kanji![1])}></mwc-icon-button> -->
     </div>

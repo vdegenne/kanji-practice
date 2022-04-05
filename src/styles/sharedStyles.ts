@@ -4,6 +4,10 @@ export const sharedStyles = css`
 [hide] {
   display: none;
 }
+.tag {
+  padding: 0px 14px;
+  border-radius: 12px;
+}
 .jlpt5-color {
   background-color: #4caf50 !important;
   color: white !important;
@@ -23,5 +27,10 @@ export const sharedStyles = css`
 .jlpt1-color {
   background-color: black !important;
   color: white !important;
+}
+.not-found {
+  /* background-color: transparent; */
+  border: 1px solid #f44336;
+  color: #f44336;
 }
 `

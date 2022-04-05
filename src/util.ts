@@ -1,3 +1,5 @@
+import _kanjis from '../docs/data/kanjis.json'
+import { Kanji } from './types'
 
 export function jisho (word) {
   // window.open(`https://jisho.org/search/${encodeURIComponent(word)}%20%23kanji`, '_blank')
@@ -30,4 +32,6 @@ export function playJapaneseAudio (word) {
 }
 
 
-// export function
+export function getKanjiData (character: string) {
+  return (_kanjis as Kanji[]).find(k => k[1] === character)
+}

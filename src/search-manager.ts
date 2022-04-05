@@ -45,9 +45,11 @@ const jlpts: JlptWordEntry[][] = [
 // }
 // const jlpts = [jlpt5, jlpt4, jlpt3]
 
+export type Dictionaries = 'jlpt5'|'jlpt4'|'jlpt3'|'jlpt2'|'jlpt1'|'exact search not found';
+
 export type SearchItem = {
   type: ViewType;
-  dictionary: string;
+  dictionary: Dictionaries;
   word: string;
   hiragana?: string;
   english?: string;
@@ -109,7 +111,7 @@ export class SearchManager extends LitElement {
 
       <!-- SEARCH BAR -->
       <div style="display:flex;align-items:center;position:relative">
-        <mwc-textfield .value=${this.query} dialogInitialFocus
+        <mwc-textfield .value=${this.query}
           @keypress=${e=>{if (e.key === 'Enter') {this.search(this.textfield.value)}}}
           iconTrailing=close></mwc-textfield>
         <mwc-icon-button icon=close style="position:absolute;top:4px;right:4px;"
@@ -126,7 +128,7 @@ export class SearchManager extends LitElement {
       <div id="kanji-results" ?hide=${this.view !== 'kanji'}>
         ${kanjiResult.length === 0 ? html`no result` : nothing}
         ${kanjiResult.map(i=>{
-          return html`<search-item-element .item=${i} revealed></search-item-element>`
+          return html`<search-item-element .item=${i} .revealed=${true}></search-item-element>`
           return html`
           <div class=item>
             <div style="display:flex;justify-content:space-between;margin:12px 0 5px 0;">
@@ -198,7 +200,7 @@ export class SearchManager extends LitElement {
           .map(r=>{
             return this.attachFrequencyValue({
               type: 'words',
-              dictionary: `jlpt n${5 - n}`,
+              dictionary: `jlpt${5 - n}` as Dictionaries,
               word: r[0],
               english: r[2],
               hiragana: r[1] || undefined
@@ -206,6 +208,16 @@ export class SearchManager extends LitElement {
           });
       searchResult.push(...result)
     });
+    // add the exact search if not found
+    const exactSearch = searchResult.find(i=>i.word===query);
+    if (!exactSearch) {
+      searchResult.unshift({
+        type: 'words',
+        dictionary: 'exact search not found',
+        word:query,
+        english: 'click the menu to search on external sites'
+      })
+    }
 
     /** Kanji search */
     searchResult.push(...
@@ -215,13 +227,13 @@ export class SearchManager extends LitElement {
         })
         .map<SearchItem>(i=>({
           type: 'kanji',
-          dictionary: `jlpt n${i[2]}`,
+          dictionary: `jlpt${i[2]}` as Dictionaries,
           word: i[1],
           english: `${i[3]}//${i[4]}`
         }))
     )
 
-    this.searchItemElements.forEach(e=>e.revealed=false)
+    this.searchItemElements.forEach(e=>e.conceal())
     // should include Lemmas in the search ?
     this.result = searchResult
   }
@@ -243,6 +255,8 @@ export class SearchManager extends LitElement {
     }
     this.dialog.show()
   }
+
+
 }
 
 
