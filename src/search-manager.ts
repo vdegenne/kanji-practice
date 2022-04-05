@@ -215,7 +215,6 @@ export class SearchManager extends LitElement {
         type: 'words',
         dictionary: 'exact search not found',
         word:query,
-        english: 'click the menu to search on external sites'
       })
     }
 

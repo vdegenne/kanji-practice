@@ -95,7 +95,7 @@ export class SearchItemElement extends LitElement {
         })}
       </div>
       ${this.item.hiragana ? html`
-      <concealable-span class=hiragana .concealed=${!this.revealed}>${this.item.hiragana}</concealable-span>` : nothing}
+      <concealable-span class=hiragana ?concealed=${!this.revealed}>${this.item.hiragana}</concealable-span>` : nothing}
       <div style="flex:1"></div>
       ${this.item.frequency ? html`
       <span class=lemma>${this.item.frequency}</span>
@@ -112,8 +112,10 @@ export class SearchItemElement extends LitElement {
 
     <!-- ENGLISH -->
     ${this.item.english ? html`
-    <concealable-span class=english .concealed=${this.item.dictionary !== 'exact search not found' && !this.revealed}>${this.item.english}</concealable-span>
-    ` : nothing }
+    <concealable-span class=english ?concealed=${!this.revealed}>${this.item.english}</concealable-span>
+    ` : html`
+    <span class=english>Click the menu to search on external sites.  </span>
+    ` }
 
     `
   }
