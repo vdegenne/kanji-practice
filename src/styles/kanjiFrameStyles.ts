@@ -16,6 +16,12 @@ export const kanjiFrameStyles = css`
   box-shadow: 0 3px 2px -2px #00000063;
   color: white;
 }
+:host([revealed]) {
+  background-color: #f44336;
+}
+:host([revealed][success]) {
+  background-color: #4caf50;
+}
 #kanji {
   font-size: 12em;
   /* opacity: 0; */

@@ -171,6 +171,7 @@ export class AppContainer extends LitElement {
 
   onCasinoButtonClick() {
     this.kanjiFrame.conceal()
+    // this.kanjiFrame.success = false
     this.textfield.value =''
     this.textfield.focus()
     this.kanji = this.pickNewKanji()
@@ -188,7 +189,7 @@ export class AppContainer extends LitElement {
     if (!this.kanjiFrame.revealed) {
       this.kanjiFrame.reveal()
       if (this.textfield.value === this.kanji![1]) {
-        this.kanjiFrame.happy = true
+        this.kanjiFrame.success = true
         this.playSuccessSound()
         // window.toast('CORRECT ! :)')
         data.splice(data.indexOf(this.kanji!), 1)

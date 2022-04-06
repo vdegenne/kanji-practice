@@ -11,7 +11,10 @@ export class KanjiFrame extends LitElement {
   @property({type:Boolean, reflect:true})
   public revealed = false
 
-  @property({type:Boolean, reflect:true}) happy = false
+  @property({type:Boolean, reflect:true})
+  public success = false
+
+  // @property({type:Boolean, reflect:true}) happy = false
 
   @property({ type: Array }) kanji: Kanji|null = null;
 
@@ -28,7 +31,7 @@ export class KanjiFrame extends LitElement {
     return html`
     <div class="tag jlpt${this.kanji[2]}-color" id="jlpt-tag">jlpt${this.kanji[2]}</div>
     <div id=kanji>
-      ${this.happy ? html`
+      ${false && this.success ? html`
       <img src="./img/yeh.gif"/>
       ` : nothing}
       ${this.revealed ?
@@ -66,6 +69,6 @@ export class KanjiFrame extends LitElement {
   }
   conceal () {
     this.revealed =false
-    this.happy = false
+    this.success = false
   }
 }
