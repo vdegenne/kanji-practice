@@ -39,6 +39,11 @@ export class KanjiFrame extends LitElement {
       }
     </div>
 
+    <div id=meanings>
+      <div style="margin-bottom:3px"><span class=tag style="background-color:#870000;margin-right:5px">On</span>${this.kanji[3]}</div>
+      <div><span class=tag style="background-color:crimson;margin-right:5px;">Kun</span>${this.kanji[4]}</div>
+    </div>
+
     ${this.revealed ? html`
     <div id=details-strip>
       <mwc-icon-button icon="playlist_add"
@@ -46,15 +51,12 @@ export class KanjiFrame extends LitElement {
         @click=${_=>{window.collectionsSelector.open(this.kanji![1])}}></mwc-icon-button>
       <!-- <mwc-icon-button icon=info
         @click=${_=>jisho(this.kanji![1])}></mwc-icon-button> -->
-      <mwc-icon-button icon=search
+      <mwc-icon-button icon=more_horiz
         @click=${()=>{window.searchManager.open(this.kanji![1], 'words')}}></mwc-icon-button>
       <!-- <mwc-icon-button><img src="./img/tatoeba.svg" width=24 height=24
         @click=${()=>tatoeba(this.kanji![1])}></mwc-icon-button> -->
     </div>
     ` : nothing}
-
-    <div style="margin-bottom:3px"><span class=tag style="background-color:#870000;padding:3px 11px;margin-right:5px">On</span>${this.kanji[3]}</div>
-    <div><span class=tag style="background-color:crimson;margin-right:5px;">Kun</span>${this.kanji[4]}</div>
     `
   }
 

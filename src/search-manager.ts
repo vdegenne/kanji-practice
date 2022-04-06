@@ -67,8 +67,9 @@ export class SearchManager extends LitElement {
 
   private _searchHistory: SearchHistoryItem[] = [{search: 'test', view: 'words'}]
 
-  private _hideInformationsOnSearchOption = true
-  @state() showShowAllInfoButton = this._hideInformationsOnSearchOption
+  @state() blindMode = false
+  // private _hideInformationsOnSearchOption = true
+  // @state() showShowAllInfoButton = this._hideInformationsOnSearchOption
 
   @query('mwc-dialog') dialog!: Dialog;
   @query('mwc-textfield') textfield!: TextField;
@@ -121,7 +122,7 @@ export class SearchManager extends LitElement {
       <!-- WORDS RESULT -->
       <div id="words-results" ?hide=${this.view !== 'words'}>
         ${wordsResult.length === 0 ? html`no result` : nothing}
-        ${wordsResult.map(i=>html`<search-item-element .item=${i}></search-item-element>`)}
+        ${wordsResult.map(i=>html`<search-item-element .item=${i} .revealed=${!this.blindMode}></search-item-element>`)}
       </div>
 
       <!-- KANJI RESULT -->
@@ -148,12 +149,16 @@ export class SearchManager extends LitElement {
         })}
       </div>
 
-      ${this.showShowAllInfoButton ? html`
+      <mwc-formfield slot=secondaryAction label="blind mode" style="--mdc-checkbox-ripple-size:32px;margin-right:10px">
+        <mwc-checkbox ?checked=${this.blindMode}
+          @change=${e=>{this.toggleBlindMode()}}></mwc-checkbox>
+      </mwc-formfield>
+      <!-- ${this.showShowAllInfoButton ? html`
       <mwc-button unelevated slot="secondaryAction" style="--mdc-theme-primary:grey"
         @click=${()=>{[...this.searchItemElements].forEach(e=>e.revealed = true);this.requestUpdate()}}>
         <mwc-icon>remove_red_eye</mwc-icon>
       </mwc-button>
-      ` : nothing}
+      ` : nothing} -->
       <mwc-button outlined slot="secondaryAction" dialogAction="close">close</mwc-button>
     </mwc-dialog>
     `
@@ -161,7 +166,7 @@ export class SearchManager extends LitElement {
 
   async updated () {
     await Promise.all([...this.searchItemElements].map(e=>e.updateComplete))
-    this.showShowAllInfoButton = [...this.searchItemElements].some(el => el.hasConcealedSpans())
+    // this.showShowAllInfoButton = [...this.searchItemElements].some(el => el.hasConcealedSpans())
 
     // ;[...this.shadowRoot!.querySelectorAll('mwc-menu')].forEach((el: Menu)=>{
     //   el.anchor = el.previousElementSibling
@@ -232,7 +237,12 @@ export class SearchManager extends LitElement {
         }))
     )
 
-    this.searchItemElements.forEach(e=>e.conceal())
+    // if (this.blindMode) {
+    //   this.searchItemElements.forEach(e=>e.conceal())
+    // }
+    // else {
+    //   this.searchItemElements.forEach(e=>e.reveal())
+    // }
     // should include Lemmas in the search ?
     this.result = searchResult
   }
@@ -243,6 +253,16 @@ export class SearchManager extends LitElement {
       item.frequency = lemma.f
     }
     return item
+  }
+
+  toggleBlindMode () {
+    this.blindMode = !this.blindMode
+    // if (this.blindMode) {
+    //   this.searchItemElements.forEach(e=>e.conceal())
+    // }
+    // else {
+    //   this.searchItemElements.forEach(e=>e.reveal())
+    // }
   }
 
   open(query?: string, view?: ViewType) {

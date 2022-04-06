@@ -7,8 +7,8 @@ export const kanjiFrameStyles = css`
   justify-content: center;
   align-items: flex-start;
   /* border: 1px solid #eeeeee; */
-  border-radius: 6px;
-  padding: 24px;
+  border-radius: 10px;
+  /* padding: 24px; */
   padding-top: 0px;
   min-width: 300px;
   position: relative;
@@ -53,11 +53,15 @@ export const kanjiFrameStyles = css`
 }
 /* :host([happy]) img { display: initial } */
 
+#meanings {
+  padding: 0 48px 24px 24px;
+}
 #details-strip {
   display: flex;
   flex-direction: column;
   position: absolute;
-  top: 0; right: 0;
+  bottom: 0; right: 0;
+  /* float:right; */
 }
 
 mwc-icon-button[highlight] {
