@@ -1,9 +1,10 @@
-import { css, html, LitElement, nothing } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { Menu } from '@material/mwc-menu';
+import { css, html, LitElement, nothing, PropertyValueMap } from 'lit';
+import { customElement, property, query, state } from 'lit/decorators.js';
 import { kanjiFrameStyles } from './styles/kanjiFrameStyles';
 import { sharedStyles } from './styles/sharedStyles';
 import { Kanji } from './types';
-import { jisho, mdbg, tatoeba } from './util';
+import { googleImageSearch, jisho, mdbg, naver, tatoeba } from './util';
 
 
 @customElement('kanji-frame')
@@ -18,6 +19,8 @@ export class KanjiFrame extends LitElement {
 
   @property({ type: Array }) kanji: Kanji|null = null;
 
+  @query('mwc-menu') menu!: Menu;
+
   static styles = [kanjiFrameStyles, sharedStyles]
 
   render () {
@@ -25,7 +28,6 @@ export class KanjiFrame extends LitElement {
       // @TODO: return an image with empty
       return nothing
     }
-
 
 
     return html`
@@ -47,22 +49,53 @@ export class KanjiFrame extends LitElement {
       <div><span class=tag style="background-color:crimson;margin-right:5px;">Kun</span>${this.kanji[4]}</div>
     </div>
 
-    ${this.revealed ? html`
-    <div id=details-strip>
+    <div id=details-strip ?hide=${!this.revealed}>
       <mwc-icon-button icon="playlist_add"
         ?highlight=${window.collectionsManager.IsCharacterInACollection(this.kanji[1])}
         @click=${_=>{window.collectionsSelector.open(this.kanji![1])}}></mwc-icon-button>
       <!-- <mwc-icon-button icon=info
         @click=${_=>jisho(this.kanji![1])}></mwc-icon-button> -->
       <mwc-icon-button icon=more_horiz
-        @click=${()=>{window.searchManager.open(this.kanji![1], 'words')}}></mwc-icon-button>
+        @click=${()=>{this.menu.show()}}></mwc-icon-button>
       <!-- <mwc-icon-button><img src="./img/tatoeba.svg" width=24 height=24
         @click=${()=>tatoeba(this.kanji![1])}></mwc-icon-button> -->
+
+      <!-- <div style="position:relative"> -->
+      <!-- <mwc-menu corner="BOTTOM_LEFT"> -->
+      <mwc-menu corner="TOP_LEFT">
+        <mwc-list-item graphic=icon @click=${()=>{mdbg(this.kanji![1])}}>
+          <span>mdbg</span>
+          <img src="./img/mdbg.ico" slot=graphic>
+        </mwc-list-item>
+        <mwc-list-item graphic=icon @click=${()=>{jisho(this.kanji![1])}}>
+          <span>jisho</span>
+          <img src="./img/jisho.ico" slot=graphic>
+        </mwc-list-item>
+        <mwc-list-item graphic=icon @click=${()=>{naver(this.kanji![1])}}>
+          <span>naver</span>
+          <img src="./img/naver.ico" slot=graphic>
+        </mwc-list-item>
+        <mwc-list-item graphic=icon
+            @click=${()=>{googleImageSearch(this.kanji![1])}}>
+          <span>Google Images</span>
+          <mwc-icon slot=graphic style="color:#03a9f4">image</mwc-icon>
+        </mwc-list-item>
+        <li divider role="separator" padded></li>
+        <mwc-list-item graphic=icon
+            @click=${()=>{window.searchManager.open(this.kanji![1], 'words')}}>
+          <span>words search</span>
+          <mwc-icon slot=graphic>search</mwc-icon>
+        </mwc-list-item>
+      </mwc-menu>
     </div>
-    ` : nothing}
+    <!-- </div> -->
+
     `
   }
 
+  protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    this.menu.anchor = this.menu.parentElement!
+  }
 
   reveal() {
     this.revealed = true

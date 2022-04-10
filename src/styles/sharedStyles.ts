@@ -2,7 +2,7 @@ import { css } from 'lit';
 
 export const sharedStyles = css`
 [hide] {
-  display: none;
+  display: none !important;
 }
 .tag {
   padding: 0px 14px;
