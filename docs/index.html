@@ -33,6 +33,11 @@
 
     <script type=module src="./app.js"></script>
     <script>
+      window.onload = function () {
+        // bind manager...
+        window.collectionsSelector.manager = window.collectionsManager
+      }
+
       window.toast = function (labelText, timeoutMs = 4000) {
         snackbar.labelText = labelText;
         if (timeoutMs >= 4000 || timeoutMs === -1) {

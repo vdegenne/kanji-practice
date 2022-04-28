@@ -1,14 +1,20 @@
 import { css, html, LitElement, nothing } from 'lit';
-import { customElement, query, state } from 'lit/decorators.js';
+import {customElement, query, queryAll, state} from 'lit/decorators.js';
 import {live} from 'lit/directives/live.js'
 import { Dialog } from '@material/mwc-dialog';
 import { Collection } from './types';
+import {CollectionsManager} from "./collections-manager";
+import {Checkbox} from "@material/mwc-checkbox";
+import {Formfield} from "@material/mwc-formfield";
 
 @customElement('collections-selector')
 export class CollectionsSelector extends LitElement {
+  public manager!: CollectionsManager;
+
   @state() kanji!: string;
 
   @query('mwc-dialog') dialog!: Dialog;
+  @queryAll('mwc-checkbox') checkboxes!: Checkbox[]
 
   static styles = css`
   header {
@@ -40,7 +46,7 @@ export class CollectionsSelector extends LitElement {
           dialogAction=close></mwc-icon-button>
       </header>
 
-      <div style="margin-top:30px">
+      <div style="margin-top:38px;display: flex;flex-direction: column;">
       ${this.kanji ? collections.map(c => {
         return html`
         <mwc-formfield label=${c.name}>
@@ -51,9 +57,23 @@ export class CollectionsSelector extends LitElement {
       }) : nothing}
       </div>
 
-      <mwc-button outlined slot="secondaryAction" icon=add style="--mdc-theme-primary:grey">new collection</mwc-button>
+      <mwc-button outlined slot="secondaryAction" icon=add style="--mdc-theme-primary:grey"
+        @click=${()=>{this.onCreateNewCollectionButtonClick()}}>new collection</mwc-button>
     </mwc-dialog>
     `
+  }
+
+  private async onCreateNewCollectionButtonClick() {
+    try {
+      const collection = await this.manager.createCollectionDialog.show()
+      this.requestUpdate()
+      await this.updateComplete
+      // get the checkbox
+      ;([...this.checkboxes].find(el=>(el.parentElement as Formfield).label==collection.name) as Checkbox).click()
+    }
+    catch (e) {
+      // cancelled
+    }
   }
 
   onCheckboxClick (collection: Collection, e) {

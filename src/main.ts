@@ -36,7 +36,7 @@ declare global {
 }
 
 export let data: Kanji[];
-function resetData () { data = _kanjis as Kanji[] }
+function resetData () { data = (_kanjis as Kanji[]).slice(0) }
 resetData()
 
 
@@ -197,9 +197,10 @@ export class AppContainer extends LitElement {
       }
       else {
         this.playFailureSound()
-        this.requestUpdate()
+        // this.requestUpdate()
         // window.toast(':(')
       }
+      this.requestUpdate()
     } else {
       this.onCasinoButtonClick()
     }
