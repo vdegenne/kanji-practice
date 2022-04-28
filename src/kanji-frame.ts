@@ -53,8 +53,8 @@ export class KanjiFrame extends LitElement {
       <mwc-icon-button icon="playlist_add"
         ?highlight=${window.collectionsManager.IsCharacterInACollection(this.kanji[1])}
         @click=${_=>{window.collectionsSelector.open(this.kanji![1])}}></mwc-icon-button>
-      <!-- <mwc-icon-button icon=info
-        @click=${_=>jisho(this.kanji![1])}></mwc-icon-button> -->
+      <mwc-icon-button icon=search
+        @click=${()=>{window.searchManager.open(this.kanji![1], 'words')}}></mwc-icon-button>
       <mwc-icon-button icon=more_horiz
         @click=${()=>{this.menu.show()}}></mwc-icon-button>
       <!-- <mwc-icon-button><img src="./img/tatoeba.svg" width=24 height=24

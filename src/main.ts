@@ -135,7 +135,8 @@ export class AppContainer extends LitElement {
   initializeData () {
     switch (this.mode) {
       case 'discovery':
-        this.data = _kanjis as Kanji[];
+        // this.data = _kanjis as Kanji[];
+        this.data = data;
         break
       case 'practice':
         // console.log(this.collection?.kanjis.map(k1 => (_data as Kanji[]).find(k2 => k2[1] === k1)))
@@ -192,15 +193,15 @@ export class AppContainer extends LitElement {
         this.kanjiFrame.success = true
         this.playSuccessSound()
         // window.toast('CORRECT ! :)')
-        data.splice(data.indexOf(this.kanji!), 1)
+        this.data.splice(this.data.indexOf(this.kanji!), 1)
+        this.requestUpdate()
         return
       }
       else {
         this.playFailureSound()
-        // this.requestUpdate()
+        this.requestUpdate()
         // window.toast(':(')
       }
-      this.requestUpdate()
     } else {
       this.onCasinoButtonClick()
     }
