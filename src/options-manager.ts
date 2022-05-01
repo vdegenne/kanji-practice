@@ -48,7 +48,7 @@ export class OptionsManager extends LitElement {
             @change=${e=>this.jlpts.jlpt5 = e.target.checked}></mwc-checkbox>
         </mwc-formfield>
         <mwc-icon-button icon="local_drink" title="refill"
-          @click=${()=>{}}></mwc-icon-button>
+          @click=${()=>{this.onRefillClick()}}></mwc-icon-button>
       </div>
       <div class="jlpt-row">
         <mwc-formfield label=JLPT4>
@@ -97,5 +97,14 @@ export class OptionsManager extends LitElement {
 
   open() {
     this.dialog.show()
+  }
+
+  onRefillClick () {
+    // jlpt?
+
+    // if app.mode = 'discovery' -> init the data
+    // else -> just remove the jlpt kanjis from the validated list and save
+
+    // should pick a new kanji if ran out of kanjis
   }
 }

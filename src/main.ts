@@ -54,9 +54,16 @@ export class AppContainer extends LitElement {
 
   private validatedKanjis: string[] = []
 
-  /** Getters */
+
+  /**
+   * Returns the Kanjis overall list jlpt-filtered
+   */
   get kanjisLeft () {
-    return this.data.filter(row => Object.entries(window.optionsManager.jlpts).filter(([j,b])=>b).map(([j,b])=>j).includes(`jlpt${row[2]}`))
+    const activeJlpts = Object.entries(window.optionsManager.jlpts)
+      .filter(([j, b]) => b)
+      .map(([j, b]) => j)
+
+    return this.data.filter(kanji => activeJlpts.includes(`jlpt${kanji[2]}`))
   }
 
 
@@ -156,6 +163,7 @@ export class AppContainer extends LitElement {
 
   pickNewKanji (): Kanji|null {
     const kanjisLeft = this.kanjisLeft
+
     if (kanjisLeft.length === 0) {
       window.toast('You\'ve run out of Kanji 😲 Try to refill from the options', -1)
       // @TODO what to do?
