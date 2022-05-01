@@ -52,6 +52,8 @@ export class AppContainer extends LitElement {
   /** collections */
   // public collections: Collection[];
 
+  private validatedKanjis: string[] = []
+
   /** Getters */
   get kanjisLeft () {
     return this.data.filter(row => Object.entries(window.optionsManager.jlpts).filter(([j,b])=>b).map(([j,b])=>j).includes(`jlpt${row[2]}`))
@@ -77,6 +79,11 @@ export class AppContainer extends LitElement {
     //   ? JSON.parse(localStorage.getItem('kanji-practice:collections')!)
     //   : /* default */ [{name: 'collection 1', kanjis: []}];
 
+
+    // Load the validated kanjis
+    this.validatedKanjis = (localStorage.getItem('kanji-practice:validated'))
+      ? JSON.parse(localStorage.getItem('kanji-practice:validated')!.toString())
+      : []
 
     // Initialize the data
     this.initializeData()
@@ -137,6 +144,8 @@ export class AppContainer extends LitElement {
       case 'discovery':
         // this.data = _kanjis as Kanji[];
         this.data = data;
+        // Remove the validated kanji from the list
+        this.data = this.data.filter(k=>!this.validatedKanjis.includes(k[1]))
         break
       case 'practice':
         // console.log(this.collection?.kanjis.map(k1 => (_data as Kanji[]).find(k2 => k2[1] === k1)))
@@ -148,7 +157,7 @@ export class AppContainer extends LitElement {
   pickNewKanji (): Kanji|null {
     const kanjisLeft = this.kanjisLeft
     if (kanjisLeft.length === 0) {
-      window.toast('You\'ve run out of Kanji 😲 You should reload the app', -1)
+      window.toast('You\'ve run out of Kanji 😲 Try to refill from the options', -1)
       // @TODO what to do?
       return null
     }
@@ -187,6 +196,7 @@ export class AppContainer extends LitElement {
 
 
   submitAnswer () {
+    /* -- SUCCESS -- */
     if (!this.kanjiFrame.revealed) {
       this.kanjiFrame.reveal()
       if (this.textfield.value === this.kanji![1]) {
@@ -195,8 +205,11 @@ export class AppContainer extends LitElement {
         // window.toast('CORRECT ! :)')
         this.data.splice(this.data.indexOf(this.kanji!), 1)
         this.requestUpdate()
+        this.addToValidatedList(this.kanji![1])
+        this.validatedKanjis
         return
       }
+      /* -- FAILURE -- */
       else {
         this.playFailureSound()
         this.requestUpdate()
@@ -211,8 +224,19 @@ export class AppContainer extends LitElement {
   private _failureAudio = new Audio('./audio/wrong.mp3')
   playSuccessSound() {
     const _successAudio = new Audio('./audio/success.mp3')
-    _successAudio.play()
+    // _successAudio.play()
   }
-  playFailureSound() { this._failureAudio.play() }
+  playFailureSound() {
+    // this._failureAudio.play()
+  }
 
+  addToValidatedList (character) {
+    this.validatedKanjis.push(character)
+    this.validatedKanjis = [...new Set(this.validatedKanjis)]
+    this.saveValidated()
+  }
+
+  saveValidated () {
+    localStorage.setItem('kanji-practice:validated', JSON.stringify(this.validatedKanjis))
+  }
 }

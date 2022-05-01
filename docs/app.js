@@ -1032,30 +1032,53 @@ mwc-icon-button[highlight] {
     <mwc-dialog heading=Options
       @change=${()=>this.onOptionsChanged()}>
 
-      <mwc-formfield label=JLPT5>
-        <mwc-checkbox ?checked=${this.jlpts.jlpt5}
-          @change=${e=>this.jlpts.jlpt5=e.target.checked}></mwc-checkbox>
-      </mwc-formfield>
-      <mwc-formfield label=JLPT4>
-        <mwc-checkbox ?checked=${this.jlpts.jlpt4}
-          @change=${e=>this.jlpts.jlpt4=e.target.checked}></mwc-checkbox>
-      </mwc-formfield>
-      <mwc-formfield label=JLPT3>
-        <mwc-checkbox ?checked=${this.jlpts.jlpt3}
-          @change=${e=>this.jlpts.jlpt3=e.target.checked}></mwc-checkbox>
-      </mwc-formfield>
-      <mwc-formfield label=JLPT2>
-        <mwc-checkbox ?checked=${this.jlpts.jlpt2}
-          @change=${e=>this.jlpts.jlpt2=e.target.checked}></mwc-checkbox>
-      </mwc-formfield>
-      <mwc-formfield label=JLPT1>
-        <mwc-checkbox ?checked=${this.jlpts.jlpt1}
-          @change=${e=>this.jlpts.jlpt1=e.target.checked}></mwc-checkbox>
-      </mwc-formfield>
+      <div class="jlpt-row">
+        <mwc-formfield label=JLPT5>
+          <mwc-checkbox ?checked=${this.jlpts.jlpt5}
+            @change=${e=>this.jlpts.jlpt5=e.target.checked}></mwc-checkbox>
+        </mwc-formfield>
+        <mwc-icon-button icon="local_drink" title="refill"
+          @click=${()=>{}}></mwc-icon-button>
+      </div>
+      <div class="jlpt-row">
+        <mwc-formfield label=JLPT4>
+          <mwc-checkbox ?checked=${this.jlpts.jlpt4}
+            @change=${e=>this.jlpts.jlpt4=e.target.checked}></mwc-checkbox>
+        </mwc-formfield>
+        <mwc-icon-button icon="local_drink" title="refill"
+          @click=${()=>{}}></mwc-icon-button>
+      </div>
+      <div class="jlpt-row">
+        <mwc-formfield label=JLPT3>
+          <mwc-checkbox ?checked=${this.jlpts.jlpt3}
+            @change=${e=>this.jlpts.jlpt3=e.target.checked}></mwc-checkbox>
+        </mwc-formfield>
+        <mwc-icon-button icon="local_drink"></mwc-icon-button>
+      </div>
+      <div class="jlpt-row">
+        <mwc-formfield label=JLPT2>
+          <mwc-checkbox ?checked=${this.jlpts.jlpt2}
+            @change=${e=>this.jlpts.jlpt2=e.target.checked}></mwc-checkbox>
+        </mwc-formfield>
+        <mwc-icon-button icon="local_drink"></mwc-icon-button>
+      </div>
+      <div class="jlpt-row">
+        <mwc-formfield label=JLPT1>
+          <mwc-checkbox ?checked=${this.jlpts.jlpt1}
+            @change=${e=>this.jlpts.jlpt1=e.target.checked}></mwc-checkbox>
+        </mwc-formfield>
+        <mwc-icon-button icon="local_drink"></mwc-icon-button>
+      </div>
 
       <mwc-button outlined slot="primaryAction" dialogAction="close">close</mwc-button>
     </mwc-dialog>
-    `}onOptionsChanged(){this.save(),window.app.kanji=window.app.pickNewKanji()}save(){localStorage.setItem("kanji-practice:options",JSON.stringify(this.jlpts))}open(){this.dialog.show()}};r([_e("mwc-dialog")],Qo.prototype,"dialog",void 0),Qo=r([be("options-manager")],Qo);let Zo=class extends me{render(){const e=window.collectionsManager.collections;return L`
+    `}onOptionsChanged(){this.save()}save(){localStorage.setItem("kanji-practice:options",JSON.stringify(this.jlpts))}open(){this.dialog.show()}};Qo.styles=re`
+  .jlpt-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  `,r([_e("mwc-dialog")],Qo.prototype,"dialog",void 0),Qo=r([be("options-manager")],Qo);let Zo=class extends me{render(){const e=window.collectionsManager.collections;return L`
     <mwc-dialog>
       <header>
         <div>Save ${this.kanji} to...</div>
@@ -1866,7 +1889,7 @@ const na=re`mwc-list ::slotted([mwc-list-item]:not([twoline])),mwc-list ::slotte
       `:N} -->
       <mwc-button outlined slot="secondaryAction" dialogAction="close">close</mwc-button>
     </mwc-dialog>
-    `}async updated(){await Promise.all([...this.searchItemElements].map((e=>e.updateComplete)))}firstUpdated(e){const t=()=>{this.dialog.shadowRoot.querySelector(".mdc-dialog__surface").style.minHeight="calc(100% - 32px)",this.dialog.removeEventListener("opened",t)};this.dialog.addEventListener("opened",t),this.textfield.updateComplete.then((()=>{this.textfield.shadowRoot.querySelector("i").style.color="transparent"}))}search(e){if(e===this.query)return;this.query=e;let t=[];da.forEach(((e,o)=>{const r=da[o].filter((e=>e[0].includes(this.query)||e[2].includes(this.query))).map((e=>this.attachFrequencyValue({type:"words",dictionary:"jlpt"+(5-o),word:e[0],english:e[2],hiragana:e[1]||void 0})));t.push(...r)}));const o=t.find((t=>t.word===e));o||t.unshift({type:"words",dictionary:"exact search not found",word:e}),t.push(...Bo.filter((e=>this.query.includes(e[1])||e[3].includes(this.query)||e[4].includes(this.query))).map((e=>({type:"kanji",dictionary:`jlpt${e[2]}`,word:e[1],english:`${e[3]}//${e[4]}`})))),this.result=t}attachFrequencyValue(e){const t=rr.find((t=>t.l===e.word));return t&&(e.frequency=t.f),e}toggleBlindMode(){this.blindMode=!this.blindMode}open(e,t){e&&this.search(e),t&&(this.view=t),this.dialog.show()}};ha.styles=[ir,Ho],r([we()],ha.prototype,"view",void 0),r([we()],ha.prototype,"query",void 0),r([we()],ha.prototype,"result",void 0),r([we()],ha.prototype,"blindMode",void 0),r([_e("mwc-dialog")],ha.prototype,"dialog",void 0),r([_e("mwc-textfield")],ha.prototype,"textfield",void 0),r([Ee("#words-results search-item-element")],ha.prototype,"searchItemElements",void 0),ha=r([be("search-manager")],ha),ua=Bo.slice(0);let ma=class extends me{constructor(){super(),this.mode="discovery",this.data=[],this._successAudio=new Audio("./audio/success.mp3"),this._failureAudio=new Audio("./audio/wrong.mp3"),window.collectionsManager.selectedCollection&&(this.mode="practice"),this.initializeData(),this.kanji=this.pickNewKanji()}get kanjisLeft(){return this.data.filter((e=>Object.entries(window.optionsManager.jlpts).filter((([e,t])=>t)).map((([e,t])=>e)).includes(`jlpt${e[2]}`)))}render(){var e;return L`
+    `}async updated(){await Promise.all([...this.searchItemElements].map((e=>e.updateComplete)))}firstUpdated(e){const t=()=>{this.dialog.shadowRoot.querySelector(".mdc-dialog__surface").style.minHeight="calc(100% - 32px)",this.dialog.removeEventListener("opened",t)};this.dialog.addEventListener("opened",t),this.textfield.updateComplete.then((()=>{this.textfield.shadowRoot.querySelector("i").style.color="transparent"}))}search(e){if(e===this.query)return;this.query=e;let t=[];da.forEach(((e,o)=>{const r=da[o].filter((e=>e[0].includes(this.query)||e[2].includes(this.query))).map((e=>this.attachFrequencyValue({type:"words",dictionary:"jlpt"+(5-o),word:e[0],english:e[2],hiragana:e[1]||void 0})));t.push(...r)}));const o=t.find((t=>t.word===e));o||t.unshift({type:"words",dictionary:"exact search not found",word:e}),t.push(...Bo.filter((e=>this.query.includes(e[1])||e[3].includes(this.query)||e[4].includes(this.query))).map((e=>({type:"kanji",dictionary:`jlpt${e[2]}`,word:e[1],english:`${e[3]}//${e[4]}`})))),this.result=t}attachFrequencyValue(e){const t=rr.find((t=>t.l===e.word));return t&&(e.frequency=t.f),e}toggleBlindMode(){this.blindMode=!this.blindMode}open(e,t){e&&this.search(e),t&&(this.view=t),this.dialog.show()}};ha.styles=[ir,Ho],r([we()],ha.prototype,"view",void 0),r([we()],ha.prototype,"query",void 0),r([we()],ha.prototype,"result",void 0),r([we()],ha.prototype,"blindMode",void 0),r([_e("mwc-dialog")],ha.prototype,"dialog",void 0),r([_e("mwc-textfield")],ha.prototype,"textfield",void 0),r([Ee("#words-results search-item-element")],ha.prototype,"searchItemElements",void 0),ha=r([be("search-manager")],ha),ua=Bo.slice(0);let ma=class extends me{constructor(){super(),this.mode="discovery",this.data=[],this.validatedKanjis=[],this._successAudio=new Audio("./audio/success.mp3"),this._failureAudio=new Audio("./audio/wrong.mp3"),window.collectionsManager.selectedCollection&&(this.mode="practice"),this.validatedKanjis=localStorage.getItem("kanji-practice:validated")?JSON.parse(localStorage.getItem("kanji-practice:validated").toString()):[],this.initializeData(),this.kanji=this.pickNewKanji()}get kanjisLeft(){return this.data.filter((e=>Object.entries(window.optionsManager.jlpts).filter((([e,t])=>t)).map((([e,t])=>e)).includes(`jlpt${e[2]}`)))}render(){var e;return L`
     <header>
       <div style="display:flex;align-items:center">
         <mwc-icon style="margin-right:8px">${"discovery"===this.mode?"remove_red_eye":"repeat"}</mwc-icon>
@@ -1909,4 +1932,4 @@ const na=re`mwc-list ::slotted([mwc-list-item]:not([twoline])),mwc-list ::slotte
     </div>
 
     <!-- <div style="height:100px;margin:50px 0;padding:50px 0;"></div> -->
-    `}initializeData(){switch(this.mode){case"discovery":this.data=ua;break;case"practice":this.data=window.collectionsManager.collection.kanjis.map((e=>Bo.find((t=>t[1]===e))))}}pickNewKanji(){const e=this.kanjisLeft;if(0===e.length)return window.toast("You've run out of Kanji 😲 You should reload the app",-1),null;window.toast("",0);const t=e[~~(Math.random()*e.length)],o=function(e){for(const t of da){const o=t.find((t=>t[0].includes(e)));if(o)return o}return null}(t[1]);return o&&Yo(o[1]||o[0]),t}async firstUpdated(e){await this.textfield.updateComplete,this.textfield.shadowRoot.querySelector("i").style.color="transparent"}onCasinoButtonClick(){this.kanjiFrame.conceal(),this.textfield.value="",this.textfield.focus(),this.kanji=this.pickNewKanji()}onTextFieldPress(e){"Enter"===e.key&&this.submitButton.click()}submitAnswer(){if(this.kanjiFrame.revealed)this.onCasinoButtonClick();else{if(this.kanjiFrame.reveal(),this.textfield.value===this.kanji[1])return this.kanjiFrame.success=!0,this.playSuccessSound(),this.data.splice(this.data.indexOf(this.kanji),1),void this.requestUpdate();this.playFailureSound(),this.requestUpdate()}}playSuccessSound(){new Audio("./audio/success.mp3").play()}playFailureSound(){this._failureAudio.play()}};ma.styles=er,r([ve({reflect:!0})],ma.prototype,"mode",void 0),r([we()],ma.prototype,"kanji",void 0),r([_e("kanji-frame")],ma.prototype,"kanjiFrame",void 0),r([_e("mwc-textfield")],ma.prototype,"textfield",void 0),r([_e("#submit-button")],ma.prototype,"submitButton",void 0),ma=r([be("app-container")],ma);export{ma as AppContainer,ua as data};
+    `}initializeData(){switch(this.mode){case"discovery":this.data=ua,this.data=this.data.filter((e=>!this.validatedKanjis.includes(e[1])));break;case"practice":this.data=window.collectionsManager.collection.kanjis.map((e=>Bo.find((t=>t[1]===e))))}}pickNewKanji(){const e=this.kanjisLeft;if(0===e.length)return window.toast("You've run out of Kanji 😲 Try to refill from the options",-1),null;window.toast("",0);const t=e[~~(Math.random()*e.length)],o=function(e){for(const t of da){const o=t.find((t=>t[0].includes(e)));if(o)return o}return null}(t[1]);return o&&Yo(o[1]||o[0]),t}async firstUpdated(e){await this.textfield.updateComplete,this.textfield.shadowRoot.querySelector("i").style.color="transparent"}onCasinoButtonClick(){this.kanjiFrame.conceal(),this.textfield.value="",this.textfield.focus(),this.kanji=this.pickNewKanji()}onTextFieldPress(e){"Enter"===e.key&&this.submitButton.click()}submitAnswer(){if(this.kanjiFrame.revealed)this.onCasinoButtonClick();else{if(this.kanjiFrame.reveal(),this.textfield.value===this.kanji[1])return this.kanjiFrame.success=!0,this.playSuccessSound(),this.data.splice(this.data.indexOf(this.kanji),1),this.requestUpdate(),this.addToValidatedList(this.kanji[1]),void this.validatedKanjis;this.playFailureSound(),this.requestUpdate()}}playSuccessSound(){new Audio("./audio/success.mp3")}playFailureSound(){}addToValidatedList(e){this.validatedKanjis.push(e),this.validatedKanjis=[...new Set(this.validatedKanjis)],this.saveValidated()}saveValidated(){localStorage.setItem("kanji-practice:validated",JSON.stringify(this.validatedKanjis))}};ma.styles=er,r([ve({reflect:!0})],ma.prototype,"mode",void 0),r([we()],ma.prototype,"kanji",void 0),r([_e("kanji-frame")],ma.prototype,"kanjiFrame",void 0),r([_e("mwc-textfield")],ma.prototype,"textfield",void 0),r([_e("#submit-button")],ma.prototype,"submitButton",void 0),ma=r([be("app-container")],ma);export{ma as AppContainer,ua as data};
