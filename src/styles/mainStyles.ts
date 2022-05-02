@@ -5,7 +5,7 @@ export const mainStyles = css`
   display: block;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
   align-items: flex-start;
   justify-content: center;
   padding: 0 12px;

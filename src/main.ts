@@ -23,6 +23,7 @@ import './collections-manager'
 import { CollectionsManager } from './collections-manager'
 import './search-manager'
 import { firstWordFoundFromCharacter, SearchManager } from './search-manager'
+import './candidates-row'
 
 declare global {
   interface Window {
@@ -51,6 +52,8 @@ export class AppContainer extends LitElement {
   @state() kanji: Kanji|null;
   /** collections */
   // public collections: Collection[];
+
+  @state() candidatesListSize = 0;
 
   private validatedKanjis: string[] = []
 
@@ -140,11 +143,19 @@ export class AppContainer extends LitElement {
         style="position:absolute;right:-55px;top:7px;background-color:#0000000a;border-radius:50%"
         @click=${() => { window.searchManager.open(this.textfield.value, 'kanji')} }>${this.textfield.value}</mwc-icon-button>
       ` :nothing}
+        
     </div>
+    
+    <candidates-row size=${this.candidatesListSize} answer=${this.kanji![1]}
+        @candidate-click=${e=>{
+          this.textfield.value = e.detail.candidate;
+          this.submitButton.click()
+        }}></candidates-row>
 
     <!-- <div style="height:100px;margin:50px 0;padding:50px 0;"></div> -->
     `
   }
+
 
   initializeData () {
     switch (this.mode) {

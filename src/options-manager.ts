@@ -1,6 +1,9 @@
 import { Dialog } from '@material/mwc-dialog';
-import { css, html, LitElement } from 'lit';
+import {css, html, LitElement, PropertyValues} from 'lit';
 import { customElement, query } from 'lit/decorators.js';
+import {AppContainer} from "./main";
+import '@material/mwc-slider'
+import {Slider} from '@material/mwc-slider'
 
 export type Jlpts = {
   jlpt1: boolean;
@@ -12,6 +15,8 @@ export type Jlpts = {
 
 @customElement('options-manager')
 export class OptionsManager extends LitElement {
+  private app!: AppContainer;
+
   @query('mwc-dialog') dialog!: Dialog;
 
   public jlpts: Jlpts;
@@ -79,10 +84,29 @@ export class OptionsManager extends LitElement {
         </mwc-formfield>
         <mwc-icon-button icon="local_drink"></mwc-icon-button>
       </div>
+        
+        <!-- Candidates List -->
+        <p>Candidates List Size</p>
+        <mwc-slider
+                discrete
+                withTickMarks
+                min="0"
+                max="20"
+                step="1"
+                @change=${e=>{this.app.candidatesListSize = e.detail.value}}
+        ></mwc-slider>
 
       <mwc-button outlined slot="primaryAction" dialogAction="close">close</mwc-button>
     </mwc-dialog>
     `
+  }
+
+  protected firstUpdated(_changedProperties: PropertyValues) {
+    this.dialog.addEventListener('opened', ()=>{
+      ;(this.shadowRoot!.querySelector('mwc-slider') as Slider).value = this.app.candidatesListSize
+      ;(this.shadowRoot!.querySelector('mwc-slider') as Slider).layout()
+    })
+    super.firstUpdated(_changedProperties);
   }
 
   onOptionsChanged () {

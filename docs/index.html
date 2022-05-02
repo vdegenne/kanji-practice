@@ -34,8 +34,9 @@
     <script type=module src="./app.js"></script>
     <script>
       window.onload = function () {
-        // bind manager...
+        // bindings
         window.collectionsSelector.manager = window.collectionsManager
+        window.optionsManager.app = window.app
       }
 
       window.toast = function (labelText, timeoutMs = 4000) {
