@@ -25,7 +25,7 @@
     <collections-selector id=collectionsSelector></collections-selector>
 
     <app-container id=app></app-container>
-    <options-manager id=optionsManager></options-manager>
+<!--    <options-manager id=optionsManager></options-manager>-->
     <collections-manager id=collectionsManager></collections-manager>
     <search-manager id=searchManager></search-manager>
 
@@ -36,7 +36,7 @@
       window.onload = function () {
         // bindings
         window.collectionsSelector.manager = window.collectionsManager
-        window.optionsManager.app = window.app
+        // window.optionsManager.app = window.app
       }
 
       window.toast = function (labelText, timeoutMs = 4000) {

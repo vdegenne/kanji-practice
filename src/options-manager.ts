@@ -21,8 +21,9 @@ export class OptionsManager extends LitElement {
 
   public jlpts: Jlpts;
 
-  constructor () {
+  constructor (app: AppContainer) {
     super()
+    this.app = app
     this.jlpts = localStorage.getItem('kanji-practice:options')
       ? JSON.parse(localStorage.getItem('kanji-practice:options')!)
       : { /* default */
@@ -40,6 +41,11 @@ export class OptionsManager extends LitElement {
     justify-content: space-between;
     align-items: center;
   }
+    
+    .jlpt-row > span {
+      color: grey;
+      margin: 0 48px;
+    }
   `
 
   render () {
@@ -48,40 +54,45 @@ export class OptionsManager extends LitElement {
       @change=${()=>this.onOptionsChanged()}>
 
       <div class="jlpt-row">
-        <mwc-formfield label=JLPT5>
+        <mwc-formfield label="JLPT5">
           <mwc-checkbox ?checked=${this.jlpts.jlpt5}
             @change=${e=>this.jlpts.jlpt5 = e.target.checked}></mwc-checkbox>
         </mwc-formfield>
+          <span>${this.app.getRemainingOverTotal(5)}</span>
         <mwc-icon-button icon="local_drink" title="refill"
           @click=${()=>{this.onRefillClick()}}></mwc-icon-button>
       </div>
       <div class="jlpt-row">
-        <mwc-formfield label=JLPT4>
+        <mwc-formfield label="JLPT4">
           <mwc-checkbox ?checked=${this.jlpts.jlpt4}
             @change=${e=>this.jlpts.jlpt4 = e.target.checked}></mwc-checkbox>
         </mwc-formfield>
+          <span>${this.app.getRemainingOverTotal(4)}</span>
         <mwc-icon-button icon="local_drink" title="refill"
           @click=${()=>{}}></mwc-icon-button>
       </div>
       <div class="jlpt-row">
-        <mwc-formfield label=JLPT3>
+        <mwc-formfield label="JLPT3">
           <mwc-checkbox ?checked=${this.jlpts.jlpt3}
             @change=${e=>this.jlpts.jlpt3 = e.target.checked}></mwc-checkbox>
         </mwc-formfield>
+          <span>${this.app.getRemainingOverTotal(3)}</span>
         <mwc-icon-button icon="local_drink"></mwc-icon-button>
       </div>
       <div class="jlpt-row">
-        <mwc-formfield label=JLPT2>
+        <mwc-formfield label="JLPT2">
           <mwc-checkbox ?checked=${this.jlpts.jlpt2}
             @change=${e=>this.jlpts.jlpt2 = e.target.checked}></mwc-checkbox>
         </mwc-formfield>
+          <span>${this.app.getRemainingOverTotal(2)}</span>
         <mwc-icon-button icon="local_drink"></mwc-icon-button>
       </div>
       <div class="jlpt-row">
-        <mwc-formfield label=JLPT1>
+        <mwc-formfield label="JLPT1">
           <mwc-checkbox ?checked=${this.jlpts.jlpt1}
             @change=${e=>this.jlpts.jlpt1 = e.target.checked}></mwc-checkbox>
         </mwc-formfield>
+          <span>${this.app.getRemainingOverTotal(1)}</span>
         <mwc-icon-button icon="local_drink"></mwc-icon-button>
       </div>
         

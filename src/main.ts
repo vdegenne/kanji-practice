@@ -24,11 +24,12 @@ import { CollectionsManager } from './collections-manager'
 import './search-manager'
 import { firstWordFoundFromCharacter, SearchManager } from './search-manager'
 import './candidates-row'
+import {Options} from "rollup-plugin-terser";
 
 declare global {
   interface Window {
     app: AppContainer;
-    optionsManager: OptionsManager;
+    // optionsManager: OptionsManager;
     collectionsSelector: CollectionsSelector;
     collectionsManager: CollectionsManager;
     searchManager: SearchManager;
@@ -57,22 +58,32 @@ export class AppContainer extends LitElement {
 
   private validatedKanjis: string[] = []
 
+  private optionsManager: OptionsManager = new OptionsManager(this);
+
 
   /**
    * Returns the Kanjis overall list jlpt-filtered
    */
   get kanjisLeft () {
-    const activeJlpts = Object.entries(window.optionsManager.jlpts)
+    const activeJlpts = Object.entries(this.optionsManager.jlpts)
       .filter(([j, b]) => b)
       .map(([j, b]) => j)
 
     return this.data.filter(kanji => activeJlpts.includes(`jlpt${kanji[2]}`))
   }
 
+  getRemainingOverTotal (jlpt: number) {
+    const total = (_kanjis as Kanji[]).filter(k=>k[2]==jlpt).map(k=>k[1])
+    // total - (how much of the validated are in the total ?)
+    const validated = this.validatedKanjis.filter(k=>total.includes(k))
+    return `${total.length - validated.length}/${total.length}`
+  }
+
 
   @query('kanji-frame') kanjiFrame!: KanjiFrame;
   @query('mwc-textfield') textfield!: TextField;
   @query('#submit-button') submitButton!: Button;
+  // @query('options-manager') optionsManager!: OptionsManager;
 
   static styles = mainStyles;
 
@@ -98,7 +109,7 @@ export class AppContainer extends LitElement {
     // Initialize the data
     this.initializeData()
 
-    // Then pick a new kanji
+    // Pick a Kanji
     this.kanji = this.pickNewKanji()
   }
 
@@ -115,7 +126,7 @@ export class AppContainer extends LitElement {
       <mwc-icon-button icon=search
         @click=${()=>{window.searchManager.open()}}></mwc-icon-button>
       <mwc-icon-button icon=settings
-        @click=${()=>window.optionsManager.open()}></mwc-icon-button>
+        @click=${()=>this.optionsManager.open()}></mwc-icon-button>
     </header>
 
     <kanji-frame .kanji=${this.kanji} style="width:-webkit-fill-available"></kanji-frame>
@@ -153,6 +164,8 @@ export class AppContainer extends LitElement {
         }}></candidates-row>
 
     <!-- <div style="height:100px;margin:50px 0;padding:50px 0;"></div> -->
+    
+        ${this.optionsManager}
     `
   }
 
@@ -196,6 +209,9 @@ export class AppContainer extends LitElement {
   protected async firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
     await this.textfield.updateComplete
     this.textfield.shadowRoot!.querySelector('i')!.style.color = 'transparent'
+
+    console.log(this.optionsManager)
+    await this.optionsManager.updateComplete
   }
 
   onCasinoButtonClick() {
