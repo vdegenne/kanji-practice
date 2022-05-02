@@ -1181,16 +1181,19 @@ let Er=class extends _r{};Er.styles=[Qo],Er=r([be("mwc-slider")],Er);let Tr=clas
     <mwc-dialog heading=Options
       @change=${()=>this.onOptionsChanged()}>
 
-      <div class="jlpt-row">
-        <mwc-formfield label="JLPT5">
-          <mwc-checkbox ?checked=${this.jlpts.jlpt5}
-            @change=${e=>this.jlpts.jlpt5=e.target.checked}></mwc-checkbox>
-        </mwc-formfield>
-          <span>${this.app.getRemainingOverTotal(5)}</span>
-        <mwc-icon-button icon="local_drink" title="refill"
-          @click=${()=>{this.onRefillClick()}}></mwc-icon-button>
-      </div>
-      <div class="jlpt-row">
+        <p>Dictionaries</p>
+        ${[5,4,3,2,1].map((e=>L`
+          <div class="jlpt-row">
+              <mwc-formfield label="JLPT${e}">
+                  <mwc-checkbox ?checked=${this.jlpts[`jlpt${e}`]}
+                                @change=${t=>this.jlpts[`jlpt${e}`]=t.target.checked}></mwc-checkbox>
+              </mwc-formfield>
+              <span>${this.app.getRemainingOverTotal(e)}</span>
+              <mwc-icon-button icon="local_drink" title="refill"
+                               @click=${()=>{this.app.refillJlpt(e),this.app.saveValidated(),this.requestUpdate()}}></mwc-icon-button>
+          </div>
+          `))}
+      <!-- <div class="jlpt-row">
         <mwc-formfield label="JLPT4">
           <mwc-checkbox ?checked=${this.jlpts.jlpt4}
             @change=${e=>this.jlpts.jlpt4=e.target.checked}></mwc-checkbox>
@@ -1222,7 +1225,7 @@ let Er=class extends _r{};Er.styles=[Qo],Er=r([be("mwc-slider")],Er);let Tr=clas
         </mwc-formfield>
           <span>${this.app.getRemainingOverTotal(1)}</span>
         <mwc-icon-button icon="local_drink"></mwc-icon-button>
-      </div>
+      </div> -->
         
         <!-- Candidates List -->
         <p>Candidates List Size</p>
@@ -1237,7 +1240,7 @@ let Er=class extends _r{};Er.styles=[Qo],Er=r([be("mwc-slider")],Er);let Tr=clas
 
       <mwc-button outlined slot="primaryAction" dialogAction="close">close</mwc-button>
     </mwc-dialog>
-    `}firstUpdated(e){this.dialog.addEventListener("opened",(()=>{this.shadowRoot.querySelector("mwc-slider").value=this.app.candidatesListSize,this.shadowRoot.querySelector("mwc-slider").layout()})),super.firstUpdated(e)}onOptionsChanged(){this.save()}save(){localStorage.setItem("kanji-practice:options",JSON.stringify(this.jlpts))}open(){this.dialog.show()}onRefillClick(){}};Tr.styles=re`
+    `}firstUpdated(e){this.dialog.addEventListener("opened",(()=>{this.shadowRoot.querySelector("mwc-slider").value=this.app.candidatesListSize,this.shadowRoot.querySelector("mwc-slider").layout(),this.requestUpdate()})),super.firstUpdated(e)}onOptionsChanged(){this.save()}save(){localStorage.setItem("kanji-practice:options",JSON.stringify(this.jlpts))}open(){this.dialog.show()}onRefillClick(){}};Tr.styles=re`
   .jlpt-row {
     display: flex;
     justify-content: space-between;
@@ -1246,7 +1249,9 @@ let Er=class extends _r{};Er.styles=[Qo],Er=r([be("mwc-slider")],Er);let Tr=clas
     
     .jlpt-row > span {
       color: grey;
-      margin: 0 48px;
+      min-width: 200px;
+      text-align: center;
+      //margin: 0 48px;
     }
   `,r([_e("mwc-dialog")],Tr.prototype,"dialog",void 0),Tr=r([be("options-manager")],Tr);let Ar=class extends me{render(){const e=window.collectionsManager.collections;return L`
     <mwc-dialog>
@@ -2122,5 +2127,5 @@ const Oa=re`mwc-list ::slotted([mwc-list-item]:not([twoline])),mwc-list ::slotte
     <!-- <div style="height:100px;margin:50px 0;padding:50px 0;"></div> -->
     
         ${this.optionsManager}
-    `}initializeData(){switch(this.mode){case"discovery":this.data=Pa,this.data=this.data.filter((e=>!this.validatedKanjis.includes(e[1])));break;case"practice":this.data=window.collectionsManager.collection.kanjis.map((e=>Bo.find((t=>t[1]===e))))}}pickNewKanji(){const e=this.kanjisLeft;if(0===e.length)return window.toast("You've run out of Kanji 😲 Try to refill from the options",-1),null;window.toast("",0);const t=e[~~(Math.random()*e.length)],o=function(e){for(const t of $a){const o=t.find((t=>t[0].includes(e)));if(o)return o}return null}(t[1]);return o&&Xo(o[1]||o[0]),t}async firstUpdated(e){await this.textfield.updateComplete,this.textfield.shadowRoot.querySelector("i").style.color="transparent",console.log(this.optionsManager),await this.optionsManager.updateComplete}onCasinoButtonClick(){this.kanjiFrame.conceal(),this.textfield.value="",this.textfield.focus(),this.kanji=this.pickNewKanji()}onTextFieldPress(e){"Enter"===e.key&&this.submitButton.click()}submitAnswer(){if(this.kanjiFrame.revealed)this.onCasinoButtonClick();else{if(this.kanjiFrame.reveal(),this.textfield.value===this.kanji[1])return this.kanjiFrame.success=!0,this.playSuccessSound(),this.data.splice(this.data.indexOf(this.kanji),1),this.requestUpdate(),this.addToValidatedList(this.kanji[1]),void this.validatedKanjis;this.playFailureSound(),this.requestUpdate()}}playSuccessSound(){new Audio("./audio/success.mp3")}playFailureSound(){}addToValidatedList(e){this.validatedKanjis.push(e),this.validatedKanjis=[...new Set(this.validatedKanjis)],this.saveValidated()}saveValidated(){localStorage.setItem("kanji-practice:validated",JSON.stringify(this.validatedKanjis))}};Ba.styles=Sr,r([ve({reflect:!0})],Ba.prototype,"mode",void 0),r([we()],Ba.prototype,"kanji",void 0),r([we()],Ba.prototype,"candidatesListSize",void 0),r([_e("kanji-frame")],Ba.prototype,"kanjiFrame",void 0),r([_e("mwc-textfield")],Ba.prototype,"textfield",void 0),r([_e("#submit-button")],Ba.prototype,"submitButton",void 0),Ba=r([be("app-container")],Ba);export{Ba as AppContainer,Pa as data};
+    `}initializeData(){switch(this.mode){case"discovery":this.data=Pa,this.data=this.data.filter((e=>!this.validatedKanjis.includes(e[1])));break;case"practice":this.data=window.collectionsManager.collection.kanjis.map((e=>Bo.find((t=>t[1]===e))))}}pickNewKanji(){const e=this.kanjisLeft;if(0===e.length)return window.toast("You've run out of Kanji 😲 Try to refill from the options",-1),null;window.toast("",0);const t=e[~~(Math.random()*e.length)],o=function(e){for(const t of $a){const o=t.find((t=>t[0].includes(e)));if(o)return o}return null}(t[1]);return o&&Xo(o[1]||o[0]),t}refillJlpt(e){const t=Bo.filter((t=>t[2]==e)).map((e=>e[1]));this.validatedKanjis=this.validatedKanjis.filter((e=>!t.includes(e)))}async firstUpdated(e){await this.textfield.updateComplete,this.textfield.shadowRoot.querySelector("i").style.color="transparent",console.log(this.optionsManager),await this.optionsManager.updateComplete}onCasinoButtonClick(){this.kanjiFrame.conceal(),this.textfield.value="",0==this.candidatesListSize&&this.textfield.focus(),this.kanji=this.pickNewKanji()}onTextFieldPress(e){"Enter"===e.key&&this.submitButton.click()}submitAnswer(){if(this.kanjiFrame.revealed)this.onCasinoButtonClick();else{if(this.kanjiFrame.reveal(),this.textfield.value===this.kanji[1])return this.kanjiFrame.success=!0,this.playSuccessSound(),this.data.splice(this.data.indexOf(this.kanji),1),this.requestUpdate(),void this.addToValidatedList(this.kanji[1]);this.playFailureSound(),this.requestUpdate()}}playSuccessSound(){new Audio("./audio/success.mp3")}playFailureSound(){}addToValidatedList(e){this.validatedKanjis.push(e),this.validatedKanjis=[...new Set(this.validatedKanjis)],this.saveValidated()}saveValidated(){localStorage.setItem("kanji-practice:validated",JSON.stringify(this.validatedKanjis))}};Ba.styles=Sr,r([ve({reflect:!0})],Ba.prototype,"mode",void 0),r([we()],Ba.prototype,"kanji",void 0),r([we()],Ba.prototype,"candidatesListSize",void 0),r([_e("kanji-frame")],Ba.prototype,"kanjiFrame",void 0),r([_e("mwc-textfield")],Ba.prototype,"textfield",void 0),r([_e("#submit-button")],Ba.prototype,"submitButton",void 0),Ba=r([be("app-container")],Ba);export{Ba as AppContainer,Pa as data};
 //# sourceMappingURL=app.js.map

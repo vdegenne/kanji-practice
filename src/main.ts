@@ -204,6 +204,13 @@ export class AppContainer extends LitElement {
     return kanji
   }
 
+  refillJlpt (jlpt: number) {
+    const kanjis = (_kanjis as Kanji[]).filter(k=>k[2]==jlpt).map(k=>k[1])
+    // remove jlpt kanjis from the validated list
+    this.validatedKanjis = this.validatedKanjis.filter(k=> !kanjis.includes(k))
+
+  }
+
 
 
   protected async firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
@@ -218,7 +225,8 @@ export class AppContainer extends LitElement {
     this.kanjiFrame.conceal()
     // this.kanjiFrame.success = false
     this.textfield.value =''
-    this.textfield.focus()
+    if (this.candidatesListSize == 0)
+      this.textfield.focus()
     this.kanji = this.pickNewKanji()
   }
 
@@ -241,7 +249,7 @@ export class AppContainer extends LitElement {
         this.data.splice(this.data.indexOf(this.kanji!), 1)
         this.requestUpdate()
         this.addToValidatedList(this.kanji![1])
-        this.validatedKanjis
+        // this.validatedKanjis
         return
       }
       /* -- FAILURE -- */

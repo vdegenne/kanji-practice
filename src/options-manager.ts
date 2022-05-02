@@ -44,7 +44,9 @@ export class OptionsManager extends LitElement {
     
     .jlpt-row > span {
       color: grey;
-      margin: 0 48px;
+      min-width: 200px;
+      text-align: center;
+      //margin: 0 48px;
     }
   `
 
@@ -53,16 +55,25 @@ export class OptionsManager extends LitElement {
     <mwc-dialog heading=Options
       @change=${()=>this.onOptionsChanged()}>
 
-      <div class="jlpt-row">
-        <mwc-formfield label="JLPT5">
-          <mwc-checkbox ?checked=${this.jlpts.jlpt5}
-            @change=${e=>this.jlpts.jlpt5 = e.target.checked}></mwc-checkbox>
-        </mwc-formfield>
-          <span>${this.app.getRemainingOverTotal(5)}</span>
-        <mwc-icon-button icon="local_drink" title="refill"
-          @click=${()=>{this.onRefillClick()}}></mwc-icon-button>
-      </div>
-      <div class="jlpt-row">
+        <p>Dictionaries</p>
+        ${[5, 4, 3, 2, 1].map(n=>{
+          return html`
+          <div class="jlpt-row">
+              <mwc-formfield label="JLPT${n}">
+                  <mwc-checkbox ?checked=${this.jlpts[`jlpt${n}`]}
+                                @change=${e=>this.jlpts[`jlpt${n}`] = e.target.checked}></mwc-checkbox>
+              </mwc-formfield>
+              <span>${this.app.getRemainingOverTotal(n)}</span>
+              <mwc-icon-button icon="local_drink" title="refill"
+                               @click=${()=>{
+                                 this.app.refillJlpt(n)
+                                 this.app.saveValidated()
+                                 this.requestUpdate()
+                               }}></mwc-icon-button>
+          </div>
+          `
+        })}
+      <!-- <div class="jlpt-row">
         <mwc-formfield label="JLPT4">
           <mwc-checkbox ?checked=${this.jlpts.jlpt4}
             @change=${e=>this.jlpts.jlpt4 = e.target.checked}></mwc-checkbox>
@@ -94,7 +105,7 @@ export class OptionsManager extends LitElement {
         </mwc-formfield>
           <span>${this.app.getRemainingOverTotal(1)}</span>
         <mwc-icon-button icon="local_drink"></mwc-icon-button>
-      </div>
+      </div> -->
         
         <!-- Candidates List -->
         <p>Candidates List Size</p>
@@ -116,6 +127,9 @@ export class OptionsManager extends LitElement {
     this.dialog.addEventListener('opened', ()=>{
       ;(this.shadowRoot!.querySelector('mwc-slider') as Slider).value = this.app.candidatesListSize
       ;(this.shadowRoot!.querySelector('mwc-slider') as Slider).layout()
+
+      // update the interface every time it opens
+      this.requestUpdate()
     })
     super.firstUpdated(_changedProperties);
   }
