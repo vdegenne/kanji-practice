@@ -1190,7 +1190,7 @@ let Er=class extends _r{};Er.styles=[Qo],Er=r([be("mwc-slider")],Er);let Tr=clas
               </mwc-formfield>
               <span>${this.app.getRemainingOverTotal(e)}</span>
               <mwc-icon-button icon="local_drink" title="refill"
-                               @click=${()=>{this.app.refillJlpt(e),this.app.saveValidated(),this.requestUpdate()}}></mwc-icon-button>
+                               @click=${()=>{this.app.refillJlpt(e),this.app.saveValidated(),"discovery"==this.app.mode&&(this.app.initializeData(),this.app.requestUpdate()),this.requestUpdate()}}></mwc-icon-button>
           </div>
           `))}
       <!-- <div class="jlpt-row">

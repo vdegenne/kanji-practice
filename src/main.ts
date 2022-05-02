@@ -46,7 +46,7 @@ resetData()
 export class AppContainer extends LitElement {
 
   /** mode */
-  @property({reflect:true}) private mode: Mode = 'discovery';
+  @property({reflect:true}) public mode: Mode = 'discovery';
   /** data */
   private data: Kanji[] = []
   /** selected kanji */

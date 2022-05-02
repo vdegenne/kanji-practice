@@ -68,6 +68,10 @@ export class OptionsManager extends LitElement {
                                @click=${()=>{
                                  this.app.refillJlpt(n)
                                  this.app.saveValidated()
+                                   if (this.app.mode=='discovery') {
+                                     this.app.initializeData()
+                                     this.app.requestUpdate()
+                                   }
                                  this.requestUpdate()
                                }}></mwc-icon-button>
           </div>
