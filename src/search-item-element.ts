@@ -15,7 +15,7 @@ import { ConcealableSpan } from './concealable-span';
 import { sharedStyles } from './styles/sharedStyles';
 
 // @ts-ignore
-const extension_id = chrome.runtime.id
+// const extension_id = chrome.runtime.id
 
 
 @customElement('search-item-element')
@@ -70,19 +70,19 @@ export class SearchItemElement extends LitElement {
         <!-- jisho -->
         <mwc-list-item id="jisho" graphic=icon @click=${()=>{jisho(this.item.word)}}>
           <span>Jisho</span>
-          <img src="chrome-extension://${extension_id}/images/jisho.ico" slot="graphic">
+          <img src="./img/jisho.ico" slot="graphic">
         </mwc-list-item>
         <mwc-list-item id="mdbg" graphic=icon @click=${()=>{mdbg(this.item.word)}}>
           <span>MDBG</span>
-          <img src="chrome-extension://${extension_id}/images/mdbg.ico" slot="graphic">
+          <img src="./img/mdbg.ico" slot="graphic">
         </mwc-list-item>
         <mwc-list-item id="naver" graphic=icon @click=${()=>{naver(this.item.word)}}>
           <span>Naver</span>
-          <img src="chrome-extension://${extension_id}/images/naver.ico" slot="graphic">
+          <img src="./img/naver.ico" slot="graphic">
         </mwc-list-item>
         <mwc-list-item id="tatoeba" graphic=icon @click=${()=>{tatoeba(this.item.word)}}>
           <span>Tatoeba</span>
-          <img src="chrome-extension://${extension_id}/images/tatoeba.ico" slot="graphic">
+          <img src="./img/tatoeba.ico" slot="graphic">
         </mwc-list-item>
         <li divider role=separator padded></li>
         <!-- listen -->

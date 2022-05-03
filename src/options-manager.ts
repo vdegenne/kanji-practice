@@ -41,7 +41,7 @@ export class OptionsManager extends LitElement {
     justify-content: space-between;
     align-items: center;
   }
-    
+
     .jlpt-row > span {
       color: grey;
       min-width: 200px;
@@ -110,21 +110,21 @@ export class OptionsManager extends LitElement {
           <span>${this.app.getRemainingOverTotal(1)}</span>
         <mwc-icon-button icon="local_drink"></mwc-icon-button>
       </div> -->
-        
+
         <!-- AUDIO OPTIONS -->
         <p>Audio</p>
         <mwc-formfield label="play audio word hint">
-            <mwc-checkbox ?checked=${this.app.playAudioHint}></mwc-checkbox>
+            <mwc-checkbox ?checked=${this.app.enableAudioHint}></mwc-checkbox>
         </mwc-formfield>
         <br>
         <mwc-formfield label="randomized word" style="margin-left:48px;">
-            <mwc-checkbox ?checked=${this.app.playAudioHint}></mwc-checkbox>
+            <mwc-checkbox ?checked=${this.app.enableAudioHint}></mwc-checkbox>
         </mwc-formfield>
         <br>
         <mwc-formfield label="play income audio (failure/success)">
-            <mwc-checkbox ?checked=${this.app.playAudioHint}></mwc-checkbox>
+            <mwc-checkbox ?checked=${this.app.enableAudioHint}></mwc-checkbox>
         </mwc-formfield>
-        
+
         <!-- Candidates List -->
         <p>Candidates List Size</p>
         <mwc-slider

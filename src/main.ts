@@ -13,7 +13,7 @@ import { Collection, Kanji, Mode } from './types'
 import { TextField } from '@material/mwc-textfield'
 import { KanjiFrame } from './kanji-frame'
 import { Button } from '@material/mwc-button'
-import { mdbg, playJapaneseAudio } from './util'
+import { changeButtonHeight, mdbg, playJapaneseAudio } from './util'
 import './options-manager'
 import { OptionsManager } from './options-manager'
 import './collections-selector'
@@ -22,10 +22,11 @@ import { mainStyles } from './styles/mainStyles'
 import './collections-manager'
 import { CollectionsManager } from './collections-manager'
 import './search-manager'
-import { firstWordFoundFromCharacter, SearchManager } from './search-manager'
+import {SearchItem, SearchManager} from './search-manager'
 import './candidates-row'
 import {Options} from "rollup-plugin-terser";
 import {sharedStyles} from "./styles/sharedStyles";
+import { speakJapanese } from './speech'
 
 declare global {
   interface Window {
@@ -57,8 +58,9 @@ export class AppContainer extends LitElement {
 
   @state() candidatesListSize = 0;
 
-  playAudioHint = true;
+  enableAudioHint = true;
   playIncomeAudio = true;
+  private hintSearch: SearchItem[] = []
 
   private validatedKanjis: string[] = []
 
@@ -128,7 +130,7 @@ export class AppContainer extends LitElement {
       <mwc-icon-button icon=inventory
         @click=${()=>{window.collectionsManager.show()}}></mwc-icon-button>
       <mwc-icon-button icon=search
-        @click=${()=>{window.searchManager.open()}}></mwc-icon-button>
+        @click=${()=>{window.searchManager.show()}}></mwc-icon-button>
       <mwc-icon-button icon=settings
         @click=${()=>this.optionsManager.open()}></mwc-icon-button>
     </header>
@@ -139,28 +141,37 @@ export class AppContainer extends LitElement {
       style="margin:12px 0"
       @click=${() => this.onCasinoButtonClick()}>pick new Kanji</mwc-button> -->
 
-    <!-- TEXTFIELD -->
-    <div style="display:inline-block;position:relative;margin-top:18px;">
-      <mwc-textfield label="answer"
-        @keypress=${(e) => {this.onTextFieldPress(e)}  }
-        helper="input and press enter"
-        helperPersistent
-        iconTrailing="remove_red_eye">
-      </mwc-textfield>
-      <mwc-icon-button icon=${this.kanjiFrame?.revealed ? 'skip_next' : 'remove_red_eye'}
-        id=submit-button
-        style="position:absolute;bottom:23px;right:4px"
-        @click=${()=>this.submit()}></mwc-icon-button>
+    <div style="width:100%;display:flex;align-items: center;justify-content:space-between">
+      <!-- TEXTFIELD -->
+      <div style="display:inline-block;position:relative;margin-top:18px;">
+        <mwc-textfield label="answer"
+          @keypress=${(e) => {this.onTextFieldPress(e)}  }
+          helper="input and press enter"
+          helperPersistent
+          iconTrailing="remove_red_eye">
+        </mwc-textfield>
+        <mwc-icon-button icon=${this.kanjiFrame?.revealed ? 'skip_next' : 'remove_red_eye'}
+          id=submit-button
+          style="position:absolute;bottom:23px;right:4px"
+          @click=${()=>this.submit()}></mwc-icon-button>
 
-      <!-- wrong answer search button -->
-      ${this.kanjiFrame && this.kanjiFrame.revealed && this.textfield.value.trim() !== '' && this.textfield.value.trim() !== this.kanji![1] ? html`
-      <mwc-icon-button
-        style="position:absolute;right:-55px;top:7px;background-color:#0000000a;border-radius:50%"
-        @click=${() => { window.searchManager.open(this.textfield.value, 'kanji')} }>${this.textfield.value}</mwc-icon-button>
-      ` :nothing}
-        
+        <!-- wrong answer search button -->
+        ${this.kanjiFrame && this.kanjiFrame.revealed && this.textfield.value.trim() !== '' && this.textfield.value.trim() !== this.kanji![1] ? html`
+        <mwc-icon-button
+          style="position:absolute;right:-55px;top:7px;background-color:#0000000a;border-radius:50%"
+          @click=${() => { window.searchManager.show(this.textfield.value, 'kanji')} }>${this.textfield.value}</mwc-icon-button>
+        ` :nothing}
+
+      </div>
+
+      ${this.kanjiFrame?.revealed && this.hintSearch[0] ? html`
+        <mwc-button
+          style="--mdc-typography-button-font-size:1.5em;--mdc-typography-button-font-family: 'Sawarabi Mincho';--mdc-button-horizontal-padding:18px"
+          height=46
+        >${this.hintSearch[0].word}</mwc-button>
+      ` : nothing}
     </div>
-    
+
     <candidates-row size=${this.candidatesListSize} answer=${this.kanji![1]}
         @candidate-click=${e=>{
           if (!this.kanjiFrame.revealed) {
@@ -168,16 +179,17 @@ export class AppContainer extends LitElement {
             this.submitButton.click()
           }
           else {
-            window.searchManager.open(e.detail.candidate, 'kanji')
+            window.searchManager.show(e.detail.candidate, 'kanji')
           }
         }}></candidates-row>
 
     <!-- <div style="height:100px;margin:50px 0;padding:50px 0;"></div> -->
-    
+
     <div style="width:100%;text-align: center" ?hide=${!this.kanjiFrame?.revealed}>
       <mwc-button raised icon="arrow_forward"
           @click=${()=>{this.submit()}}>next</mwc-button>
     </div>
+
         ${this.optionsManager}
     `
   }
@@ -211,13 +223,33 @@ export class AppContainer extends LitElement {
     }
     const kanji = kanjisLeft[~~(Math.random() * kanjisLeft.length)]
 
-    /* Play Audio (?) */
-    const firstWordFound = firstWordFoundFromCharacter(kanji[1])
-    if (firstWordFound) {
-      playJapaneseAudio(firstWordFound[1] || firstWordFound[0])
-    }
+    // Hint
+    this.hintSearch = window.searchManager.searchData(kanji[1], ['words'])
+      .filter(i=>{
+        return i.dictionary != 'not found'
+      })
+      .sort(function (i1, i2) {
+        return (i2.frequency || -9999) - (i1.frequency || -9999)
+      })
+
+    this.playAudioHint()
 
     return kanji
+  }
+
+  async playAudioHint() {
+    if (this.enableAudioHint) {
+      if (this.hintSearch[0]) {
+        try {
+          await playJapaneseAudio(this.hintSearch[0].hiragana || this.hintSearch[0].word)
+        }
+        catch (e) {
+          // rollback to the synthetic voice
+          await speakJapanese(this.hintSearch[0].hiragana || this.hintSearch[0].word)
+        }
+      }
+    }
+
   }
 
   refillJlpt (jlpt: number) {
@@ -228,6 +260,13 @@ export class AppContainer extends LitElement {
   }
 
 
+  protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    this.shadowRoot!.querySelectorAll<Button>('mwc-button').forEach(button=>{
+      if (button.getAttribute('height') !== null) {
+        changeButtonHeight(button, parseInt(button.getAttribute('height')!))
+      }
+    })
+  }
 
   protected async firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
     await this.textfield.updateComplete

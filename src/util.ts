@@ -1,6 +1,7 @@
 import _kanjis from '../docs/data/kanjis.json'
 import { Kanji } from './types'
 import {isFullChinese} from 'asian-regexps'
+import { Button } from '@material/mwc-button'
 
 export function jisho (word) {
   // window.open(`https://jisho.org/search/${encodeURIComponent(word)}%20%23kanji`, '_blank')
@@ -43,3 +44,7 @@ export function getKanjiData (character: string) {
   return (_kanjis as Kanji[]).find(k => k[1] === character)
 }
 
+export async function changeButtonHeight (button: Button, height: number) {
+  await button.updateComplete
+  ;(button.shadowRoot!.querySelector('button') as HTMLButtonElement).style.height  = `${height}px`
+}

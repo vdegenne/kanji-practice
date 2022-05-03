@@ -54,7 +54,7 @@ export class KanjiFrame extends LitElement {
         ?highlight=${window.collectionsManager.IsCharacterInACollection(this.kanji[1])}
         @click=${_=>{window.collectionsSelector.open(this.kanji![1])}}></mwc-icon-button>
       <mwc-icon-button icon=search
-        @click=${()=>{window.searchManager.open(this.kanji![1], 'words')}}></mwc-icon-button>
+        @click=${()=>{window.searchManager.show(this.kanji![1], 'words')}}></mwc-icon-button>
       <mwc-icon-button icon=more_horiz
         @click=${()=>{this.menu.show()}}></mwc-icon-button>
       <!-- <mwc-icon-button><img src="./img/tatoeba.svg" width=24 height=24
@@ -82,7 +82,7 @@ export class KanjiFrame extends LitElement {
         </mwc-list-item>
         <li divider role="separator" padded></li>
         <mwc-list-item graphic=icon
-            @click=${()=>{window.searchManager.open(this.kanji![1], 'words')}}>
+            @click=${()=>{window.searchManager.show(this.kanji![1], 'words')}}>
           <span>words search</span>
           <mwc-icon slot=graphic>search</mwc-icon>
         </mwc-list-item>

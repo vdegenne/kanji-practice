@@ -2,7 +2,7 @@ import { html, LitElement, nothing, PropertyValueMap } from 'lit'
 import { customElement, query, queryAll, state } from 'lit/decorators.js'
 import { JlptWordEntry, Kanji } from './types';
 
-import lemmas from '../data/lemmas.json'
+import lemmas from '../docs/data/lemmas.json'
 import { searchManagerStyles } from './styles/searchManagerStyles';
 import { googleImageSearch, jisho, mdbg, naver, playJapaneseAudio } from './util';
 import {hasChinese} from 'asian-regexps'
@@ -25,12 +25,12 @@ import './search-history'
 import {SearchHistory} from "./search-history";
 import { ConcealableSpan } from './concealable-span';
 
-import _kanjis from '../data/kanjis.json'
-import jlpt5 from'../data/jlpt5-words.json'
-import jlpt4 from '../data/jlpt4-words.json'
-import jlpt3 from '../data/jlpt3-words.json'
-import jlpt2 from '../data/jlpt2-words.json'
-import jlpt1 from '../data/jlpt1-words.json'
+import _kanjis from '../docs/data/kanjis.json'
+import jlpt5 from'../docs/data/jlpt5-words.json'
+import jlpt4 from '../docs/data/jlpt4-words.json'
+import jlpt3 from '../docs/data/jlpt3-words.json'
+import jlpt2 from '../docs/data/jlpt2-words.json'
+import jlpt1 from '../docs/data/jlpt1-words.json'
 import { sharedStyles } from './styles/sharedStyles';
 import { Menu } from '@material/mwc-menu';
 import { SearchItemElement } from './search-item-element';
@@ -87,7 +87,9 @@ export class SearchManager extends LitElement {
   // private _searchCache: {[query:string]: SearchItem[]} = {}
   // private _searchHistory: SearchHistoryItem[] = [{search: 'test', view: 'words'}]
   // private _history: SearchHistory = new SearchHistory(this)
-  @query('search-history') _history!: SearchHistory;
+  // @query('search-history') _history!: SearchHistory;
+  private _history = new SearchHistory(this)
+
 
   @state() blindMode = false
   // private _hideInformationsOnSearchOption = true
@@ -158,28 +160,6 @@ export class SearchManager extends LitElement {
                                    this.textfield.focus()
                                }}></mwc-icon-button>
           </div>
-
-          <!-- <div style="position: relative">
-            <mwc-icon-button icon="casino" @click=${(e)=>{this.onCasinoButtonClick(e)}}></mwc-icon-button>
-            <mwc-menu fixed
-                    @action=${(e)=>{this.onMenuListItemAction(e)}}>
-                <mwc-list-item>
-                    <span>jlpt5</span>
-                </mwc-list-item>
-                <mwc-list-item>
-                    <span>jlpt4</span>
-                </mwc-list-item>
-                <mwc-list-item>
-                    <span>jlpt3</span>
-                </mwc-list-item>
-                <mwc-list-item>
-                    <span>jlpt2</span>
-                </mwc-list-item>
-                <mwc-list-item>
-                    <span>jlpt1</span>
-                </mwc-list-item>
-            </mwc-menu>
-          </div> -->
       </div>
       <!-- choice checkboxes -->
       <div>
@@ -228,7 +208,7 @@ export class SearchManager extends LitElement {
         ${wordsResult.map(i=>html`<search-item-element .item=${i} .searchManager=${this} .revealed=${!this.blindMode}></search-item-element>`)}
       </div>
 
-        <search-history .searchManager="${this}" slot=secondaryAction></search-history>
+<!--        <search-history .searchManager="${this}" slot=secondaryAction></search-history>-->
 
       <mwc-formfield slot=secondaryAction label="blind mode" style="--mdc-checkbox-ripple-size:32px;margin-right:10px">
         <mwc-checkbox ?checked=${this.blindMode}
@@ -279,7 +259,7 @@ export class SearchManager extends LitElement {
     this.textfield.blur()
   }
 
-  public searchData (query: string, types = ['words', 'kanji']) {
+  searchData (query: string, types = ['words', 'kanji']) {
     /**
      * If the search is cached we give the cached version first
      */
