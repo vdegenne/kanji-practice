@@ -31,6 +31,12 @@ export const searchItemStyles = css`
   font-size: 1.5em;
   color: black;
 }
+:host [highlight] {
+  background-color: yellow;
+}
+:host .word[notFound] {
+  /* color: red; */
+}
 :host .word .character {
   /* cursor: pointer; */
 }

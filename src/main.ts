@@ -25,6 +25,7 @@ import './search-manager'
 import { firstWordFoundFromCharacter, SearchManager } from './search-manager'
 import './candidates-row'
 import {Options} from "rollup-plugin-terser";
+import {sharedStyles} from "./styles/sharedStyles";
 
 declare global {
   interface Window {
@@ -56,6 +57,9 @@ export class AppContainer extends LitElement {
 
   @state() candidatesListSize = 0;
 
+  playAudioHint = true;
+  playIncomeAudio = true;
+
   private validatedKanjis: string[] = []
 
   private optionsManager: OptionsManager = new OptionsManager(this);
@@ -85,7 +89,7 @@ export class AppContainer extends LitElement {
   @query('#submit-button') submitButton!: Button;
   // @query('options-manager') optionsManager!: OptionsManager;
 
-  static styles = mainStyles;
+  static styles = [mainStyles, sharedStyles];
 
   constructor () {
     super()
@@ -146,7 +150,7 @@ export class AppContainer extends LitElement {
       <mwc-icon-button icon=${this.kanjiFrame?.revealed ? 'skip_next' : 'remove_red_eye'}
         id=submit-button
         style="position:absolute;bottom:23px;right:4px"
-        @click=${()=>this.submitAnswer()}></mwc-icon-button>
+        @click=${()=>this.submit()}></mwc-icon-button>
 
       <!-- wrong answer search button -->
       ${this.kanjiFrame && this.kanjiFrame.revealed && this.textfield.value.trim() !== '' && this.textfield.value.trim() !== this.kanji![1] ? html`
@@ -159,12 +163,21 @@ export class AppContainer extends LitElement {
     
     <candidates-row size=${this.candidatesListSize} answer=${this.kanji![1]}
         @candidate-click=${e=>{
-          this.textfield.value = e.detail.candidate;
-          this.submitButton.click()
+          if (!this.kanjiFrame.revealed) {
+            this.textfield.value = e.detail.candidate;
+            this.submitButton.click()
+          }
+          else {
+            window.searchManager.open(e.detail.candidate, 'kanji')
+          }
         }}></candidates-row>
 
     <!-- <div style="height:100px;margin:50px 0;padding:50px 0;"></div> -->
     
+    <div style="width:100%;text-align: center" ?hide=${!this.kanjiFrame?.revealed}>
+      <mwc-button raised icon="arrow_forward"
+          @click=${()=>{this.submit()}}>next</mwc-button>
+    </div>
         ${this.optionsManager}
     `
   }
@@ -197,10 +210,13 @@ export class AppContainer extends LitElement {
       window.toast('', 0)
     }
     const kanji = kanjisLeft[~~(Math.random() * kanjisLeft.length)]
+
+    /* Play Audio (?) */
     const firstWordFound = firstWordFoundFromCharacter(kanji[1])
     if (firstWordFound) {
       playJapaneseAudio(firstWordFound[1] || firstWordFound[0])
     }
+
     return kanji
   }
 
@@ -217,8 +233,7 @@ export class AppContainer extends LitElement {
     await this.textfield.updateComplete
     this.textfield.shadowRoot!.querySelector('i')!.style.color = 'transparent'
 
-    console.log(this.optionsManager)
-    await this.optionsManager.updateComplete
+    // await this.optionsManager.updateComplete
   }
 
   onCasinoButtonClick() {
@@ -238,10 +253,10 @@ export class AppContainer extends LitElement {
   }
 
 
-  submitAnswer () {
-    /* -- SUCCESS -- */
+  submit () {
     if (!this.kanjiFrame.revealed) {
       this.kanjiFrame.reveal()
+      /* -- SUCCESS -- */
       if (this.textfield.value === this.kanji![1]) {
         this.kanjiFrame.success = true
         this.playSuccessSound()
