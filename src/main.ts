@@ -168,6 +168,7 @@ export class AppContainer extends LitElement {
         <mwc-button
           style="--mdc-typography-button-font-size:1.5em;--mdc-typography-button-font-family: 'Sawarabi Mincho';--mdc-button-horizontal-padding:18px"
           height=46
+          @click=${()=>{window.searchManager.show(this.hintSearch[0].word, 'words')}}
         >${this.hintSearch[0].word}</mwc-button>
       ` : nothing}
     </div>
