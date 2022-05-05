@@ -20,14 +20,22 @@
         background-color: #eeeeee;
         color: #616161;
       }
+
+      #searchManager {
+        z-index: 7;
+      }
+      #collectionsSelector {
+        z-index: 12;
+      }
     </style>
 
-    <collections-selector id=collectionsSelector></collections-selector>
 
     <app-container id=app></app-container>
 <!--    <options-manager id=optionsManager></options-manager>-->
     <collections-manager id=collectionsManager></collections-manager>
     <search-manager id=searchManager></search-manager>
+
+    <collections-selector id=collectionsSelector></collections-selector>
 
     <mwc-snackbar id=snackbar leading></mwc-snackbar>
 
