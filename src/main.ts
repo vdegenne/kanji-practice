@@ -85,6 +85,10 @@ export class AppContainer extends LitElement {
     return `${total.length - validated.length}/${total.length}`
   }
 
+  get revealed () {
+    return this.kanjiFrame?.revealed;
+  }
+
 
   @query('kanji-frame') kanjiFrame!: KanjiFrame;
   @query('mwc-textfield') textfield!: TextField;
@@ -164,12 +168,18 @@ export class AppContainer extends LitElement {
 
       </div>
 
-      ${this.kanjiFrame?.revealed && this.hintSearch[0] ? html`
+      ${this.hintSearch[0] ? html`
         <mwc-button
+          outlined
           style="--mdc-typography-button-font-size:1.5em;--mdc-typography-button-font-family: 'Sawarabi Mincho';--mdc-button-horizontal-padding:18px"
           height=46
-          @click=${()=>{window.searchManager.show(this.hintSearch[0].word, 'words')}}
-        >${this.hintSearch[0].word}</mwc-button>
+          @click=${()=>{
+            if (this.revealed)
+              window.searchManager.show(this.hintSearch[0].word, 'words')
+            else
+              this.playAudioHint()
+          }}
+        >${this.revealed ? this.hintSearch[0].word : '?'}</mwc-button>
       ` : nothing}
     </div>
 
@@ -248,6 +258,7 @@ export class AppContainer extends LitElement {
           // rollback to the synthetic voice
           await speakJapanese(this.hintSearch[0].hiragana || this.hintSearch[0].word)
         }
+        console.log('end')
       }
     }
 

@@ -84,7 +84,14 @@ export class SearchItemElement extends LitElement {
           <span>Tatoeba</span>
           <img src="./img/tatoeba.ico" slot="graphic">
         </mwc-list-item>
+
         <li divider role=separator padded></li>
+        ${this.item.type == 'kanji' ? html`
+        <mwc-list-item graphic="icon" @click=${()=>{window.collectionsSelector.open(this.item.word)}}>
+          <span>Add to collection</span>
+          <mwc-icon slot=graphic>playlist_add</mwc-icon>
+        </mwc-list-item>
+        ` : nothing}
         <!-- listen -->
         <mwc-list-item id="listen" graphic=icon @click=${()=>{playJapaneseAudio(this.item.hiragana || this.item.word)}}>
           <span>Listen</span>

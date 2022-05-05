@@ -33,10 +33,27 @@ export function googleImageSearch (word) {
 //   window.open(`https://www.mdbg.net/chinese/dictionary?page=worddict&wdrst=0&wdqb=${encodeURIComponent(word)}`, '_blank")
 // }
 
+const audioMap: {[word: string]: HTMLAudioElement} = {}
 
-export function playJapaneseAudio (word) {
-  const audio = new Audio(`https://assiets.vdegenne.com/data/japanese/audio/${encodeURIComponent(word)}`)
-  audio.play()
+export async function playJapaneseAudio (word) {
+  let audio: HTMLAudioElement
+  if (word in audioMap) {
+    audio = audioMap[word]
+  }
+  else {
+    audio = new Audio(`https://assiets.vdegenne.com/data/japanese/audio/${encodeURIComponent(word)}`)
+  }
+
+  return new Promise((resolve, reject) => {
+    audio.onerror = () => reject()
+    audio.onended = () => {
+      resolve(audio)
+      if (!(word in audioMap)) {
+        audioMap[word] = audio
+      }
+    }
+    audio.play()
+  })
 }
 
 
