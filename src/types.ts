@@ -2,7 +2,7 @@ export const domains = ['Kanji', 'Words'] as const;
 export type Domain = typeof domains[number];
 export type Mode = 'discovery'|'practice';
 
-export type Row = [id:number, character:string, jlpt:number, meaning1:string, meaning2:string];
+export type Row = [id:number, character:string, jlpt:number, meaning1:string, meaning2OrHiragana:string];
 
 export type Collection = {
   name: string;

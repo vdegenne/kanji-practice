@@ -22,7 +22,7 @@ export class AppContainer extends LitElement {
   /** data */
   private data: Row[] = []
   /** selected kanji */
-  @state() kanji: Row|null;
+  @state() element: Row|null;
   /** collections */
   // public collections: Collection[];
 
@@ -40,7 +40,7 @@ export class AppContainer extends LitElement {
   /**
    * Returns the Kanjis overall list jlpt-filtered
    */
-  get kanjisLeft () {
+  get elementsLeft () {
     const activeJlpts = Object.entries(this.optionsManager.jlpts)
       .filter(([j, b]) => b)
       .map(([j, b]) => j)
@@ -90,7 +90,7 @@ export class AppContainer extends LitElement {
     this.initializeData()
 
     // Pick a Kanji
-    this.kanji = this.pickNewKanji()
+    this.element = this.pickNewElement()
   }
 
   static styles = [mainStyles, sharedStyles];
@@ -108,7 +108,7 @@ export class AppContainer extends LitElement {
         <mwc-icon style="margin-right:8px">${this.mode === 'discovery' ? 'remove_red_eye' : 'repeat'}</mwc-icon>
         <span>${this.mode === 'discovery' ? 'discovery' : window.collectionsManager.selectedCollection}</span>
       </div>
-      <div style="font-size: 0.8em;color: #bdbdbd;">kanji left: ${this.kanjisLeft.length}</div>
+      <div style="font-size: 0.8em;color: #bdbdbd;">kanji left: ${this.elementsLeft.length}</div>
       <mwc-icon-button icon=inventory
         @click=${()=>{window.collectionsManager.show()}}></mwc-icon-button>
       <mwc-icon-button icon=search
@@ -117,7 +117,7 @@ export class AppContainer extends LitElement {
         @click=${()=>this.optionsManager.open()}></mwc-icon-button>
     </header>
 
-    <kanji-frame .kanji=${this.kanji} style="width:-webkit-fill-available"></kanji-frame>
+    <kanji-frame .kanji=${this.element} style="width:-webkit-fill-available"></kanji-frame>
 
     <!-- <mwc-button unelevated icon="casino"
       style="margin:12px 0"
@@ -138,7 +138,7 @@ export class AppContainer extends LitElement {
           @click=${()=>this.submit()}></mwc-icon-button>
 
         <!-- wrong answer search button -->
-        ${this.kanjiFrame && this.kanjiFrame.revealed && this.textfield.value.trim() !== '' && this.textfield.value.trim() !== this.kanji![1] ? html`
+        ${this.kanjiFrame && this.kanjiFrame.revealed && this.textfield.value.trim() !== '' && this.textfield.value.trim() !== this.element![1] ? html`
         <mwc-icon-button
           style="position:absolute;right:-55px;top:7px;background-color:#0000000a;border-radius:50%"
           @click=${() => { window.searchManager.show(this.textfield.value, 'kanji')} }>${this.textfield.value}</mwc-icon-button>
@@ -146,22 +146,30 @@ export class AppContainer extends LitElement {
 
       </div>
 
-      ${this.hintSearch[0] ? html`
+      ${this.domain=='Kanji' && this.hintSearch[0] ? html`
         <mwc-button
           outlined
           style="--mdc-typography-button-font-size:1.5em;--mdc-typography-button-font-family: 'Sawarabi Mincho';--mdc-button-horizontal-padding:18px"
           height=46
           @click=${()=>{
-            if (this.revealed)
-              window.searchManager.show(this.hintSearch[0].word, 'words')
-            else
+            if (!this.revealed) {
               this.playAudioHint()
+              return
+            }
+            else {
+              window.searchManager.show(this.hintSearch[0].word, 'words')
+            }
           }}
         >${this.revealed ? this.hintSearch[0].word : '?'}</mwc-button>
       ` : nothing}
+
+      ${this.domain=='Words' ? html`
+      <mwc-icon-button icon=volume_up
+        @click=${()=>{this.playAudioHint()}}></mwc-icon-button>
+      ` : nothing}
     </div>
 
-    <candidates-row size=${this.candidatesListSize} answer=${this.kanji![1]}
+    <candidates-row size=${this.candidatesListSize} answer=${this.element![1]}
         @candidate-click=${e=>{
           if (!this.kanjiFrame.revealed) {
             this.textfield.value = e.detail.candidate;
@@ -207,10 +215,10 @@ export class AppContainer extends LitElement {
     }
   }
 
-  pickNewKanji (): Row|null {
-    const kanjisLeft = this.kanjisLeft
+  pickNewElement (): Row|null {
+    const elementsLeft = this.elementsLeft
 
-    if (kanjisLeft.length === 0) {
+    if (elementsLeft.length === 0) {
       window.toast('You\'ve run out of Kanji 😲 Try to refill from the options', -1)
       // @TODO what to do?
       return null
@@ -218,10 +226,10 @@ export class AppContainer extends LitElement {
     else {
       window.toast('', 0)
     }
-    const kanji = kanjisLeft[~~(Math.random() * kanjisLeft.length)]
+    const element = elementsLeft[~~(Math.random() * elementsLeft.length)]
 
     // Hint
-    this.hintSearch = window.searchManager.searchData(kanji[1], ['words'])
+    this.hintSearch = window.searchManager.searchData(element[1], ['words'])
       .filter(i=>{
         return i.dictionary != 'not found'
       })
@@ -231,19 +239,25 @@ export class AppContainer extends LitElement {
 
     this.playAudioHint()
 
-    return kanji
+    return element
   }
 
   async playAudioHint() {
     if (this.enableAudioHint) {
-      if (this.hintSearch[0]) {
-        try {
-          await playJapaneseAudio(this.hintSearch[0].hiragana || this.hintSearch[0].word)
-        }
-        catch (e) {
-          // rollback to the synthetic voice
-          await speakJapanese(this.hintSearch[0].hiragana || this.hintSearch[0].word)
-        }
+      if (this.domain=='Kanji' && !this.hintSearch[0]) {
+        return
+      }
+
+      const word = (this.domain == 'Kanji')
+        ? this.hintSearch[0].hiragana || this.hintSearch[0].word
+        : this.element![4] || this.element![1];
+
+      try {
+        await playJapaneseAudio(word)
+      }
+      catch (e) {
+        // rollback to the synthetic voice
+        await speakJapanese(word)
       }
     }
 
@@ -278,7 +292,7 @@ export class AppContainer extends LitElement {
     this.textfield.value =''
     if (this.candidatesListSize == 0)
       this.textfield.focus()
-    this.kanji = this.pickNewKanji()
+    this.element = this.pickNewElement()
   }
 
   onTextFieldPress (e) {
@@ -293,13 +307,13 @@ export class AppContainer extends LitElement {
     if (!this.kanjiFrame.revealed) {
       this.kanjiFrame.reveal()
       /* -- SUCCESS -- */
-      if (this.textfield.value === this.kanji![1]) {
+      if (this.textfield.value === this.element![1]) {
         this.kanjiFrame.success = true
         this.playSuccessSound()
         // window.toast('CORRECT ! :)')
-        this.data.splice(this.data.indexOf(this.kanji!), 1)
+        this.data.splice(this.data.indexOf(this.element!), 1)
         this.requestUpdate()
-        this.addToValidatedList(this.kanji![1])
+        this.addToValidatedList(this.element![1])
         // this.validatedKanjis
         return
       }

@@ -12,7 +12,7 @@ export const Kanjis = _kanjis as Row[]
 // building the words list from the searchManager data
 export const Words = jlpts.flatMap((jlpt, i) => {
   return jlpt.map(word => {
-    return [0, word[0], 5-i, word[1], word[2]]
+    return [0, word[0], 5-i, word[2], word[1]]
   })
 }) as Row[]
 
