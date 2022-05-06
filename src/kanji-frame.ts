@@ -11,13 +11,14 @@ import { googleImageSearch, jisho, mdbg, naver, tatoeba } from './util';
 export class KanjiFrame extends LitElement {
   @property({type:Boolean, reflect:true})
   public revealed = false
-
   @property({type:Boolean, reflect:true})
   public success = false
-
   // @property({type:Boolean, reflect:true}) happy = false
+  @property({ type: Array })
+  kanji: Row|null = null;
+  @state()
+  showTextualHint = true;
 
-  @property({ type: Array }) kanji: Row|null = null;
 
   @query('mwc-menu') menu!: Menu;
 
@@ -47,7 +48,7 @@ export class KanjiFrame extends LitElement {
       }
     </div>
 
-    <div id=meanings>
+    <div id=meanings ?hide=${!this.revealed && !this.showTextualHint}>
       <div style="margin-bottom:3px"><span class=tag style="background-color:#870000;margin-right:5px">On</span>${this.kanji[3]}</div>
       <div><span class=tag style="background-color:crimson;margin-right:5px;">Kun</span>${this.kanji[4]}</div>
     </div>

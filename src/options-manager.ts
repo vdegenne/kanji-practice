@@ -43,7 +43,7 @@ export class OptionsManager extends LitElement {
 
     .jlpt-row > span {
       color: grey;
-      min-width: 200px;
+      min-width: 160px;
       text-align: center;
       //margin: 0 48px;
     }
@@ -111,17 +111,19 @@ export class OptionsManager extends LitElement {
       </div> -->
 
         <!-- AUDIO OPTIONS -->
-        <p>Audio</p>
+        <p>Hint</p>
         <mwc-formfield label="play audio word hint">
             <mwc-checkbox ?checked=${this.app.enableAudioHint}></mwc-checkbox>
         </mwc-formfield>
         <br>
-        <mwc-formfield label="randomized word" style="margin-left:48px;">
+        <mwc-formfield label="randomized word hint" style="margin-left:48px;">
             <mwc-checkbox ?checked=${this.app.enableAudioHint}></mwc-checkbox>
         </mwc-formfield>
         <br>
-        <mwc-formfield label="play income audio (failure/success)">
-            <mwc-checkbox ?checked=${this.app.enableAudioHint}></mwc-checkbox>
+        <mwc-formfield label="show textual hint" style="margin-left:48px;">
+            <mwc-checkbox
+              checked
+              @change=${e=>{this.forwardTextualHintToValue(e.target.checked)}}></mwc-checkbox>
         </mwc-formfield>
 
         <!-- Candidates List -->
@@ -134,6 +136,12 @@ export class OptionsManager extends LitElement {
                 step="1"
                 @change=${e=>{this.app.candidatesListSize = e.detail.value}}
         ></mwc-slider>
+
+        <p>Others</p>
+        <mwc-formfield label="play income audio (failure/success)">
+            <mwc-checkbox ?checked=${this.app.enableAudioHint}></mwc-checkbox>
+        </mwc-formfield>
+
 
       <mwc-button outlined slot="primaryAction" dialogAction="close">close</mwc-button>
     </mwc-dialog>
@@ -172,5 +180,9 @@ export class OptionsManager extends LitElement {
     // else -> just remove the jlpt kanjis from the validated list and save
 
     // should pick a new kanji if ran out of kanjis
+  }
+
+  forwardTextualHintToValue (value: boolean) {
+    this.app.kanjiFrame.showTextualHint = value
   }
 }
