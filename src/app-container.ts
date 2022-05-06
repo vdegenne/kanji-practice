@@ -251,6 +251,7 @@ export class AppContainer extends LitElement {
       const word = (this.domain == 'Kanji')
         ? this.hintSearch[0].hiragana || this.hintSearch[0].word
         : this.element![4] || this.element![1];
+console.log(`word : `, word)
 
       try {
         await playJapaneseAudio(word)

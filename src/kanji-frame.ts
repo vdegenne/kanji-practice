@@ -29,6 +29,9 @@ export class KanjiFrame extends LitElement {
       return nothing
     }
 
+    const frameWidth = `${parseInt(getComputedStyle(this).width) - 48}px`
+    let padding = 150 - (54 * this.kanji[1].length)
+    if (padding < 0) { padding = 0 }
 
     return html`
     <div class="tag jlpt${this.kanji[2]}-color" id="jlpt-tag">jlpt${this.kanji[2]}</div>
@@ -38,7 +41,7 @@ export class KanjiFrame extends LitElement {
       ` : nothing}
       ${this.revealed ?
         html`
-        <span style="z-index:2">${this.kanji[1]}</span>
+        <span style="z-index:2;font-size:calc(${frameWidth} / ${this.kanji[1].length} - ${padding}px)">${this.kanji[1]}</span>
         ` :
         html`?`
       }
