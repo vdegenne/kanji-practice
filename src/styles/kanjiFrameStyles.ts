@@ -16,6 +16,7 @@ export const kanjiFrameStyles = css`
   background-color: black;
   box-shadow: 0 3px 2px -2px #00000063;
   color: white;
+  margin: 0 auto;
 }
 :host([revealed]) {
   background-color: #f44336;

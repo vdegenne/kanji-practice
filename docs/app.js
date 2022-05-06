@@ -1012,6 +1012,7 @@ let ur=class extends pr{};ur.styles=[Po],ur=r([a("mwc-slider")],ur);const hr=me`
   background-color: black;
   box-shadow: 0 3px 2px -2px #00000063;
   color: white;
+  margin: 0 auto;
 }
 :host([revealed]) {
   background-color: #f44336;
@@ -1108,7 +1109,7 @@ mwc-icon-button[highlight] {
     <div id=kanji>
       ${J}
       ${this.revealed?W`
-        <span style="z-index:2;font-size:calc(${e} / ${this.kanji[1].length} - ${t}px)">${this.kanji[1]}</span>
+        <span style="z-index:2;font-size:calc(${e} / ${this.kanji[1].length} - ${t}px);min-height: 284px;">${this.kanji[1]}</span>
         `:W`?`}
     </div>
 
