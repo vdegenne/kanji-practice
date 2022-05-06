@@ -1,6 +1,6 @@
 import { html, LitElement, nothing, PropertyValueMap } from 'lit'
 import { customElement, query, queryAll, state } from 'lit/decorators.js'
-import { JlptWordEntry, Kanji } from './types';
+import { JlptWordEntry, Row } from './types';
 
 import lemmas from '../docs/data/lemmas.json'
 import { searchManagerStyles } from './styles/searchManagerStyles';
@@ -32,7 +32,6 @@ import jlpt3 from '../docs/data/jlpt3-words.json'
 import jlpt2 from '../docs/data/jlpt2-words.json'
 import jlpt1 from '../docs/data/jlpt1-words.json'
 import { sharedStyles } from './styles/sharedStyles';
-import { Menu } from '@material/mwc-menu';
 import { SearchItemElement } from './search-item-element';
 export const jlpts: JlptWordEntry[][] = [
   jlpt5 as JlptWordEntry[],
@@ -318,7 +317,7 @@ export class SearchManager extends LitElement {
             // if the character is not a kanji we ignore
             continue
           }
-          const kanji = (_kanjis as Kanji[]).find(k => k[1] === character)
+          const kanji = (_kanjis as Row[]).find(k => k[1] === character)
           if (kanji) {
             searchResult.push(this.attachFrequencyValue({
               type: 'kanji',
@@ -341,7 +340,7 @@ export class SearchManager extends LitElement {
       } else {
         // we assume the search is purely english-oriented
         searchResult.push(...
-          (_kanjis as Kanji[])
+          (_kanjis as Row[])
             .filter(k => k[3].includes(query) || k[4].includes(query))
             .sort(function (k1, k2) {
               return k2[2] - k1[2]

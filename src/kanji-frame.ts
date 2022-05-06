@@ -3,7 +3,7 @@ import { css, html, LitElement, nothing, PropertyValueMap } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { kanjiFrameStyles } from './styles/kanjiFrameStyles';
 import { sharedStyles } from './styles/sharedStyles';
-import { Kanji } from './types';
+import { Row } from './types';
 import { googleImageSearch, jisho, mdbg, naver, tatoeba } from './util';
 
 
@@ -17,7 +17,7 @@ export class KanjiFrame extends LitElement {
 
   // @property({type:Boolean, reflect:true}) happy = false
 
-  @property({ type: Array }) kanji: Kanji|null = null;
+  @property({ type: Array }) kanji: Row|null = null;
 
   @query('mwc-menu') menu!: Menu;
 

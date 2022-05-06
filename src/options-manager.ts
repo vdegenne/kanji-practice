@@ -1,7 +1,7 @@
 import { Dialog } from '@material/mwc-dialog';
 import {css, html, LitElement, PropertyValues} from 'lit';
 import { customElement, query } from 'lit/decorators.js';
-import {AppContainer} from "./main";
+import {AppContainer} from "./entry";
 import '@material/mwc-slider'
 import {Slider} from '@material/mwc-slider'
 

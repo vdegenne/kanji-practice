@@ -1,7 +1,7 @@
 import {customElement, property} from "lit/decorators.js";
 import {css, html, LitElement, PropertyValues} from "lit";
 import _kanjis from '../docs/data/kanjis.json'
-import {Kanji} from "./types";
+import {Row} from "./types";
 
 @customElement('candidates-row')
 export class CandidatesRow extends LitElement {
@@ -44,7 +44,7 @@ export class CandidatesRow extends LitElement {
 
     // Generate the list
     const list = Array(size).fill(0).map(()=>{
-      return (_kanjis[~~(Math.random()*_kanjis.length)] as Kanji)[1]
+      return (_kanjis[~~(Math.random()*_kanjis.length)] as Row)[1]
     })
     // Add the kanji in a random location
     list[~~(Math.random() * size)] = this.answer

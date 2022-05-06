@@ -4,7 +4,7 @@ import json from '@rollup/plugin-json'
 import {terser} from 'rollup-plugin-terser'
 
 export default {
-  input: 'src/main.ts',
+  input: 'src/entry.ts',
   output: { file: 'docs/app.js', format: 'esm', sourcemap: true },
   plugins: [
     tsc(),

@@ -1,5 +1,5 @@
 import _kanjis from '../docs/data/kanjis.json'
-import { Kanji } from './types'
+import { Row } from './types'
 import {isFullChinese} from 'asian-regexps'
 import { Button } from '@material/mwc-button'
 
@@ -58,7 +58,7 @@ export async function playJapaneseAudio (word) {
 
 
 export function getKanjiData (character: string) {
-  return (_kanjis as Kanji[]).find(k => k[1] === character)
+  return (_kanjis as Row[]).find(k => k[1] === character)
 }
 
 export async function changeButtonHeight (button: Button, height: number) {
