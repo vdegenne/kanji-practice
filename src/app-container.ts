@@ -237,7 +237,11 @@ export class AppContainer extends LitElement {
         return (i2.frequency || -9999) - (i1.frequency || -9999)
       })
 
-    this.playAudioHint()
+    // in "words" domain context we have to wait that the element is returned to the callee
+    // so we can play its content
+    setTimeout(() => {
+      this.playAudioHint()
+    }, 200)
 
     return element
   }
@@ -251,7 +255,6 @@ export class AppContainer extends LitElement {
       const word = (this.domain == 'Kanji')
         ? this.hintSearch[0].hiragana || this.hintSearch[0].word
         : this.element![4] || this.element![1];
-console.log(`word : `, word)
 
       try {
         await playJapaneseAudio(word)
