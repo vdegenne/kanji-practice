@@ -42,7 +42,7 @@ export class KanjiFrame extends LitElement {
       ` : nothing}
       ${this.revealed ?
         html`
-        <span style="z-index:2;font-size:calc(${frameWidth} / ${this.kanji[1].length} - ${padding}px)">${this.kanji[1]}</span>
+        <span style="z-index:2;font-size:Min(200px, calc(${frameWidth} / ${this.kanji[1].length} - ${padding}px))">${this.kanji[1]}</span>
         ` :
         html`?`
       }

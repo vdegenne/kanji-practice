@@ -11,7 +11,7 @@ export const kanjiFrameStyles = css`
   /* padding: 24px; */
   padding-top: 0px;
   min-width: 300px;
-  max-width: 500px;
+  /* max-width: 500px; */
   min-height: 240px;
   position: relative;
   background-color: black;

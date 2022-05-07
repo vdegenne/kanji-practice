@@ -147,9 +147,8 @@ export class AppContainer extends LitElement {
       </div>
 
       ${this.domain=='Kanji' && this.hintSearch[0] ? html`
-        <mwc-button
+        <app-button
           outlined
-          style="--mdc-typography-button-font-size:1.5em;--mdc-typography-button-font-family: 'Sawarabi Mincho';--mdc-button-horizontal-padding:18px"
           height=46
           @click=${()=>{
             if (!this.revealed) {
@@ -160,7 +159,7 @@ export class AppContainer extends LitElement {
               window.searchManager.show(this.hintSearch[0].word, 'words')
             }
           }}
-        >${this.revealed ? this.hintSearch[0].word : '?'}</mwc-button>
+        >${this.revealed ? this.hintSearch[0].word : '?'}</app-button>
       ` : nothing}
 
       ${this.domain=='Words' ? html`
@@ -272,15 +271,6 @@ export class AppContainer extends LitElement {
     // remove jlpt kanjis from the validated list
     this.validatedKanjis = this.validatedKanjis.filter(k=> !kanjis.includes(k))
 
-  }
-
-
-  protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
-    this.shadowRoot!.querySelectorAll<Button>('mwc-button').forEach(button=>{
-      if (button.getAttribute('height') !== null) {
-        changeButtonHeight(button, parseInt(button.getAttribute('height')!))
-      }
-    })
   }
 
   protected async firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {

@@ -60,8 +60,3 @@ export async function playJapaneseAudio (word) {
 export function getKanjiData (character: string) {
   return (_kanjis as Row[]).find(k => k[1] === character)
 }
-
-export async function changeButtonHeight (button: Button, height: number) {
-  await button.updateComplete
-  ;(button.shadowRoot!.querySelector('button') as HTMLButtonElement).style.height  = `${height}px`
-}

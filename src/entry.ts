@@ -16,6 +16,7 @@ import './collections-manager'
 import './collections-selector'
 import './options-manager'
 import './app-container'
+import './app-button'
 
 /* global */
 import { CollectionsSelector } from './collections-selector'

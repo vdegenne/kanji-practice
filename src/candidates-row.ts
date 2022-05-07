@@ -24,8 +24,10 @@ export class CandidatesRow extends LitElement {
   render() {
     return html`
         ${this.generateCandidatesList(this.size).map(k=>{
-            return html`<mwc-icon-button
-                @click=${(e)=>{this.onButtonClick(e)}}>${k}</mwc-icon-button>`
+            return html`
+            <app-button outlined
+                height=50
+                @click=${(e)=>{this.onButtonClick(e)}}>${k}</app-button>`
         })}
     `
   }

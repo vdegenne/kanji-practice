@@ -1007,7 +1007,7 @@ let ur=class extends pr{};ur.styles=[Po],ur=r([a("mwc-slider")],ur);const hr=me`
   /* padding: 24px; */
   padding-top: 0px;
   min-width: 300px;
-  max-width: 500px;
+  /* max-width: 500px; */
   min-height: 240px;
   position: relative;
   background-color: black;
@@ -1110,7 +1110,7 @@ mwc-icon-button[highlight] {
     <div id=kanji>
       ${J}
       ${this.revealed?W`
-        <span style="z-index:2;font-size:calc(${e} / ${this.kanji[1].length} - ${t}px)">${this.kanji[1]}</span>
+        <span style="z-index:2;font-size:Min(200px, calc(${e} / ${this.kanji[1].length} - ${t}px))">${this.kanji[1]}</span>
         `:W`?`}
     </div>
 
@@ -1161,8 +1161,10 @@ mwc-icon-button[highlight] {
     <!-- </div> -->
 
     `}firstUpdated(e){this.menu.anchor=this.menu.parentElement}reveal(){this.revealed=!0}conceal(){this.revealed=!1,this.success=!1}};Cr.styles=[hr,mr],r([l({type:Boolean,reflect:!0})],Cr.prototype,"revealed",void 0),r([l({type:Boolean,reflect:!0})],Cr.prototype,"success",void 0),r([l({type:Array})],Cr.prototype,"kanji",void 0),r([s()],Cr.prototype,"showTextualHint",void 0),r([f("mwc-menu")],Cr.prototype,"menu",void 0),Cr=r([a("kanji-frame")],Cr);let Ir=class extends Se{render(){return W`
-        ${this.generateCandidatesList(this.size).map((e=>W`<mwc-icon-button
-                @click=${e=>{this.onButtonClick(e)}}>${e}</mwc-icon-button>`))}
+        ${this.generateCandidatesList(this.size).map((e=>W`
+            <app-button outlined
+                height=50
+                @click=${e=>{this.onButtonClick(e)}}>${e}</app-button>`))}
     `}async updated(e){await this.updateComplete,this.shadowRoot.querySelectorAll("mwc-icon-button").forEach((e=>{e.shadowRoot.querySelector("button").style.fontFamily='"Sawarabi Mincho", serif'})),super.updated(e)}generateCandidatesList(e){if(0==e)return[];const t=Array(e).fill(0).map((()=>gr[~~(Math.random()*gr.length)][1]));return t[~~(Math.random()*e)]=this.answer,t}onButtonClick(e){this.dispatchEvent(new CustomEvent("candidate-click",{bubbles:!1,composed:!0,detail:{candidate:e.target.textContent.trim()}}))}};Ir.styles=me`
   :host {
     display: block;
@@ -2202,12 +2204,11 @@ header > mwc-icon-button {
       </div>
 
       ${"Kanji"==this.domain&&this.hintSearch[0]?W`
-        <mwc-button
+        <app-button
           outlined
-          style="--mdc-typography-button-font-size:1.5em;--mdc-typography-button-font-family: 'Sawarabi Mincho';--mdc-button-horizontal-padding:18px"
           height=46
           @click=${()=>{this.revealed?window.searchManager.show(this.hintSearch[0].word,"words"):this.playAudioHint()}}
-        >${this.revealed?this.hintSearch[0].word:"?"}</mwc-button>
+        >${this.revealed?this.hintSearch[0].word:"?"}</app-button>
       `:J}
 
       ${"Words"==this.domain?W`
@@ -2227,5 +2228,11 @@ header > mwc-icon-button {
     </div>
 
         ${this.optionsManager}
-    `}onMDCTabBarActivated(e){const t=Ka[e.detail.index];this.domain=t,this.initializeData()}initializeData(){switch(this.mode){case"discovery":this.data="Kanji"==this.domain?Xa.slice(0):Ya.slice(0),this.data=this.data.filter((e=>!this.validatedKanjis.includes(e[1])));break;case"practice":this.data=window.collectionsManager.collection.kanjis.map((e=>_kanjis.find((t=>t[1]===e))))}}pickNewElement(){const e=this.elementsLeft;if(0===e.length)return window.toast("You've run out of Kanji 😲 Try to refill from the options",-1),null;window.toast("",0);const t=e[~~(Math.random()*e.length)];return this.hintSearch=window.searchManager.searchData(t[1],["words"]).filter((e=>"not found"!=e.dictionary)).sort((function(e,t){return(t.frequency||-9999)-(e.frequency||-9999)})),setTimeout((()=>{this.playAudioHint()}),200),t}async playAudioHint(){if(this.enableAudioHint){if("Kanji"==this.domain&&!this.hintSearch[0])return;const e="Kanji"==this.domain?this.hintSearch[0].hiragana||this.hintSearch[0].word:this.element[4]||this.element[1];try{await Sr(e)}catch(t){await Ga(e)}}}refillJlpt(e){const t=_kanjis.filter((t=>t[2]==e)).map((e=>e[1]));this.validatedKanjis=this.validatedKanjis.filter((e=>!t.includes(e)))}updated(e){this.shadowRoot.querySelectorAll("mwc-button").forEach((e=>{null!==e.getAttribute("height")&&async function(e,t){await e.updateComplete,e.shadowRoot.querySelector("button").style.height=`${t}px`}(e,parseInt(e.getAttribute("height")))}))}async firstUpdated(e){await this.textfield.updateComplete,this.textfield.shadowRoot.querySelector("i").style.color="transparent"}onCasinoButtonClick(){this.kanjiFrame.conceal(),this.textfield.value="",0==this.candidatesListSize&&this.textfield.focus(),this.element=this.pickNewElement()}onTextFieldPress(e){"Enter"===e.key&&this.submitButton.click()}submit(){if(this.kanjiFrame.revealed)this.onCasinoButtonClick();else{if(this.kanjiFrame.reveal(),this.textfield.value===this.element[1])return this.kanjiFrame.success=!0,this.playSuccessSound(),this.data.splice(this.data.indexOf(this.element),1),this.requestUpdate(),void this.addToValidatedList(this.element[1]);this.playFailureSound(),this.requestUpdate()}}playSuccessSound(){new Audio("./audio/success.mp3")}playFailureSound(){}addToValidatedList(e){this.validatedKanjis.push(e),this.validatedKanjis=[...new Set(this.validatedKanjis)],this.saveValidated()}saveValidated(){localStorage.setItem("kanji-practice:validated",JSON.stringify(this.validatedKanjis))}};Qa.styles=[Ja,mr],r([s()],Qa.prototype,"domain",void 0),r([l({reflect:!0})],Qa.prototype,"mode",void 0),r([s()],Qa.prototype,"element",void 0),r([s()],Qa.prototype,"candidatesListSize",void 0),r([f("kanji-frame")],Qa.prototype,"kanjiFrame",void 0),r([f("mwc-textfield")],Qa.prototype,"textfield",void 0),r([f("#submit-button")],Qa.prototype,"submitButton",void 0),Qa=r([a("app-container")],Qa);
+    `}onMDCTabBarActivated(e){const t=Ka[e.detail.index];this.domain=t,this.initializeData()}initializeData(){switch(this.mode){case"discovery":this.data="Kanji"==this.domain?Xa.slice(0):Ya.slice(0),this.data=this.data.filter((e=>!this.validatedKanjis.includes(e[1])));break;case"practice":this.data=window.collectionsManager.collection.kanjis.map((e=>_kanjis.find((t=>t[1]===e))))}}pickNewElement(){const e=this.elementsLeft;if(0===e.length)return window.toast("You've run out of Kanji 😲 Try to refill from the options",-1),null;window.toast("",0);const t=e[~~(Math.random()*e.length)];return this.hintSearch=window.searchManager.searchData(t[1],["words"]).filter((e=>"not found"!=e.dictionary)).sort((function(e,t){return(t.frequency||-9999)-(e.frequency||-9999)})),setTimeout((()=>{this.playAudioHint()}),200),t}async playAudioHint(){if(this.enableAudioHint){if("Kanji"==this.domain&&!this.hintSearch[0])return;const e="Kanji"==this.domain?this.hintSearch[0].hiragana||this.hintSearch[0].word:this.element[4]||this.element[1];try{await Sr(e)}catch(t){await Ga(e)}}}refillJlpt(e){const t=_kanjis.filter((t=>t[2]==e)).map((e=>e[1]));this.validatedKanjis=this.validatedKanjis.filter((e=>!t.includes(e)))}async firstUpdated(e){await this.textfield.updateComplete,this.textfield.shadowRoot.querySelector("i").style.color="transparent"}onCasinoButtonClick(){this.kanjiFrame.conceal(),this.textfield.value="",0==this.candidatesListSize&&this.textfield.focus(),this.element=this.pickNewElement()}onTextFieldPress(e){"Enter"===e.key&&this.submitButton.click()}submit(){if(this.kanjiFrame.revealed)this.onCasinoButtonClick();else{if(this.kanjiFrame.reveal(),this.textfield.value===this.element[1])return this.kanjiFrame.success=!0,this.playSuccessSound(),this.data.splice(this.data.indexOf(this.element),1),this.requestUpdate(),void this.addToValidatedList(this.element[1]);this.playFailureSound(),this.requestUpdate()}}playSuccessSound(){new Audio("./audio/success.mp3")}playFailureSound(){}addToValidatedList(e){this.validatedKanjis.push(e),this.validatedKanjis=[...new Set(this.validatedKanjis)],this.saveValidated()}saveValidated(){localStorage.setItem("kanji-practice:validated",JSON.stringify(this.validatedKanjis))}};Qa.styles=[Ja,mr],r([s()],Qa.prototype,"domain",void 0),r([l({reflect:!0})],Qa.prototype,"mode",void 0),r([s()],Qa.prototype,"element",void 0),r([s()],Qa.prototype,"candidatesListSize",void 0),r([f("kanji-frame")],Qa.prototype,"kanjiFrame",void 0),r([f("mwc-textfield")],Qa.prototype,"textfield",void 0),r([f("#submit-button")],Qa.prototype,"submitButton",void 0),Qa=r([a("app-container")],Qa);let Za=class extends Nt{async updated(e){await this.updateComplete,this.shadowRoot.querySelector("button").style.height=`${this.height}px`}};Za.styles=Nt.styles.concat(me`
+    :host {
+      --mdc-typography-button-font-size:1.5em;
+      --mdc-typography-button-font-family: 'Sawarabi Mincho';
+      --mdc-button-horizontal-padding:18px;
+    }
+  `),r([l({type:Number})],Za.prototype,"height",void 0),Za=r([a("app-button")],Za);
 //# sourceMappingURL=app.js.map
