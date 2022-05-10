@@ -1,4 +1,4 @@
-export const domains = ['Kanji', 'Words'] as const;
+export const domains = ['kanji', 'words'] as const;
 export type Domain = typeof domains[number];
 export type Mode = 'discovery'|'practice';
 
@@ -6,9 +6,23 @@ export type Row = [id:number, character:string, jlpt:number, meaning1:string, me
 
 export type Collection = {
   name: string;
-  kanjis: string[]; // save the kanji (1 character) rather than all the data. To save space.
+  elements: string[]; // save the kanji (1 character) rather than all the data. To save space.
 }
 
 
 export type JlptWordEntry = [word:string, hiragana: ''|string, english:string]
 export type LemmaEntry = {r:string, f:string, l:string}
+
+
+export type Jlpts = {
+  jlpt1: boolean;
+  jlpt2: boolean;
+  jlpt3: boolean;
+  jlpt4: boolean;
+  jlpt5: boolean;
+}
+
+export type Options = {
+  jlpts: Jlpts,
+  showTextualHint: boolean
+}

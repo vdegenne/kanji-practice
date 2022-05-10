@@ -2,7 +2,7 @@ import { css, html, LitElement, nothing } from 'lit';
 import {customElement, query, queryAll, state} from 'lit/decorators.js';
 import {live} from 'lit/directives/live.js'
 import { Dialog } from '@material/mwc-dialog';
-import { Collection } from './types';
+import { Collection, Domain } from './types';
 import {CollectionsManager} from "./collections-manager";
 import {Checkbox} from "@material/mwc-checkbox";
 import {Formfield} from "@material/mwc-formfield";
@@ -11,10 +11,16 @@ import {Formfield} from "@material/mwc-formfield";
 export class CollectionsSelector extends LitElement {
   public manager!: CollectionsManager;
 
-  @state() kanji!: string;
+  @state() element!: string;
+  @state() domain!: Domain;
 
   @query('mwc-dialog') dialog!: Dialog;
   @queryAll('mwc-checkbox') checkboxes!: Checkbox[]
+
+  constructor (managerInstance: CollectionsManager) {
+    super()
+    this.manager = managerInstance;
+  }
 
   static styles = css`
   header {
@@ -36,21 +42,21 @@ export class CollectionsSelector extends LitElement {
   `
 
   render() {
-    const collections = window.collectionsManager.collections;
+    const collections = this.manager.collections[this.domain]
 
     return html`
     <mwc-dialog>
       <header>
-        <div>Save ${this.kanji} to...</div>
+        <div>Save ${this.element} to...</div>
         <mwc-icon-button icon=close
           dialogAction=close></mwc-icon-button>
       </header>
 
       <div style="margin-top:38px;display: flex;flex-direction: column;">
-      ${this.kanji ? collections.map(c => {
+      ${this.element ? collections.map(c => {
         return html`
         <mwc-formfield label=${c.name}>
-          <mwc-checkbox ?checked=${live(c.kanjis.includes(this.kanji))}
+          <mwc-checkbox ?checked=${live(c.elements.includes(this.element))}
             @change=${e=>{this.onCheckboxClick(c, e)}}></mwc-checkbox>
         </mwc-formfield>
         `
@@ -80,18 +86,19 @@ export class CollectionsSelector extends LitElement {
     const checked = e.target.checked;
     if (checked) {
       // add the kanji to the collection
-      collection.kanjis.push(this.kanji)
+      collection.elements.push(this.element)
     }
     else {
-      collection.kanjis.splice(collection.kanjis.indexOf(this.kanji), 1)
+      collection.elements.splice(collection.elements.indexOf(this.element), 1)
     }
 
-    window.collectionsManager.saveCollections()
+    this.manager.saveCollections()
     window.toast(`Saved`, 2000)
   }
 
-  open (kanji: string) {
-    this.kanji = kanji
+  show (domain: Domain, elementToAdd: string) {
+    this.domain =domain
+    this.element = elementToAdd
     this.dialog.show()
   }
 }

@@ -16,6 +16,11 @@ export class CreateCollectionDialog extends LitElement {
   @query('mwc-dialog') dialog!: Dialog;
   @query('mwc-textfield') textfield!: TextField;
 
+  constructor (collectionsManagerInstance: CollectionsManager) {
+    super()
+    this.manager = collectionsManagerInstance;
+  }
+
   render() {
     return html`
         <mwc-dialog id="create-dialog" heading="Create new Collection">
@@ -43,13 +48,13 @@ export class CreateCollectionDialog extends LitElement {
       window.toast('Cannot be empty');
       return
     }
-    if (this.manager.collections.some(c=>c.name==value)) {
-      window.toast('This collection already exists');
+    if (this.manager.getCollection(this.manager.app.domain, value)) {
+      window.toast('This collection already exists')
       return;
     }
     // yay!
 
-    const collection = this.manager.addCollection(value)
+    const collection = this.manager.addCollection(this.manager.app.domain, value)
     // this.manager.saveCollections()
     this._createResolve(collection)
     this.dialog.close()

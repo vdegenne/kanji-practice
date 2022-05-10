@@ -28,7 +28,9 @@ export const kanjiFrameStyles = css`
 #kanji {
   font-size: 12em;
   /* opacity: 0; */
-  font-family: 'Sawarabi Mincho', serif;
+  /* font-family: 'Sawarabi Mincho', serif; */
+  font-family: 'Noto Serif JP', serif;
+  font-weight: 300;
   width: 100%;
   text-align: center;
   color: white;
@@ -64,6 +66,16 @@ export const kanjiFrameStyles = css`
 
 #meanings {
   padding: 0 48px 24px 24px;
+  cursor: pointer;
+}
+#meanings[hide] {
+  display: initial !important;
+}
+#meanings[hide] span:not(.tag) {
+  background-color: #e0e0e0;
+  color: #e0e0e0;
+  opacity: .7;
+  border-radius: 3px;
 }
 #details-strip {
   display: flex;

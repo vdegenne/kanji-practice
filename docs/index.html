@@ -8,7 +8,8 @@
     <link href="https://fonts.googleapis.com/css?family=Material+Icons&display=block" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&display=swap" rel="stylesheet">
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&display=swap" rel="stylesheet"> -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;600&family=Sawarabi+Mincho&display=swap" rel="stylesheet">
     <link rel="manifest" href="./manifest.json" />
   </head>
   <body>
@@ -24,18 +25,18 @@
       #searchManager {
         z-index: 7;
       }
-      #collectionsSelector {
+      /* #collectionsSelector {
         z-index: 12;
-      }
+      } */
     </style>
 
 
+    <search-manager id=searchManager></search-manager>
     <app-container id=app></app-container>
 <!--    <options-manager id=optionsManager></options-manager>-->
-    <collections-manager id=collectionsManager></collections-manager>
-    <search-manager id=searchManager></search-manager>
+    <!-- <collections-manager id=collectionsManager></collections-manager> -->
 
-    <collections-selector id=collectionsSelector></collections-selector>
+    <!-- <collections-selector id=collectionsSelector></collections-selector> -->
 
     <mwc-snackbar id=snackbar leading></mwc-snackbar>
 
@@ -43,7 +44,7 @@
     <script>
       window.onload = function () {
         // bindings
-        window.collectionsSelector.manager = window.collectionsManager
+        // window.collectionsSelector.manager = window.collectionsManager
         // window.optionsManager.app = window.app
       }
 

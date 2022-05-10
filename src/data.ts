@@ -5,7 +5,7 @@ import { jlpts } from './search-manager.js';
 // import jlpt3 from '../docs/data/jlpt3-words.json'
 // import jlpt2 from '../docs/data/jlpt2-words.json'
 // import jlpt1 from '../docs/data/jlpt1-words.json'
-import { Row } from './types.js';
+import { Domain, Row } from './types.js';
 
 
 export const Kanjis = _kanjis as Row[]
@@ -19,3 +19,8 @@ export const Words = jlpts.flatMap((jlpt, i) => {
 export let data: Row[];
 function resetData () { data = Kanjis.slice(0) }
 resetData()
+
+
+// export function elementsDomain (element): Domain {
+
+// }

@@ -35,4 +35,7 @@ header > div:first-child {
 header > mwc-icon-button {
   --mdc-icon-button-size: 42px;
 }
+kanji-frame {
+  width: 100%;
+}
 `

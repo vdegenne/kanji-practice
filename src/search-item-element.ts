@@ -87,7 +87,13 @@ export class SearchItemElement extends LitElement {
 
         <li divider role=separator padded></li>
         ${this.item.type == 'kanji' ? html`
-        <mwc-list-item graphic="icon" @click=${()=>{window.collectionsSelector.open(this.item.word)}}>
+        <mwc-list-item graphic="icon" @click=${()=>{window.app.collectionsManager.collectionsSelector.show('kanji', this.item.word)}}>
+          <span>Add to collection</span>
+          <mwc-icon slot=graphic>playlist_add</mwc-icon>
+        </mwc-list-item>
+        ` : nothing}
+        ${this.item.type == 'words' ? html`
+        <mwc-list-item graphic="icon" @click=${()=>{window.app.collectionsManager.collectionsSelector.show('words', this.item.word)}}>
           <span>Add to collection</span>
           <mwc-icon slot=graphic>playlist_add</mwc-icon>
         </mwc-list-item>

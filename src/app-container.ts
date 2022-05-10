@@ -10,19 +10,20 @@ import { SearchItem } from './search-manager.js';
 import { OptionsManager } from './options-manager.js';
 import { KanjiFrame } from './kanji-frame.js';
 import { sharedStyles } from './styles/sharedStyles.js';
-import { changeButtonHeight, playJapaneseAudio } from './util.js';
+import { playJapaneseAudio } from './util.js';
+import { CollectionsManager } from './collections-manager.js';
 
 @customElement('app-container')
 export class AppContainer extends LitElement {
 
-  @state() domain: Domain = 'Kanji'
+  @state() domain: Domain = 'kanji'
 
   /** mode */
   @property({reflect:true}) public mode: Mode = 'discovery';
   /** data */
   private data: Row[] = []
   /** selected kanji */
-  @state() element: Row|null;
+  @state() row!: Row|null;
   /** collections */
   // public collections: Collection[];
 
@@ -34,34 +35,12 @@ export class AppContainer extends LitElement {
 
   private validatedKanjis: string[] = []
 
-  private optionsManager: OptionsManager = new OptionsManager(this);
+  public collectionsManager: CollectionsManager = new CollectionsManager(this);
+  public optionsManager: OptionsManager = new OptionsManager(this);
+  public kanjiFrame: KanjiFrame = new KanjiFrame(this)
 
 
-  /**
-   * Returns the Kanjis overall list jlpt-filtered
-   */
-  get elementsLeft () {
-    const activeJlpts = Object.entries(this.optionsManager.jlpts)
-      .filter(([j, b]) => b)
-      .map(([j, b]) => j)
-
-    return this.data.filter(kanji => activeJlpts.includes(`jlpt${kanji[2]}`))
-  }
-
-  getRemainingOverTotal (jlpt: number) {
-    const set = (this.domain=='Kanji') ? Kanjis : Words;
-    const total = set.filter(k=>k[2]==jlpt).map(k=>k[1])
-    // total - (how much of the validated are in the total ?)
-    const validated = this.validatedKanjis.filter(k=>total.includes(k))
-    return `${total.length - validated.length}/${total.length}`
-  }
-
-  get revealed () {
-    return this.kanjiFrame?.revealed;
-  }
-
-
-  @query('kanji-frame') kanjiFrame!: KanjiFrame;
+  // @query('kanji-frame') kanjiFrame!: KanjiFrame;
   @query('mwc-textfield') textfield!: TextField;
   @query('#submit-button') submitButton!: Button;
   // @query('options-manager') optionsManager!: OptionsManager;
@@ -71,15 +50,23 @@ export class AppContainer extends LitElement {
     super()
 
     // Mode of the interface (based on the url)
-    if (window.collectionsManager.selectedCollection) {
+    if (this.collectionsManager.URLCollectionName) {
       this.mode = 'practice'
     }
 
-    // Load the collections
-    // this.collections = localStorage.getItem('kanji-practice:collections')
-    //   ? JSON.parse(localStorage.getItem('kanji-practice:collections')!)
-    //   : /* default */ [{name: 'collection 1', kanjis: []}];
+    if (this.mode == 'practice') {
+      // @TODO: Load the correct domain (the domain should also be in the URL)
 
+    }
+    else {
+      const domain = localStorage.getItem('kanji-practice:domain')
+      if (domain) {
+        this.domain = domain as Domain
+      }
+      else {
+        this.domain = 'kanji' // default
+      }
+    }
 
     // Load the validated kanjis
     this.validatedKanjis = (localStorage.getItem('kanji-practice:validated'))
@@ -87,18 +74,21 @@ export class AppContainer extends LitElement {
       : []
 
     // Initialize the data
-    this.initializeData()
+    // this.initializeData()
 
     // Pick a Kanji
-    this.element = this.pickNewElement()
+    // this.row = this.pickNewRow()
   }
 
   static styles = [mainStyles, sharedStyles];
 
   render () {
+    this.kanjiFrame.row = this.row
+
     return html`
     <mwc-tab-bar style="width:100%"
-        @MDCTabBar:activated=${e=>{this.onMDCTabBarActivated(e)}}>
+        @MDCTabBar:activated=${e=>{this.onMDCTabBarActivated(e)}}
+        activeIndex=${domains.indexOf(this.domain)}>
       <mwc-tab label=kanji></mwc-tab>
       <mwc-tab label=words></mwc-tab>
     </mwc-tab-bar>
@@ -106,18 +96,19 @@ export class AppContainer extends LitElement {
     <header>
       <div style="display:flex;align-items:center">
         <mwc-icon style="margin-right:8px">${this.mode === 'discovery' ? 'remove_red_eye' : 'repeat'}</mwc-icon>
-        <span>${this.mode === 'discovery' ? 'discovery' : window.collectionsManager.selectedCollection}</span>
+        <span>${this.mode === 'discovery' ? 'discovery' : window.collectionsManager.URLCollectionName}</span>
       </div>
       <div style="font-size: 0.8em;color: #bdbdbd;">kanji left: ${this.elementsLeft.length}</div>
       <mwc-icon-button icon=inventory
-        @click=${()=>{window.collectionsManager.show()}}></mwc-icon-button>
+        @click=${()=>{this.collectionsManager.show()}}></mwc-icon-button>
       <mwc-icon-button icon=search
         @click=${()=>{window.searchManager.show()}}></mwc-icon-button>
       <mwc-icon-button icon=settings
-        @click=${()=>this.optionsManager.open()}></mwc-icon-button>
+        @click=${()=>this.optionsManager.show()}></mwc-icon-button>
     </header>
 
-    <kanji-frame .kanji=${this.element} style="width:-webkit-fill-available"></kanji-frame>
+    ${this.kanjiFrame}
+    <!-- <kanji-frame .app=${this} .row=${this.row} style="width:-webkit-fill-available"></kanji-frame> -->
 
     <!-- <mwc-button unelevated icon="casino"
       style="margin:12px 0"
@@ -138,7 +129,7 @@ export class AppContainer extends LitElement {
           @click=${()=>this.submit()}></mwc-icon-button>
 
         <!-- wrong answer search button -->
-        ${this.kanjiFrame && this.kanjiFrame.revealed && this.textfield.value.trim() !== '' && this.textfield.value.trim() !== this.element![1] ? html`
+        ${this.kanjiFrame && this.kanjiFrame.revealed && this.textfield.value.trim() !== '' && this.textfield.value.trim() !== this.row![1] ? html`
         <mwc-icon-button
           style="position:absolute;right:-55px;top:7px;background-color:#0000000a;border-radius:50%"
           @click=${() => { window.searchManager.show(this.textfield.value, 'kanji')} }>${this.textfield.value}</mwc-icon-button>
@@ -146,7 +137,7 @@ export class AppContainer extends LitElement {
 
       </div>
 
-      ${this.domain=='Kanji' && this.hintSearch[0] ? html`
+      ${this.domain=='kanji' && this.hintSearch[0] ? html`
         <app-button
           outlined
           height=46
@@ -162,13 +153,14 @@ export class AppContainer extends LitElement {
         >${this.revealed ? this.hintSearch[0].word : '?'}</app-button>
       ` : nothing}
 
-      ${this.domain=='Words' ? html`
+      ${this.domain=='words' ? html`
       <mwc-icon-button icon=volume_up
         @click=${()=>{this.playAudioHint()}}></mwc-icon-button>
       ` : nothing}
     </div>
 
-    <candidates-row size=${this.candidatesListSize} answer=${this.element![1]}
+    ${this.row ? html`
+    <candidates-row size=${this.candidatesListSize} answer=${this.row[1]}
         @candidate-click=${e=>{
           if (!this.kanjiFrame.revealed) {
             this.textfield.value = e.detail.candidate;
@@ -177,7 +169,9 @@ export class AppContainer extends LitElement {
           else {
             window.searchManager.show(e.detail.candidate, 'kanji')
           }
-        }}></candidates-row>
+        }}
+    ></candidates-row>
+    ` : nothing}
 
     <!-- <div style="height:100px;margin:50px 0;padding:50px 0;"></div> -->
 
@@ -186,6 +180,7 @@ export class AppContainer extends LitElement {
           @click=${()=>{this.submit()}}>next</mwc-button>
     </div>
 
+        ${this.collectionsManager}
         ${this.optionsManager}
     `
   }
@@ -196,14 +191,18 @@ export class AppContainer extends LitElement {
 
     // initialize the new data
     this.initializeData()
-  }
 
+    this.reset()
+
+    // save the domain
+    this.saveDomain()
+  }
 
   initializeData () {
     switch (this.mode) {
       case 'discovery':
         // this.data = _kanjis as Kanji[];
-        this.data = this.domain=='Kanji' ? Kanjis.slice(0) : Words.slice(0);
+        this.data = this.domain=='kanji' ? Kanjis.slice(0) : Words.slice(0);
         // Remove the validated kanji from the list
         this.data = this.data.filter(k=>!this.validatedKanjis.includes(k[1]))
         break
@@ -214,7 +213,7 @@ export class AppContainer extends LitElement {
     }
   }
 
-  pickNewElement (): Row|null {
+  pickNewRow (): Row|null {
     const elementsLeft = this.elementsLeft
 
     if (elementsLeft.length === 0) {
@@ -245,15 +244,20 @@ export class AppContainer extends LitElement {
     return element
   }
 
+  changeDomain(domain: Domain) {
+    this.domain = domain
+    this.reset()
+  }
+
   async playAudioHint() {
     if (this.enableAudioHint) {
-      if (this.domain=='Kanji' && !this.hintSearch[0]) {
+      if (this.domain=='kanji' && !this.hintSearch[0]) {
         return
       }
 
-      const word = (this.domain == 'Kanji')
+      const word = (this.domain == 'kanji')
         ? this.hintSearch[0].hiragana || this.hintSearch[0].word
-        : this.element![4] || this.element![1];
+        : this.row![4] || this.row![1];
 
       try {
         await playJapaneseAudio(word)
@@ -264,6 +268,29 @@ export class AppContainer extends LitElement {
       }
     }
 
+  }
+
+  /**
+   * Returns the Kanjis overall list jlpt-filtered
+   */
+  get elementsLeft () {
+    const activeJlpts = Object.entries(this.optionsManager.options.jlpts)
+      .filter(([j, b]) => b)
+      .map(([j, b]) => j)
+
+    return this.data.filter(kanji => activeJlpts.includes(`jlpt${kanji[2]}`))
+  }
+
+  getRemainingOverTotal (jlpt: number) {
+    const set = (this.domain=='kanji') ? Kanjis : Words;
+    const total = set.filter(k=>k[2]==jlpt).map(k=>k[1])
+    // total - (how much of the validated are in the total ?)
+    const validated = this.validatedKanjis.filter(k=>total.includes(k))
+    return `${total.length - validated.length}/${total.length}`
+  }
+
+  get revealed () {
+    return this.kanjiFrame?.revealed;
   }
 
   refillJlpt (jlpt: number) {
@@ -286,8 +313,10 @@ export class AppContainer extends LitElement {
     this.textfield.value =''
     if (this.candidatesListSize == 0)
       this.textfield.focus()
-    this.element = this.pickNewElement()
+    this.row = this.pickNewRow()
   }
+  public reset = this.onCasinoButtonClick
+
 
   onTextFieldPress (e) {
     if (e.key === 'Enter') {
@@ -301,13 +330,13 @@ export class AppContainer extends LitElement {
     if (!this.kanjiFrame.revealed) {
       this.kanjiFrame.reveal()
       /* -- SUCCESS -- */
-      if (this.textfield.value === this.element![1]) {
+      if (this.textfield.value === this.row![1]) {
         this.kanjiFrame.success = true
         this.playSuccessSound()
         // window.toast('CORRECT ! :)')
-        this.data.splice(this.data.indexOf(this.element!), 1)
+        this.data.splice(this.data.indexOf(this.row!), 1)
         this.requestUpdate()
-        this.addToValidatedList(this.element![1])
+        this.addToValidatedList(this.row![1])
         // this.validatedKanjis
         return
       }
@@ -340,5 +369,8 @@ export class AppContainer extends LitElement {
 
   saveValidated () {
     localStorage.setItem('kanji-practice:validated', JSON.stringify(this.validatedKanjis))
+  }
+  saveDomain() {
+    localStorage.setItem('kanji-practice:domain', this.domain)
   }
 }

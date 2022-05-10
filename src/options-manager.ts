@@ -3,14 +3,9 @@ import {css, html, LitElement, PropertyValues} from 'lit';
 import { customElement, query } from 'lit/decorators.js';
 import {Slider} from '@material/mwc-slider'
 import { AppContainer } from './app-container';
+import { Jlpts, Options } from './types';
+import { Checkbox } from '@material/mwc-checkbox';
 
-export type Jlpts = {
-  jlpt1: boolean;
-  jlpt2: boolean;
-  jlpt3: boolean;
-  jlpt4: boolean;
-  jlpt5: boolean;
-}
 
 @customElement('options-manager')
 export class OptionsManager extends LitElement {
@@ -18,20 +13,22 @@ export class OptionsManager extends LitElement {
 
   @query('mwc-dialog') dialog!: Dialog;
 
-  public jlpts: Jlpts;
+  options!: Options;
+  // public jlpts!: Jlpts;
 
-  constructor (app: AppContainer) {
+  constructor (appInstance: AppContainer) {
     super()
-    this.app = app
-    this.jlpts = localStorage.getItem('kanji-practice:options')
-      ? JSON.parse(localStorage.getItem('kanji-practice:options')!)
-      : { /* default */
-          jlpt1: false,
-          jlpt2: false,
-          jlpt3: false,
-          jlpt4: true,
-          jlpt5: false
-        }
+    this.app = appInstance
+    // this.jlpts = localStorage.getItem('kanji-practice:options')
+    //   ? JSON.parse(localStorage.getItem('kanji-practice:options')!)
+    //   : { /* default */
+    //       jlpt1: false,
+    //       jlpt2: false,
+    //       jlpt3: false,
+    //       jlpt4: true,
+    //       jlpt5: false
+    //     }
+    this.loadOptions()
   }
 
   static styles = css`
@@ -59,8 +56,8 @@ export class OptionsManager extends LitElement {
           return html`
           <div class="jlpt-row">
               <mwc-formfield label="JLPT${n}">
-                  <mwc-checkbox ?checked=${this.jlpts[`jlpt${n}`]}
-                                @change=${e=>this.jlpts[`jlpt${n}`] = e.target.checked}></mwc-checkbox>
+                  <mwc-checkbox ?checked=${this.options.jlpts[`jlpt${n}`]}
+                                @change=${e=>this.options.jlpts[`jlpt${n}`] = e.target.checked}></mwc-checkbox>
               </mwc-formfield>
               <span>${this.app.getRemainingOverTotal(n)}</span>
               <mwc-icon-button icon="local_drink" title="refill"
@@ -76,54 +73,21 @@ export class OptionsManager extends LitElement {
           </div>
           `
         })}
-      <!-- <div class="jlpt-row">
-        <mwc-formfield label="JLPT4">
-          <mwc-checkbox ?checked=${this.jlpts.jlpt4}
-            @change=${e=>this.jlpts.jlpt4 = e.target.checked}></mwc-checkbox>
-        </mwc-formfield>
-          <span>${this.app.getRemainingOverTotal(4)}</span>
-        <mwc-icon-button icon="local_drink" title="refill"
-          @click=${()=>{}}></mwc-icon-button>
-      </div>
-      <div class="jlpt-row">
-        <mwc-formfield label="JLPT3">
-          <mwc-checkbox ?checked=${this.jlpts.jlpt3}
-            @change=${e=>this.jlpts.jlpt3 = e.target.checked}></mwc-checkbox>
-        </mwc-formfield>
-          <span>${this.app.getRemainingOverTotal(3)}</span>
-        <mwc-icon-button icon="local_drink"></mwc-icon-button>
-      </div>
-      <div class="jlpt-row">
-        <mwc-formfield label="JLPT2">
-          <mwc-checkbox ?checked=${this.jlpts.jlpt2}
-            @change=${e=>this.jlpts.jlpt2 = e.target.checked}></mwc-checkbox>
-        </mwc-formfield>
-          <span>${this.app.getRemainingOverTotal(2)}</span>
-        <mwc-icon-button icon="local_drink"></mwc-icon-button>
-      </div>
-      <div class="jlpt-row">
-        <mwc-formfield label="JLPT1">
-          <mwc-checkbox ?checked=${this.jlpts.jlpt1}
-            @change=${e=>this.jlpts.jlpt1 = e.target.checked}></mwc-checkbox>
-        </mwc-formfield>
-          <span>${this.app.getRemainingOverTotal(1)}</span>
-        <mwc-icon-button icon="local_drink"></mwc-icon-button>
-      </div> -->
 
         <!-- AUDIO OPTIONS -->
         <p>Hint</p>
-        <mwc-formfield label="play audio word hint">
+        <mwc-formfield label="Play audio word hint">
             <mwc-checkbox ?checked=${this.app.enableAudioHint}></mwc-checkbox>
         </mwc-formfield>
         <br>
-        <mwc-formfield label="randomized word hint" style="margin-left:48px;">
+        <mwc-formfield label="Randomized word hint (kanji only)" style="margin-left:48px;">
             <mwc-checkbox ?checked=${this.app.enableAudioHint}></mwc-checkbox>
         </mwc-formfield>
         <br>
-        <mwc-formfield label="show textual hint" style="margin-left:48px;">
+        <mwc-formfield label="Show textual hint" style="margin-left:48px;">
             <mwc-checkbox
-              checked
-              @change=${e=>{this.forwardTextualHintToValue(e.target.checked)}}></mwc-checkbox>
+              ?checked=${this.options.showTextualHint}
+              @change=${()=>{this.forwardShowTextualHint()}}></mwc-checkbox>
         </mwc-formfield>
 
         <!-- Candidates List -->
@@ -148,6 +112,10 @@ export class OptionsManager extends LitElement {
     `
   }
 
+  get showTextualHint () {
+    return (this.shadowRoot!.querySelector('mwc-formfield[label="Show textual hint"]')!.firstElementChild as Checkbox).checked
+  }
+
   protected firstUpdated(_changedProperties: PropertyValues) {
     this.dialog.addEventListener('opened', ()=>{
       ;(this.shadowRoot!.querySelector('mwc-slider') as Slider).value = this.app.candidatesListSize
@@ -160,16 +128,12 @@ export class OptionsManager extends LitElement {
   }
 
   onOptionsChanged () {
-    this.save()
+    this.saveOptions()
     // window.app.kanji = window.app.pickNewKanji()
     // window.app.requestUpdate()
   }
 
-  save () {
-    localStorage.setItem('kanji-practice:options', JSON.stringify(this.jlpts))
-  }
-
-  open() {
+  show() {
     this.dialog.show()
   }
 
@@ -182,7 +146,47 @@ export class OptionsManager extends LitElement {
     // should pick a new kanji if ran out of kanjis
   }
 
-  forwardTextualHintToValue (value: boolean) {
-    this.app.kanjiFrame.showTextualHint = value
+  forwardShowTextualHint () {
+    // this.app.kanjiFrame.showTextualHint = value
+    this.options.showTextualHint = this.showTextualHint
+    this.app.kanjiFrame.showText = this.options.showTextualHint
+  }
+
+  loadOptions () {
+    let options: Options;
+    if (localStorage.getItem('kanji-practice:options') !== null) {
+      options = JSON.parse(localStorage.getItem('kanji-practice:options')!) as Options
+      // ensure that the old version data structure is converted
+      if ('jlpt1' in options) {
+        options = {
+          jlpts: <unknown>options as Jlpts,
+          showTextualHint: true
+        }
+      }
+    }
+    else {
+      // default
+      options = {
+        jlpts: {
+          jlpt5: true,
+          jlpt4: false,
+          jlpt3: false,
+          jlpt2: false,
+          jlpt1: false,
+        },
+        showTextualHint: true
+      }
+    }
+
+    this.options = options
+    // this.forwardShowTextualHint()
+  }
+
+  saveOptions () {
+    const options: Options = {
+      jlpts: this.options.jlpts,
+      showTextualHint: this.showTextualHint
+    }
+    localStorage.setItem('kanji-practice:options', JSON.stringify(options))
   }
 }
