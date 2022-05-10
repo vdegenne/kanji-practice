@@ -39,7 +39,6 @@ export class AppContainer extends LitElement {
   public optionsManager: OptionsManager = new OptionsManager(this);
   public kanjiFrame: KanjiFrame = new KanjiFrame(this)
 
-
   // @query('kanji-frame') kanjiFrame!: KanjiFrame;
   @query('mwc-textfield') textfield!: TextField;
   @query('#submit-button') submitButton!: Button;
@@ -116,7 +115,7 @@ export class AppContainer extends LitElement {
 
     <div style="width:100%;display:flex;align-items: center;justify-content:space-between">
       <!-- TEXTFIELD -->
-      <div style="display:inline-block;position:relative;margin-top:18px;">
+      <div style="display:inline-block;position:relative;margin-top:18px;max-width:158px">
         <mwc-textfield label="answer"
           @keypress=${(e) => {this.onTextFieldPress(e)}  }
           helper="input and press enter"

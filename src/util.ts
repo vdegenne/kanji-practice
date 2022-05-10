@@ -33,27 +33,40 @@ export function googleImageSearch (word) {
 //   window.open(`https://www.mdbg.net/chinese/dictionary?page=worddict&wdrst=0&wdqb=${encodeURIComponent(word)}`, '_blank")
 // }
 
-const audioMap: {[word: string]: HTMLAudioElement} = {}
+const audioMap: {[word: string]: HTMLAudioElement|Blob} = {}
 
 export async function playJapaneseAudio (word) {
   let audio: HTMLAudioElement
   if (word in audioMap) {
-    audio = audioMap[word]
+    if (audioMap[word] instanceof Blob) {
+      audio = createAudioElementFromBlob(audioMap[word] as Blob)
+    }
+    else {
+      audio = audioMap[word] as HTMLAudioElement
+    }
+    // audio = audioMap[word]
   }
   else {
-    audio = new Audio(`https://assiets.vdegenne.com/data/japanese/audio/${encodeURIComponent(word)}`)
+    const response = await fetch(`https://assiets.vdegenne.com/data/japanese/audio/${encodeURIComponent(word)}`)
+    const blob = audioMap[word] = await response.blob()
+    audio = createAudioElementFromBlob(blob)
+    // audio = new Audio(`https://assiets.vdegenne.com/data/japanese/audio/${encodeURIComponent(word)}`)
   }
 
   return new Promise((resolve, reject) => {
     audio.onerror = () => reject()
     audio.onended = () => {
       resolve(audio)
-      if (!(word in audioMap)) {
-        audioMap[word] = audio
-      }
+      // if (!(word in audioMap)) {
+      //   audioMap[word] = audio
+      // }
     }
     audio.play()
   })
+}
+
+export function createAudioElementFromBlob (blob: Blob) {
+  return new Audio(URL.createObjectURL(blob))
 }
 
 

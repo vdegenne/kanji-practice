@@ -48,13 +48,13 @@ export class CreateCollectionDialog extends LitElement {
       window.toast('Cannot be empty');
       return
     }
-    if (this.manager.getCollection(this.manager.app.domain, value)) {
+    if (this.manager.getCollection(this.manager.collectionsSelector.domain, value)) {
       window.toast('This collection already exists')
       return;
     }
     // yay!
 
-    const collection = this.manager.addCollection(this.manager.app.domain, value)
+    const collection = this.manager.addCollection(this.manager.collectionsSelector.domain, value)
     // this.manager.saveCollections()
     this._createResolve(collection)
     this.dialog.close()

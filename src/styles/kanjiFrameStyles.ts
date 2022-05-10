@@ -72,9 +72,9 @@ export const kanjiFrameStyles = css`
   display: initial !important;
 }
 #meanings[hide] span:not(.tag) {
-  background-color: #e0e0e0;
-  color: #e0e0e0;
-  opacity: .7;
+  background-color: white;
+  color: white;
+  opacity: .6;
   border-radius: 3px;
 }
 #details-strip {
