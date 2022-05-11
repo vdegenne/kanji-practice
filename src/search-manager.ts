@@ -49,6 +49,12 @@ export const jlpts: JlptWordEntry[][] = [
   jlpt1 as JlptWordEntry[],
   // [],
 ]
+let j = 0
+export const Words = jlpts.flatMap((jlpt, i) => {
+  return jlpt.map((word) => {
+    return [j++, word[0], 5-i, word[2], word[1]]
+  })
+}) as Row[]
 // const data: {[dictionary:string]: JlptWordEntry[]|LemmaEntry[]} = {
 //   'jlpt4': jlpt4 as JlptWordEntry[]
 // }
@@ -64,6 +70,7 @@ export type SearchItem = {
   english?: string;
   frequency?: number;
   exactSearch?: boolean;
+  rowId: number|null;
 }
 const views = ['words', 'kanji'] as const
 declare type ViewType = typeof views[number];
@@ -275,34 +282,51 @@ export class SearchManager extends LitElement {
 
     /** Words search */
     if (types.includes('words')) {
-      jlpts.forEach((entries, n) => {
-        const result: SearchItem[] =
-          jlpts[n]
-            .filter(e => {
-              return e[0].includes(query!)
-                || (e[1] && e[1].includes(query!))
-                || e[2].includes(query!)
-            })
-            .map(r => {
-              return this.attachFrequencyValue({
-                type: 'words',
-                dictionary: `jlpt${5 - n}` as Dictionaries,
-                word: r[0],
-                english: r[2],
-                hiragana: r[1] || undefined,
-                exactSearch: r[0] === query
-              })
-            });
-        searchResult.push(...result)
-      });
+      Words.forEach(row => {
+        if (row[1].includes(query)
+          || (row[4] && row[4].includes(query))
+          || row[3].includes(query)) {
+            searchResult.push(this.attachFrequencyValue({
+              type: 'words',
+              dictionary: `jlpt${row[2]}` as Dictionaries,
+              word: row[1],
+              english: row[3],
+              hiragana: row[4],
+              exactSearch: row[1] === query,
+              rowId: row[0]
+            }))
+          }
+      })
+      // jlpts.forEach((entries, n) => {
+      //   const result: SearchItem[] =
+      //     jlpts[n]
+      //       .filter(e => {
+      //         return e[0].includes(query!)
+      //           || (e[1] && e[1].includes(query!))
+      //           || e[2].includes(query!)
+      //       })
+      //       .map(r => {
+      //         return this.attachFrequencyValue({
+      //           type: 'words',
+      //           dictionary: `jlpt${5 - n}` as Dictionaries,
+      //           word: r[0],
+      //           english: r[2],
+      //           hiragana: r[1] || undefined,
+      //           exactSearch: r[0] === query,
+      //           rowId: r[0]
+      //         })
+      //       });
+      //   searchResult.push(...result)
+      // });
       // add the exact search if not found
-      const exactSearch = searchResult.find(i => i.word === query);
-      if (!exactSearch) {
+      const exactSearch = searchResult.some(i => i.word === query);
+      if (!searchResult.some(i=>i.exactSearch)) {
         searchResult.unshift({
           type: 'words',
           dictionary: 'not found',
           word: query,
-          exactSearch: true
+          exactSearch: true,
+          rowId: null
         })
       }
     }
@@ -324,7 +348,8 @@ export class SearchManager extends LitElement {
               dictionary: `jlpt${kanji[2]}` as Dictionaries,
               word: kanji[1],
               english: `${kanji[3]}//${kanji[4]}`,
-              exactSearch: kanji[1] === query
+              exactSearch: kanji[1] === query,
+              rowId: kanji[0]
             }))
           } else {
             // if a kanji was not found we include the result in the list
@@ -333,7 +358,8 @@ export class SearchManager extends LitElement {
               type: 'kanji',
               dictionary: 'not found',
               word: character,
-              exactSearch: character === query
+              exactSearch: character === query,
+              rowId: null
             })
           }
         }
@@ -349,7 +375,8 @@ export class SearchManager extends LitElement {
               type: 'kanji',
               dictionary: `jlpt${kanji[2]}` as Dictionaries,
               word: kanji[1],
-              english: `${kanji[3]}//${kanji[4]}`
+              english: `${kanji[3]}//${kanji[4]}`,
+              rowId: kanji[0]
             }))
         )
       }

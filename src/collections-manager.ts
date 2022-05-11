@@ -6,6 +6,8 @@ import { Collection, Domain } from './types';
 import {CreateCollectionDialog} from "./create-collection-dialog";
 import { AppContainer } from './app-container';
 import { CollectionsSelector } from './collections-selector';
+import { CollectionViewer } from './collection-viewer';
+import { Kanjis, Words } from './data';
 
 declare type Collections = { kanji: Collection[], words: Collection[] };
 
@@ -25,6 +27,7 @@ export class CollectionsManager extends LitElement {
   collectionsSelector: CollectionsSelector;
   // @query('create-collection-dialog')
   createCollectionDialog: CreateCollectionDialog;
+  collectionViewer: CollectionViewer;
 
 
   constructor (appInstance: AppContainer) {
@@ -38,6 +41,23 @@ export class CollectionsManager extends LitElement {
           words: []
         }
       }
+      // also for old versions, ensure that all elements are ids (numbers)
+      collections.kanji.forEach(c=> {
+        c.elements = c.elements.map(i=> {
+          if (typeof i == 'string') {
+            return Kanjis.find(r=>r[1]==i)![0]
+          }
+          return i
+        })
+      })
+      collections.words.forEach(c=> {
+        c.elements = c.elements.map(i=> {
+          if (typeof i == 'string') {
+            return Words.find(r=>r[1]==i)![0]
+          }
+          return i
+        })
+      })
       this.collections = collections
     }
     else {
@@ -50,6 +70,7 @@ export class CollectionsManager extends LitElement {
     this.app = appInstance;
     this.collectionsSelector = new CollectionsSelector(this)
     this.createCollectionDialog = new CreateCollectionDialog(this)
+    this.collectionViewer = new CollectionViewer()
     // this.coll
   }
 
@@ -66,11 +87,14 @@ export class CollectionsManager extends LitElement {
     <mwc-dialog heading="Collections">
      ${this.collections[this.app.domain].map(c => {
        return html`
-           <div class="collection-row">
-               <span>${c.name} (${c.elements.length})</span>
-               <mwc-icon-button icon=replay
-                    @click=${()=>{window.open(`./?collection=${encodeURIComponent(c.name)}`)}}></mwc-icon-button>
-           </div>
+          <div class="collection-row">
+            <span>${c.name} (${c.elements.length})</span>
+            <mwc-icon-button icon=remove_red_eye
+              @click=${()=>{this.collectionViewer.show(c)}}
+            ></mwc-icon-button>
+            <mwc-icon-button icon=replay
+              @click=${()=>{window.open(`./?collection=${encodeURIComponent(c.name)}`)}}></mwc-icon-button>
+          </div>
        `
      })}
         <mwc-button outlined icon="add" slot="primaryAction"
@@ -82,6 +106,8 @@ export class CollectionsManager extends LitElement {
 
     <!-- CREATE COLLECTION DIALOG -->
     ${this.createCollectionDialog}
+
+    ${this.collectionViewer}
     `
   }
 
@@ -96,10 +122,10 @@ export class CollectionsManager extends LitElement {
     return (this.collections[domain] as Collection[]).find(c=>c.name==collectionName)
   }
 
-  IsElementInACollection(domain: Domain, element: string) {
+  IsElementInACollection(domain: Domain, id: number) {
     // console.log(this.collections)
     // console.log(this.collections.some(c=>c.kanjis.includes(character)))
-    return this.collections[domain].some(c => c.elements.includes(element));
+    return this.collections[domain].some(c => c.elements.includes(id));
   }
 
   addCollection(domain: Domain, name: string) {

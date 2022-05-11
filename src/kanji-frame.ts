@@ -2,6 +2,7 @@ import { Menu } from '@material/mwc-menu';
 import { css, html, LitElement, nothing, PropertyValueMap } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { AppContainer } from './app-container';
+import { getRowFromId } from './data';
 import { kanjiFrameStyles } from './styles/kanjiFrameStyles';
 import { sharedStyles } from './styles/sharedStyles';
 import { Row } from './types';
@@ -64,8 +65,8 @@ export class KanjiFrame extends LitElement {
 
     <div id=details-strip ?hide=${!this.revealed}>
       <mwc-icon-button icon="playlist_add"
-        ?highlight=${this.app.collectionsManager.IsElementInACollection(this.app.domain, this.row[1])}
-        @click=${()=>{this.app.collectionsManager.collectionsSelector.show(this.app.domain, this.row![1])}}></mwc-icon-button>
+        ?highlight=${this.app.collectionsManager.IsElementInACollection(this.app.domain, this.row![0])}
+        @click=${()=>{this.app.collectionsManager.collectionsSelector.show(this.app.domain, getRowFromId(this.app.domain, this.row![0]))}}></mwc-icon-button>
       <mwc-icon-button icon=search
         @click=${()=>{window.searchManager.show(this.row![1], 'words')}}></mwc-icon-button>
       <mwc-icon-button icon=more_horiz

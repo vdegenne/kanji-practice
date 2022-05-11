@@ -2,7 +2,7 @@ import { css, html, LitElement, nothing } from 'lit';
 import {customElement, query, queryAll, state} from 'lit/decorators.js';
 import {live} from 'lit/directives/live.js'
 import { Dialog } from '@material/mwc-dialog';
-import { Collection, Domain } from './types';
+import { Collection, Domain, Row } from './types';
 import {CollectionsManager} from "./collections-manager";
 import {Checkbox} from "@material/mwc-checkbox";
 import {Formfield} from "@material/mwc-formfield";
@@ -11,7 +11,7 @@ import {Formfield} from "@material/mwc-formfield";
 export class CollectionsSelector extends LitElement {
   public manager!: CollectionsManager;
 
-  @state() element!: string;
+  @state() row!: Row;
   @state() domain!: Domain;
 
   @query('mwc-dialog') dialog!: Dialog;
@@ -47,16 +47,16 @@ export class CollectionsSelector extends LitElement {
     return html`
     <mwc-dialog>
       <header>
-        <div>Save ${this.element} to...</div>
+        <div>Save ${this.row ? this.row[1] : ''} to...</div>
         <mwc-icon-button icon=close
           dialogAction=close></mwc-icon-button>
       </header>
 
       <div style="margin-top:38px;display: flex;flex-direction: column;">
-      ${this.element ? collections.map(c => {
+      ${this.row ? collections.map(c => {
         return html`
         <mwc-formfield label=${c.name}>
-          <mwc-checkbox ?checked=${live(c.elements.includes(this.element))}
+          <mwc-checkbox ?checked=${live(c.elements.includes(this.row[0]))}
             @change=${e=>{this.onCheckboxClick(c, e)}}></mwc-checkbox>
         </mwc-formfield>
         `
@@ -86,19 +86,20 @@ export class CollectionsSelector extends LitElement {
     const checked = e.target.checked;
     if (checked) {
       // add the kanji to the collection
-      collection.elements.push(this.element)
+      collection.elements.push(this.row[0])
     }
     else {
-      collection.elements.splice(collection.elements.indexOf(this.element), 1)
+      collection.elements.splice(collection.elements.indexOf(this.row[0]), 1)
     }
 
     this.manager.saveCollections()
     window.toast(`Saved`, 2000)
   }
 
-  show (domain: Domain, elementToAdd: string) {
+  show (domain: Domain, rowToAdd: Row) {
+    console.log(rowToAdd)
     this.domain =domain
-    this.element = elementToAdd
+    this.row = rowToAdd
     this.dialog.show()
   }
 }

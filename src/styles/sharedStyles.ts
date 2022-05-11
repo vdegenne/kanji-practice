@@ -33,4 +33,9 @@ export const sharedStyles = css`
   border: 1px solid #f44336;
   color: #f44336;
 }
+
+.jp-font {
+  font-family: 'Noto Serif JP', serif;
+  font-weight: 300;
+}
 `

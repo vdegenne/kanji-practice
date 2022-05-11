@@ -18,6 +18,7 @@ import './options-manager'
 import './app-container'
 import './app-button'
 import './create-collection-dialog'
+import './collection-viewer'
 
 /* global */
 import { CollectionsSelector } from './collections-selector'

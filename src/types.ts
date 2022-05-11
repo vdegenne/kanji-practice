@@ -6,7 +6,7 @@ export type Row = [id:number, character:string, jlpt:number, meaning1:string, me
 
 export type Collection = {
   name: string;
-  elements: string[]; // save the kanji (1 character) rather than all the data. To save space.
+  elements: number[]; // save ids
 }
 
 
