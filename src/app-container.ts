@@ -68,9 +68,10 @@ export class AppContainer extends LitElement {
     }
 
     // Load the validated kanjis
-    this.validatedKanjis = (localStorage.getItem('kanji-practice:validated'))
-      ? JSON.parse(localStorage.getItem('kanji-practice:validated')!.toString())
-      : []
+    // this.validatedKanjis = (localStorage.getItem('kanji-practice:validated'))
+    //   ? JSON.parse(localStorage.getItem('kanji-practice:validated')!.toString())
+    //   : []
+    this.loadValidated()
 
     // Initialize the data
     // this.initializeData()
@@ -200,10 +201,14 @@ export class AppContainer extends LitElement {
   initializeData () {
     switch (this.mode) {
       case 'discovery':
-        // this.data = _kanjis as Kanji[];
+        // get full data
         this.data = this.domain=='kanji' ? Kanjis.slice(0) : Words.slice(0);
-        // Remove the validated kanji from the list
-        this.data = this.data.filter(k=>!this.validatedKanjis.includes(k[1]))
+        // prepare the already validated elements
+        const validated = this.validatedKanjis.filter(i=>i[0]==this.domain[0]).map(i=>parseInt(i.slice(1)))
+        // get only the elements that are not in the validated list
+        this.data = this.data.filter(e=>{
+          return !validated.includes(e[0])
+        })
         break
       case 'practice':
         // console.log(this.collection?.kanjis.map(k1 => (_data as Kanji[]).find(k2 => k2[1] === k1)))
@@ -282,9 +287,9 @@ export class AppContainer extends LitElement {
 
   getRemainingOverTotal (jlpt: number) {
     const set = (this.domain=='kanji') ? Kanjis : Words;
-    const total = set.filter(k=>k[2]==jlpt).map(k=>k[1])
+    const total = set.filter(e=>e[2]==jlpt).map(e=>e[0])
     // total - (how much of the validated are in the total ?)
-    const validated = this.validatedKanjis.filter(k=>total.includes(k))
+    const validated = this.validatedKanjis.filter(e=>e[0]==this.domain[0] && total.includes(parseInt(e.slice(1))))
     return `${total.length - validated.length}/${total.length}`
   }
 
@@ -293,10 +298,10 @@ export class AppContainer extends LitElement {
   }
 
   refillJlpt (jlpt: number) {
-    const kanjis = (_kanjis as Row[]).filter(k=>k[2]==jlpt).map(k=>k[1])
+    const set = (this.domain=='kanji') ? Kanjis : Words;
+    const total = set.filter(k=>k[2]==jlpt).map(k=>k[0])
     // remove jlpt kanjis from the validated list
-    this.validatedKanjis = this.validatedKanjis.filter(k=> !kanjis.includes(k))
-
+    this.validatedKanjis = this.validatedKanjis.filter(e=>!(e[0]==this.domain[0] && total.includes(parseInt(e.slice(1)))))
   }
 
   protected async firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
@@ -335,7 +340,7 @@ export class AppContainer extends LitElement {
         // window.toast('CORRECT ! :)')
         this.data.splice(this.data.indexOf(this.row!), 1)
         this.requestUpdate()
-        this.addToValidatedList(this.row![1])
+        this.addToValidatedList(this.domain, this.row![0])
         // this.validatedKanjis
         return
       }
@@ -360,12 +365,22 @@ export class AppContainer extends LitElement {
     // this._failureAudio.play()
   }
 
-  addToValidatedList (character) {
-    this.validatedKanjis.push(character)
+  addToValidatedList (domain: Domain, rowId: number) {
+    this.validatedKanjis.push(`${domain[0]}${rowId}`)
     this.validatedKanjis = [...new Set(this.validatedKanjis)]
     this.saveValidated()
   }
 
+  loadValidated () {
+    const value = localStorage.getItem('kanji-practice:validated')
+    if (value) {
+      this.validatedKanjis = JSON.parse(value)
+      // convert the characters to their string value on old versions
+      if (this.validatedKanjis[0] && this.validatedKanjis[0][0] !== 'k' && this.validatedKanjis[0][0] !== 'w') {
+        this.validatedKanjis = []
+      }
+    }
+  }
   saveValidated () {
     localStorage.setItem('kanji-practice:validated', JSON.stringify(this.validatedKanjis))
   }
