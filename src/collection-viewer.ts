@@ -46,7 +46,7 @@ export class CollectionViewer extends LitElement {
   wordTemplate (word: string) {
     return html`
     <div class=word>
-      <span class="jp-font">${word}</span>
+      <span class="jp-font" @click=${()=>{window.searchManager.show(word, 'words')}}>${word}</span>
     </div>
     `
   }

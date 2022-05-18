@@ -336,7 +336,8 @@ export class AppContainer extends LitElement {
       /* -- SUCCESS -- */
       if (this.textfield.value === this.row![1]) {
         this.kanjiFrame.success = true
-        this.playSuccessSound()
+        if (this.playIncomeAudio)
+          this.playSuccessSound()
         // window.toast('CORRECT ! :)')
         this.data.splice(this.data.indexOf(this.row!), 1)
         this.requestUpdate()
@@ -346,7 +347,8 @@ export class AppContainer extends LitElement {
       }
       /* -- FAILURE -- */
       else {
-        this.playFailureSound()
+        if (this.playIncomeAudio)
+          this.playFailureSound()
         this.requestUpdate()
         // window.toast(':(')
       }
@@ -358,11 +360,11 @@ export class AppContainer extends LitElement {
   private _successAudio = new Audio('./audio/success.mp3')
   private _failureAudio = new Audio('./audio/wrong.mp3')
   playSuccessSound() {
-    const _successAudio = new Audio('./audio/success.mp3')
-    // _successAudio.play()
+    // const _successAudio = new Audio('./audio/success.mp3')
+    this._successAudio.play()
   }
   playFailureSound() {
-    // this._failureAudio.play()
+    this._failureAudio.play()
   }
 
   addToValidatedList (domain: Domain, rowId: number) {
