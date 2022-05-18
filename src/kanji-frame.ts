@@ -51,7 +51,7 @@ export class KanjiFrame extends LitElement {
       ` : nothing}
       ${this.revealed ?
         html`
-        ${this.success ? html`<img src="http://192.168.1.168:41497" style="" />` : nothing}
+        ${this.success ? html`<img src="https://192.168.1.168:3000/" style="" />` : nothing}
         <div style="z-index:2;font-size:Min(200px, calc(${frameWidth} / ${this.row[1].length} - ${padding}px))">${this.row[1]}</div>
         ` :
         html`?`

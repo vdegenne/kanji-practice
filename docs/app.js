@@ -1910,7 +1910,7 @@ mwc-icon-button[highlight] {
     <div id=kanji>
       ${J}
       ${this.revealed?W`
-        ${this.success?W`<img src="http://192.168.1.168:41497" style="" />`:J}
+        ${this.success?W`<img src="https://192.168.1.168:3000/" style="" />`:J}
         <div style="z-index:2;font-size:Min(200px, calc(${e} / ${this.row[1].length} - ${t}px))">${this.row[1]}</div>
         `:W`?`}
     </div>
