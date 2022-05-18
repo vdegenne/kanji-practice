@@ -1905,12 +1905,12 @@ const ja=me`mwc-list ::slotted([mwc-list-item]:not([twoline])),mwc-list ::slotte
 mwc-icon-button[highlight] {
   color: yellow;
 }
-`;let Ua=class extends Se{constructor(e){super(),this.revealed=!1,this.success=!1,this.row=null,this.app=e,this.showText=this.app.optionsManager.options.showTextualHint}render(){if(!this.row)return J;const e=parseInt(getComputedStyle(this).width)-48+"px";let t=150-54*this.row[1].length;return t<0&&(t=0),W`
+`;let Ua=class extends Se{constructor(e){super(),this.revealed=!1,this.success=!1,this.row=null,this._imageFeature=!0,this.app=e,this.showText=this.app.optionsManager.options.showTextualHint}render(){if(!this.row)return J;const e=parseInt(getComputedStyle(this).width)-48+"px";let t=150-54*this.row[1].length;return t<0&&(t=0),W`
     <div class="tag jlpt${this.row[2]}-color" id="jlpt-tag">jlpt${this.row[2]}</div>
     <div id=kanji>
       ${J}
       ${this.revealed?W`
-        ${this.success?W`<img src="https://xxx.vdegenne.com/?${Date.now()}" style="" />`:J}
+        ${this.success&&this._image?this._image:J}
         <div style="z-index:2;font-size:Min(200px, calc(${e} / ${this.row[1].length} - ${t}px))">${this.row[1]}</div>
         `:W`?`}
     </div>
@@ -1962,7 +1962,7 @@ mwc-icon-button[highlight] {
     </div>
     <!-- </div> -->
 
-    `}updated(e){this.menu&&(this.menu.anchor=this.menu.parentElement),e.has("revealed")&&(this.revealed?this.showText=!0:this.showText=this.app.optionsManager.options.showTextualHint)}reveal(){this.revealed=!0}conceal(){this.revealed=!1,this.success=!1}};Ua.styles=[Ba,qa],r([l({type:Boolean,reflect:!0})],Ua.prototype,"revealed",void 0),r([l({type:Boolean,reflect:!0})],Ua.prototype,"success",void 0),r([l({type:Array})],Ua.prototype,"row",void 0),r([s()],Ua.prototype,"showText",void 0),r([f("mwc-menu")],Ua.prototype,"menu",void 0),Ua=r([a("kanji-frame")],Ua);let Va=class extends Se{render(){return W`
+    `}updated(e){this.menu&&(this.menu.anchor=this.menu.parentElement),e.has("revealed")&&(this.revealed?this.showText=!0:(this.showText=this.app.optionsManager.options.showTextualHint,this._imageFeature&&this.preloadImage()))}preloadImage(){this._image=document.createElement("img"),this._image.src=`https://xxx.vdegenne.com/?${Date.now()}`}reveal(){this.revealed=!0}conceal(){this.revealed=!1,this.success=!1}};Ua.styles=[Ba,qa],r([l({type:Boolean,reflect:!0})],Ua.prototype,"revealed",void 0),r([l({type:Boolean,reflect:!0})],Ua.prototype,"success",void 0),r([l({type:Array})],Ua.prototype,"row",void 0),r([s()],Ua.prototype,"showText",void 0),r([f("mwc-menu")],Ua.prototype,"menu",void 0),Ua=r([a("kanji-frame")],Ua);let Va=class extends Se{render(){return W`
         ${this.generateCandidatesList(this.size).map((e=>W`
             <app-button outlined
                 height=50

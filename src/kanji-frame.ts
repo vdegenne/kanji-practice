@@ -22,6 +22,10 @@ export class KanjiFrame extends LitElement {
   row: Row|null = null;
   @state() showText;
 
+  private _imageFeature: boolean = true;
+  private _image?: HTMLImageElement;
+
+
 
   @query('mwc-menu') menu!: Menu;
 
@@ -51,7 +55,7 @@ export class KanjiFrame extends LitElement {
       ` : nothing}
       ${this.revealed ?
         html`
-        ${this.success ? html`<img src="https://xxx.vdegenne.com/?${Date.now()}" style="" />` : nothing}
+        ${this.success && this._image ? this._image : nothing}
         <div style="z-index:2;font-size:Min(200px, calc(${frameWidth} / ${this.row[1].length} - ${padding}px))">${this.row[1]}</div>
         ` :
         html`?`
@@ -113,13 +117,22 @@ export class KanjiFrame extends LitElement {
       this.menu.anchor = this.menu.parentElement!
     if (_changedProperties.has('revealed')) {
       if (this.revealed) {
+        // always show the text when revealed
         this.showText = true
       }
       else {
         this.showText = this.app.optionsManager.options.showTextualHint
+        if (this._imageFeature) {
+          this.preloadImage()
+        }
       }
     }
     // console.log(_changedProperties)
+  }
+
+  private preloadImage() {
+    this._image = document.createElement('img')
+    this._image.src = `https://xxx.vdegenne.com/?${Date.now()}`
   }
 
   // async stampImage() {
