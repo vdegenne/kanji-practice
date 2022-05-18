@@ -26,21 +26,28 @@ export const kanjiFrameStyles = css`
   background-color: #4caf50;
 }
 #kanji {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width : 100%;
+  min-height: 300px;
   font-size: 12em;
-  /* opacity: 0; */
   /* font-family: 'Sawarabi Mincho', serif; */
-  font-family: 'Noto Serif JP', serif;
-  font-weight: 300;
+  /* font-family: 'Noto Serif JP', serif; */
+  /* font-weight: 300;
   width: 100%;
   text-align: center;
   color: white;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; */
 }
-/* :host([revealed]) #kanji {
-  opacity: 1
-} */
+#kanji > img {
+  max-height: 500px;
+}
+#kanji > div {
+  position: absolute;
+}
 .tag {
   font-size: 0.7em;
   color: white;
@@ -53,14 +60,6 @@ export const kanjiFrameStyles = css`
   left: 4px;
   background-color: #455a64;
   color: white;
-}
-#kanji > img {
-  position: absolute;
-  z-index: 1;
-  /* display: none; */
-  /* border: 1px solid black; */
-  width: 300px;
-  /* height: 65%; */
 }
 /* :host([happy]) img { display: initial } */
 

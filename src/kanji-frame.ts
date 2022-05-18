@@ -51,7 +51,8 @@ export class KanjiFrame extends LitElement {
       ` : nothing}
       ${this.revealed ?
         html`
-        <span style="z-index:2;font-size:Min(200px, calc(${frameWidth} / ${this.row[1].length} - ${padding}px))">${this.row[1]}</span>
+        ${this.success ? html`<img src="http://192.168.1.168:41497" style="" />` : nothing}
+        <div style="z-index:2;font-size:Min(200px, calc(${frameWidth} / ${this.row[1].length} - ${padding}px))">${this.row[1]}</div>
         ` :
         html`?`
       }
@@ -120,6 +121,20 @@ export class KanjiFrame extends LitElement {
     }
     // console.log(_changedProperties)
   }
+
+  // async stampImage() {
+  //   try {
+  //     const img = document.createElement('img')
+  //     img.src = 'http://192.168.1.168:41497'
+  //     img.onloadeddata = () => {
+  //       if (this.success && this.revealed) {
+  //         this.shadowRoot!.querySelector('#kanji')!.firstElementChild!.appendChild(img)
+  //       }
+  //     }
+  //   } catch (e) {
+
+  //   }
+  // }
 
   reveal() {
     this.revealed = true
