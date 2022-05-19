@@ -155,6 +155,7 @@ export class AppContainer extends LitElement {
           @click=${()=>{
             if (!this.revealed) {
               this.playAudioHint()
+              this.textfield.focus()
               return
             }
             else {
@@ -166,7 +167,7 @@ export class AppContainer extends LitElement {
 
       ${this.domain=='words' ? html`
       <mwc-icon-button icon=volume_up
-        @click=${()=>{this.playAudioHint()}}></mwc-icon-button>
+        @click=${()=>{this.playAudioHint();this.textfield.focus();}}></mwc-icon-button>
       ` : nothing}
     </div>
 

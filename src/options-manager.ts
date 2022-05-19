@@ -81,7 +81,7 @@ export class OptionsManager extends LitElement {
         </mwc-formfield>
         <br>
         <mwc-formfield label="Randomized word hint (kanji only)" style="margin-left:48px;">
-            <mwc-checkbox ?checked=${this.app.enableAudioHint}></mwc-checkbox>
+            <mwc-checkbox ?checked=${this.options.enableAudioHint}></mwc-checkbox>
         </mwc-formfield>
         <br>
         <mwc-formfield label="Show textual hint" style="margin-left:48px;">
@@ -103,7 +103,7 @@ export class OptionsManager extends LitElement {
 
         <p>Others</p>
         <mwc-formfield label="play income audio (failure/success)">
-            <mwc-checkbox ?checked=${this.app.enableAudioHint}></mwc-checkbox>
+            <mwc-checkbox ?checked=${true}></mwc-checkbox>
         </mwc-formfield>
 
 
@@ -152,7 +152,7 @@ export class OptionsManager extends LitElement {
   forwardShowTextualHint () {
     // this.app.kanjiFrame.showTextualHint = value
     this.options.showTextualHint = this.showTextualHint
-    this.app.kanjiFrame.showText = this.options.showTextualHint
+    this.app.kanjiFrame.showText = this.showTextualHint
   }
 
   loadOptions () {

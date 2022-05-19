@@ -1910,7 +1910,7 @@ mwc-icon-button[highlight] {
     <div id=kanji>
       ${J}
       ${this.revealed?W`
-        ${!this.success&&this._image?this._image:J}
+        ${this.success&&this._image?this._image:J}
         <div style="z-index:2;font-size:Min(200px, calc(${e} / ${this.row[1].length} - ${t}px))">${this.row[1]}</div>
         `:W`?`}
     </div>
@@ -2092,7 +2092,7 @@ mwc-icon-button[highlight] {
         </mwc-formfield>
         <br>
         <mwc-formfield label="Randomized word hint (kanji only)" style="margin-left:48px;">
-            <mwc-checkbox ?checked=${this.app.enableAudioHint}></mwc-checkbox>
+            <mwc-checkbox ?checked=${this.options.enableAudioHint}></mwc-checkbox>
         </mwc-formfield>
         <br>
         <mwc-formfield label="Show textual hint" style="margin-left:48px;">
@@ -2114,13 +2114,13 @@ mwc-icon-button[highlight] {
 
         <p>Others</p>
         <mwc-formfield label="play income audio (failure/success)">
-            <mwc-checkbox ?checked=${this.app.enableAudioHint}></mwc-checkbox>
+            <mwc-checkbox ?checked=${!0}></mwc-checkbox>
         </mwc-formfield>
 
 
       <mwc-button outlined slot="primaryAction" dialogAction="close">close</mwc-button>
     </mwc-dialog>
-    `}get showTextualHint(){return this.shadowRoot.querySelector('mwc-formfield[label="Show textual hint"]').firstElementChild.checked}get enableAudioHint(){return this.shadowRoot.querySelector('mwc-formfield[label="Play audio word hint"]').firstElementChild.checked}firstUpdated(e){this.dialog.addEventListener("opened",(()=>{this.shadowRoot.querySelector("mwc-slider").value=this.app.candidatesListSize,this.shadowRoot.querySelector("mwc-slider").layout(),this.requestUpdate()})),super.firstUpdated(e)}onOptionsChanged(){this.saveOptions()}show(){this.dialog.show()}onRefillClick(){}forwardShowTextualHint(){this.options.showTextualHint=this.showTextualHint,this.app.kanjiFrame.showText=this.options.showTextualHint}loadOptions(){let e;null!==localStorage.getItem("kanji-practice:options")?(e=JSON.parse(localStorage.getItem("kanji-practice:options")),"jlpt1"in e&&(e={jlpts:e,showTextualHint:!0,enableAudioHint:!0})):e={jlpts:{jlpt5:!0,jlpt4:!1,jlpt3:!1,jlpt2:!1,jlpt1:!1},showTextualHint:!0,enableAudioHint:!0},this.options=e}saveOptions(){const e={jlpts:this.options.jlpts,showTextualHint:this.showTextualHint,enableAudioHint:this.enableAudioHint};localStorage.setItem("kanji-practice:options",JSON.stringify(e))}};Xa.styles=me`
+    `}get showTextualHint(){return this.shadowRoot.querySelector('mwc-formfield[label="Show textual hint"]').firstElementChild.checked}get enableAudioHint(){return this.shadowRoot.querySelector('mwc-formfield[label="Play audio word hint"]').firstElementChild.checked}firstUpdated(e){this.dialog.addEventListener("opened",(()=>{this.shadowRoot.querySelector("mwc-slider").value=this.app.candidatesListSize,this.shadowRoot.querySelector("mwc-slider").layout(),this.requestUpdate()})),super.firstUpdated(e)}onOptionsChanged(){this.saveOptions()}show(){this.dialog.show()}onRefillClick(){}forwardShowTextualHint(){this.options.showTextualHint=this.showTextualHint,this.app.kanjiFrame.showText=this.showTextualHint}loadOptions(){let e;null!==localStorage.getItem("kanji-practice:options")?(e=JSON.parse(localStorage.getItem("kanji-practice:options")),"jlpt1"in e&&(e={jlpts:e,showTextualHint:!0,enableAudioHint:!0})):e={jlpts:{jlpt5:!0,jlpt4:!1,jlpt3:!1,jlpt2:!1,jlpt1:!1},showTextualHint:!0,enableAudioHint:!0},this.options=e}saveOptions(){const e={jlpts:this.options.jlpts,showTextualHint:this.showTextualHint,enableAudioHint:this.enableAudioHint};localStorage.setItem("kanji-practice:options",JSON.stringify(e))}};Xa.styles=me`
   .jlpt-row {
     display: flex;
     justify-content: space-between;
@@ -2229,13 +2229,13 @@ kanji-frame {
         <app-button
           outlined
           height=46
-          @click=${()=>{this.revealed?window.searchManager.show(this.hintSearch[0].word,"words"):this.playAudioHint()}}
+          @click=${()=>{if(!this.revealed)return this.playAudioHint(),void this.textfield.focus();window.searchManager.show(this.hintSearch[0].word,"words")}}
         >${this.revealed?this.hintSearch[0].word:"?"}</app-button>
       `:J}
 
       ${"words"==this.domain?W`
       <mwc-icon-button icon=volume_up
-        @click=${()=>{this.playAudioHint()}}></mwc-icon-button>
+        @click=${()=>{this.playAudioHint(),this.textfield.focus()}}></mwc-icon-button>
       `:J}
     </div>
 
