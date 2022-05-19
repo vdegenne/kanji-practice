@@ -19,6 +19,7 @@ import './app-container'
 import './app-button'
 import './create-collection-dialog'
 import './collection-viewer'
+import './notes-dialog'
 
 /* global */
 import { CollectionsSelector } from './collections-selector'

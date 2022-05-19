@@ -12,6 +12,7 @@ import { KanjiFrame } from './kanji-frame.js';
 import { sharedStyles } from './styles/sharedStyles.js';
 import { playJapaneseAudio } from './util.js';
 import { CollectionsManager } from './collections-manager.js';
+import { NotesDialog } from './notes-dialog.js';
 
 @customElement('app-container')
 export class AppContainer extends LitElement {
@@ -29,7 +30,7 @@ export class AppContainer extends LitElement {
 
   @state() candidatesListSize = 0;
 
-  enableAudioHint = true;
+  // enableAudioHint = true;
   playIncomeAudio = true;
   private hintSearch: SearchItem[] = []
 
@@ -39,9 +40,13 @@ export class AppContainer extends LitElement {
   public optionsManager: OptionsManager = new OptionsManager(this);
   public kanjiFrame: KanjiFrame = new KanjiFrame(this)
 
+  /**
+   * Queries
+   */
   // @query('kanji-frame') kanjiFrame!: KanjiFrame;
   @query('mwc-textfield') textfield!: TextField;
   @query('#submit-button') submitButton!: Button;
+  @query('notes-dialog') notesDialog!: NotesDialog;
   // @query('options-manager') optionsManager!: OptionsManager;
 
 
@@ -82,6 +87,10 @@ export class AppContainer extends LitElement {
 
   static styles = [mainStyles, sharedStyles];
 
+
+  /**
+   * RENDER
+   */
   render () {
     this.kanjiFrame.row = this.row
 
@@ -103,6 +112,8 @@ export class AppContainer extends LitElement {
         @click=${()=>{this.collectionsManager.show()}}></mwc-icon-button>
       <mwc-icon-button icon=search
         @click=${()=>{window.searchManager.show()}}></mwc-icon-button>
+      <mwc-icon-button icon=text_snippet
+        @click=${()=>{this.notesDialog.show()}}></mwc-icon-button>
       <mwc-icon-button icon=settings
         @click=${()=>this.optionsManager.show()}></mwc-icon-button>
     </header>
@@ -126,7 +137,7 @@ export class AppContainer extends LitElement {
         <mwc-icon-button icon=${this.kanjiFrame?.revealed ? 'skip_next' : 'remove_red_eye'}
           id=submit-button
           style="position:absolute;bottom:23px;right:4px"
-          @click=${()=>this.submit()}></mwc-icon-button>
+          @click=${()=>this.validateAnswer()}></mwc-icon-button>
 
         <!-- wrong answer search button -->
         ${this.kanjiFrame && this.kanjiFrame.revealed && this.textfield.value.trim() !== '' && this.textfield.value.trim() !== this.row![1] ? html`
@@ -177,11 +188,14 @@ export class AppContainer extends LitElement {
 
     <div style="width:100%;text-align: center" ?hide=${!this.kanjiFrame?.revealed}>
       <mwc-button raised icon="arrow_forward"
-          @click=${()=>{this.submit()}}>next</mwc-button>
+          @click=${()=>{this.validateAnswer()}}>next</mwc-button>
     </div>
 
         ${this.collectionsManager}
         ${this.optionsManager}
+
+
+    <notes-dialog></notes-dialog>
     `
   }
 
@@ -217,6 +231,9 @@ export class AppContainer extends LitElement {
     }
   }
 
+  /**
+   * Just return a new element (Row)
+   */
   pickNewRow (): Row|null {
     const elementsLeft = this.elementsLeft
 
@@ -242,7 +259,7 @@ export class AppContainer extends LitElement {
     // in "words" domain context we have to wait that the element is returned to the callee
     // so we can play its content
     setTimeout(() => {
-      this.playAudioHint()
+      if (this.optionsManager.enableAudioHint) { this.playAudioHint() }
     }, 200)
 
     return element
@@ -254,7 +271,7 @@ export class AppContainer extends LitElement {
   }
 
   async playAudioHint() {
-    if (this.enableAudioHint) {
+    // if (this.optionsManager.enableAudioHint) {
       if (this.domain=='kanji' && !this.hintSearch[0]) {
         return
       }
@@ -270,8 +287,7 @@ export class AppContainer extends LitElement {
         // rollback to the synthetic voice
         await speakJapanese(word)
       }
-    }
-
+    // }
   }
 
   /**
@@ -311,6 +327,10 @@ export class AppContainer extends LitElement {
     // await this.optionsManager.updateComplete
   }
 
+  /**
+   * The user clicked the casino button.
+   * Pick a new Row element and reset various interface parts.
+   */
   onCasinoButtonClick() {
     this.kanjiFrame.conceal()
     // this.kanjiFrame.success = false
@@ -330,7 +350,11 @@ export class AppContainer extends LitElement {
   }
 
 
-  submit () {
+  /**
+   * Validate the answer after the user submit the textfield
+   */
+  validateAnswer () {
+    // @TODO : the user can submit some commands (e.g. image feature)
     if (!this.kanjiFrame.revealed) {
       this.kanjiFrame.reveal()
       /* -- SUCCESS -- */
@@ -352,10 +376,13 @@ export class AppContainer extends LitElement {
         this.requestUpdate()
         // window.toast(':(')
       }
+      if (this.optionsManager.enableAudioHint) { this.playAudioHint() }
     } else {
       this.onCasinoButtonClick()
     }
   }
+  // alias
+  submit () { this.validateAnswer() }
 
   private _successAudio = new Audio('./audio/success.mp3')
   private _failureAudio = new Audio('./audio/wrong.mp3')

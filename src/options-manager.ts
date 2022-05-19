@@ -77,7 +77,7 @@ export class OptionsManager extends LitElement {
         <!-- AUDIO OPTIONS -->
         <p>Hint</p>
         <mwc-formfield label="Play audio word hint">
-            <mwc-checkbox ?checked=${this.app.enableAudioHint}></mwc-checkbox>
+            <mwc-checkbox ?checked=${this.options.enableAudioHint}></mwc-checkbox>
         </mwc-formfield>
         <br>
         <mwc-formfield label="Randomized word hint (kanji only)" style="margin-left:48px;">
@@ -114,6 +114,9 @@ export class OptionsManager extends LitElement {
 
   get showTextualHint () {
     return (this.shadowRoot!.querySelector('mwc-formfield[label="Show textual hint"]')!.firstElementChild as Checkbox).checked
+  }
+  get enableAudioHint () {
+    return (this.shadowRoot!.querySelector('mwc-formfield[label="Play audio word hint"]')!.firstElementChild as Checkbox).checked
   }
 
   protected firstUpdated(_changedProperties: PropertyValues) {
@@ -160,7 +163,8 @@ export class OptionsManager extends LitElement {
       if ('jlpt1' in options) {
         options = {
           jlpts: <unknown>options as Jlpts,
-          showTextualHint: true
+          showTextualHint: true,
+          enableAudioHint: true
         }
       }
     }
@@ -174,7 +178,8 @@ export class OptionsManager extends LitElement {
           jlpt2: false,
           jlpt1: false,
         },
-        showTextualHint: true
+        showTextualHint: true,
+        enableAudioHint: true
       }
     }
 
@@ -185,7 +190,8 @@ export class OptionsManager extends LitElement {
   saveOptions () {
     const options: Options = {
       jlpts: this.options.jlpts,
-      showTextualHint: this.showTextualHint
+      showTextualHint: this.showTextualHint,
+      enableAudioHint: this.enableAudioHint
     }
     localStorage.setItem('kanji-practice:options', JSON.stringify(options))
   }
