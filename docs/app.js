@@ -2171,12 +2171,13 @@ header > mwc-icon-button {
 kanji-frame {
   width: 100%;
 }
-`;let tn=class extends Se{constructor(e){super(),this._history=[],this.app=e}render(){return W`
+`;let tn=class extends Se{constructor(e){super(),this._history=[],this.app=e,this.loadHistory()}render(){return W`
     <mwc-dialog heading=History>
 
       <div id="history-list">
+        ${0==this._history.length?W`nothing yet`:J}
         ${this._history.map((e=>{const t=Ha("k"==e[0]?"kanji":"words",e[1]);return W`
-          <div class=item style="color:${0==e[2]?"red":"green"}">
+          <div class=item style="color:${0==e[2]?"red":"green"};opacity:${0==e[2]?1:.5}">
             <mwc-icon style="margin: 0 6px 0;">${0==e[2]?"close":"done"}</mwc-icon>
             <span
               @click=${()=>{window.searchManager.show(t[1],"k"==e[0]?"kanji":"words")}}>${t[1]}</span>
@@ -2186,7 +2187,7 @@ kanji-frame {
 
       <mwc-button outlined slot=secondaryAction dialogAction=close>close</mwc-button>
     </mwc-dialog>
-    `}addToHistory(e,t,o){this._history.push([e,t,o?1:0]),this.requestUpdate()}async show(){this.requestUpdate(),await this.updateComplete,this.dialog.show()}};tn.styles=me`
+    `}addToHistory(e,t,o){this._history=[[e,t,o?1:0],...this._history],this.requestUpdate(),this.saveHistory()}loadHistory(){let e=localStorage.getItem("kanji-practice:history");e&&(this._history=JSON.parse(e))}saveHistory(e=50){localStorage.setItem("kanji-practice:history",JSON.stringify(this._history.slice(0,e)))}async show(){this.requestUpdate(),await this.updateComplete,this.dialog.show()}};tn.styles=me`
   .item {
     display: flex;
     align-items: center;
