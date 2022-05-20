@@ -13,6 +13,7 @@ import { sharedStyles } from './styles/sharedStyles.js';
 import { playJapaneseAudio } from './util.js';
 import { CollectionsManager } from './collections-manager.js';
 import { NotesDialog } from './notes-dialog.js';
+import { RowHistory } from './row-history.js';
 
 @customElement('app-container')
 export class AppContainer extends LitElement {
@@ -39,6 +40,7 @@ export class AppContainer extends LitElement {
   public collectionsManager: CollectionsManager = new CollectionsManager(this);
   public optionsManager: OptionsManager = new OptionsManager(this);
   public kanjiFrame: KanjiFrame = new KanjiFrame(this)
+  public rowHistory: RowHistory = new RowHistory(this)
 
   /**
    * Queries
@@ -114,6 +116,8 @@ export class AppContainer extends LitElement {
         @click=${()=>{window.searchManager.show()}}></mwc-icon-button>
       <mwc-icon-button icon=text_snippet
         @click=${()=>{this.notesDialog.show()}}></mwc-icon-button>
+      <mwc-icon-button icon=history
+        @click=${()=>this.rowHistory.show()}></mwc-icon-button>
       <mwc-icon-button icon=settings
         @click=${()=>this.optionsManager.show()}></mwc-icon-button>
     </header>
@@ -192,8 +196,9 @@ export class AppContainer extends LitElement {
           @click=${()=>{this.validateAnswer()}}>next</mwc-button>
     </div>
 
-        ${this.collectionsManager}
-        ${this.optionsManager}
+    ${this.collectionsManager}
+    ${this.optionsManager}
+    ${this.rowHistory}
 
 
     <notes-dialog></notes-dialog>
@@ -361,9 +366,9 @@ export class AppContainer extends LitElement {
       /* -- SUCCESS -- */
       if (this.textfield.value === this.row![1]) {
         this.kanjiFrame.success = true
-        if (this.playIncomeAudio)
-          this.playSuccessSound()
+        if (this.playIncomeAudio) { this.playSuccessSound() }
         // window.toast('CORRECT ! :)')
+        this.rowHistory.addToHistory(this.domain[0] as 'k'|'w', this.row![0], true)
         this.data.splice(this.data.indexOf(this.row!), 1)
         this.requestUpdate()
         this.addToValidatedList(this.domain, this.row![0])
@@ -372,8 +377,8 @@ export class AppContainer extends LitElement {
       }
       /* -- FAILURE -- */
       else {
-        if (this.playIncomeAudio)
-          this.playFailureSound()
+        if (this.playIncomeAudio) { this.playFailureSound() }
+        this.rowHistory.addToHistory(this.domain[0] as 'k'|'w', this.row![0], false)
         this.requestUpdate()
         // window.toast(':(')
       }

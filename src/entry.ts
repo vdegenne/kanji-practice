@@ -20,6 +20,7 @@ import './app-button'
 import './create-collection-dialog'
 import './collection-viewer'
 import './notes-dialog'
+import './row-history'
 
 /* global */
 import { CollectionsSelector } from './collections-selector'

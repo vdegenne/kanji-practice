@@ -2171,7 +2171,31 @@ header > mwc-icon-button {
 kanji-frame {
   width: 100%;
 }
-`;let tn=class extends Se{constructor(){if(super(),this.domain="kanji",this.mode="discovery",this.data=[],this.candidatesListSize=0,this.playIncomeAudio=!0,this.hintSearch=[],this.validatedKanjis=[],this.collectionsManager=new Ja(this),this.optionsManager=new Xa(this),this.kanjiFrame=new Ua(this),this.reset=this.onCasinoButtonClick,this._successAudio=new Audio("./audio/success.mp3"),this._failureAudio=new Audio("./audio/wrong.mp3"),this.collectionsManager.URLCollectionName&&(this.mode="practice"),"practice"==this.mode);else{const e=localStorage.getItem("kanji-practice:domain");this.domain=e||"kanji"}this.loadValidated()}render(){var e,t;return this.kanjiFrame.row=this.row,W`
+`;let tn=class extends Se{constructor(e){super(),this._history=[],this.app=e}render(){return W`
+    <mwc-dialog heading=History>
+
+      <div id="history-list">
+        ${this._history.map((e=>{const t=Ha("k"==e[0]?"kanji":"words",e[1]);return W`
+          <div class=item style="color:${0==e[2]?"red":"green"}">
+            <mwc-icon style="margin: 0 6px 0;">${0==e[2]?"close":"done"}</mwc-icon>
+            <span
+              @click=${()=>{window.searchManager.show(t[1],"k"==e[0]?"kanji":"words")}}>${t[1]}</span>
+          </div>
+          `}))}
+      </div>
+
+      <mwc-button outlined slot=secondaryAction dialogAction=close>close</mwc-button>
+    </mwc-dialog>
+    `}addToHistory(e,t,o){this._history.push([e,t,o?1:0]),this.requestUpdate()}async show(){this.requestUpdate(),await this.updateComplete,this.dialog.show()}};tn.styles=me`
+  .item {
+    display: flex;
+    align-items: center;
+    padding: 6px;
+  }
+  .item > span {
+    font-size: 1.3em;
+  }
+  `,r([f("mwc-dialog")],tn.prototype,"dialog",void 0),tn=r([a("row-history")],tn);let on=class extends Se{constructor(){if(super(),this.domain="kanji",this.mode="discovery",this.data=[],this.candidatesListSize=0,this.playIncomeAudio=!0,this.hintSearch=[],this.validatedKanjis=[],this.collectionsManager=new Ja(this),this.optionsManager=new Xa(this),this.kanjiFrame=new Ua(this),this.rowHistory=new tn(this),this.reset=this.onCasinoButtonClick,this._successAudio=new Audio("./audio/success.mp3"),this._failureAudio=new Audio("./audio/wrong.mp3"),this.collectionsManager.URLCollectionName&&(this.mode="practice"),"practice"==this.mode);else{const e=localStorage.getItem("kanji-practice:domain");this.domain=e||"kanji"}this.loadValidated()}render(){var e,t;return this.kanjiFrame.row=this.row,W`
     <mwc-tab-bar style="width:100%"
         @MDCTabBar:activated=${e=>{this.onMDCTabBarActivated(e)}}
         activeIndex=${Ya.indexOf(this.domain)}>
@@ -2191,6 +2215,8 @@ kanji-frame {
         @click=${()=>{window.searchManager.show()}}></mwc-icon-button>
       <mwc-icon-button icon=text_snippet
         @click=${()=>{this.notesDialog.show()}}></mwc-icon-button>
+      <mwc-icon-button icon=history
+        @click=${()=>this.rowHistory.show()}></mwc-icon-button>
       <mwc-icon-button icon=settings
         @click=${()=>this.optionsManager.show()}></mwc-icon-button>
     </header>
@@ -2252,24 +2278,25 @@ kanji-frame {
           @click=${()=>{this.validateAnswer()}}>next</mwc-button>
     </div>
 
-        ${this.collectionsManager}
-        ${this.optionsManager}
+    ${this.collectionsManager}
+    ${this.optionsManager}
+    ${this.rowHistory}
 
 
     <notes-dialog></notes-dialog>
-    `}onMDCTabBarActivated(e){const t=Ya[e.detail.index];this.domain=t,this.initializeData(),this.reset(),this.saveDomain()}initializeData(){switch(this.mode){case"discovery":this.data="kanji"==this.domain?Pa.slice(0):Na.slice(0);const e=this.validatedKanjis.filter((e=>e[0]==this.domain[0])).map((e=>parseInt(e.slice(1))));this.data=this.data.filter((t=>!e.includes(t[0])));break;case"practice":this.data=window.collectionsManager.collection.kanjis.map((e=>_kanjis.find((t=>t[1]===e))))}}pickNewRow(){const e=this.elementsLeft;if(0===e.length)return window.toast("You've run out of Kanji 😲 Try to refill from the options",-1),null;window.toast("",0);const t=e[~~(Math.random()*e.length)];return this.hintSearch=window.searchManager.searchData(t[1],["words"]).filter((e=>"not found"!=e.dictionary)).sort((function(e,t){return(t.frequency||-9999)-(e.frequency||-9999)})),setTimeout((()=>{this.optionsManager.enableAudioHint&&this.playAudioHint()}),200),t}changeDomain(e){this.domain=e,this.reset()}async playAudioHint(){if("kanji"==this.domain&&!this.hintSearch[0])return;const e="kanji"==this.domain?this.hintSearch[0].hiragana||this.hintSearch[0].word:this.row[4]||this.row[1];try{await Sr(e)}catch(t){await Za(e)}}get elementsLeft(){const e=Object.entries(this.optionsManager.options.jlpts).filter((([e,t])=>t)).map((([e,t])=>e));return this.data.filter((t=>e.includes(`jlpt${t[2]}`)))}getRemainingOverTotal(e){const t=("kanji"==this.domain?Pa:Na).filter((t=>t[2]==e)).map((e=>e[0])),o=this.validatedKanjis.filter((e=>e[0]==this.domain[0]&&t.includes(parseInt(e.slice(1)))));return`${t.length-o.length}/${t.length}`}get revealed(){var e;return null===(e=this.kanjiFrame)||void 0===e?void 0:e.revealed}refillJlpt(e){const t=("kanji"==this.domain?Pa:Na).filter((t=>t[2]==e)).map((e=>e[0]));this.validatedKanjis=this.validatedKanjis.filter((e=>!(e[0]==this.domain[0]&&t.includes(parseInt(e.slice(1))))))}async firstUpdated(e){await this.textfield.updateComplete,this.textfield.shadowRoot.querySelector("i").style.color="transparent"}onCasinoButtonClick(){this.kanjiFrame.conceal(),this.textfield.value="",0==this.candidatesListSize&&this.textfield.focus(),this.row=this.pickNewRow()}onTextFieldPress(e){"Enter"===e.key&&this.submitButton.click()}validateAnswer(){if(this.kanjiFrame.revealed)this.onCasinoButtonClick();else{if(this.kanjiFrame.reveal(),this.textfield.value===this.row[1])return this.kanjiFrame.success=!0,this.playIncomeAudio&&this.playSuccessSound(),this.data.splice(this.data.indexOf(this.row),1),this.requestUpdate(),void this.addToValidatedList(this.domain,this.row[0]);this.playIncomeAudio&&this.playFailureSound(),this.requestUpdate(),this.optionsManager.enableAudioHint&&this.playAudioHint()}}submit(){this.validateAnswer()}playSuccessSound(){this._successAudio.play()}playFailureSound(){this._failureAudio.play()}addToValidatedList(e,t){this.validatedKanjis.push(`${e[0]}${t}`),this.validatedKanjis=[...new Set(this.validatedKanjis)],this.saveValidated()}loadValidated(){const e=localStorage.getItem("kanji-practice:validated");e&&(this.validatedKanjis=JSON.parse(e),this.validatedKanjis[0]&&"k"!==this.validatedKanjis[0][0]&&"w"!==this.validatedKanjis[0][0]&&(this.validatedKanjis=[]))}saveValidated(){localStorage.setItem("kanji-practice:validated",JSON.stringify(this.validatedKanjis))}saveDomain(){localStorage.setItem("kanji-practice:domain",this.domain)}};tn.styles=[en,qa],r([s()],tn.prototype,"domain",void 0),r([l({reflect:!0})],tn.prototype,"mode",void 0),r([s()],tn.prototype,"row",void 0),r([s()],tn.prototype,"candidatesListSize",void 0),r([f("mwc-textfield")],tn.prototype,"textfield",void 0),r([f("#submit-button")],tn.prototype,"submitButton",void 0),r([f("notes-dialog")],tn.prototype,"notesDialog",void 0),tn=r([a("app-container")],tn);let on=class extends Ft{async updated(e){await this.updateComplete,this.shadowRoot.querySelector("button").style.height=`${this.height}px`}};on.styles=Ft.styles.concat(me`
+    `}onMDCTabBarActivated(e){const t=Ya[e.detail.index];this.domain=t,this.initializeData(),this.reset(),this.saveDomain()}initializeData(){switch(this.mode){case"discovery":this.data="kanji"==this.domain?Pa.slice(0):Na.slice(0);const e=this.validatedKanjis.filter((e=>e[0]==this.domain[0])).map((e=>parseInt(e.slice(1))));this.data=this.data.filter((t=>!e.includes(t[0])));break;case"practice":this.data=window.collectionsManager.collection.kanjis.map((e=>_kanjis.find((t=>t[1]===e))))}}pickNewRow(){const e=this.elementsLeft;if(0===e.length)return window.toast("You've run out of Kanji 😲 Try to refill from the options",-1),null;window.toast("",0);const t=e[~~(Math.random()*e.length)];return this.hintSearch=window.searchManager.searchData(t[1],["words"]).filter((e=>"not found"!=e.dictionary)).sort((function(e,t){return(t.frequency||-9999)-(e.frequency||-9999)})),setTimeout((()=>{this.optionsManager.enableAudioHint&&this.playAudioHint()}),200),t}changeDomain(e){this.domain=e,this.reset()}async playAudioHint(){if("kanji"==this.domain&&!this.hintSearch[0])return;const e="kanji"==this.domain?this.hintSearch[0].hiragana||this.hintSearch[0].word:this.row[4]||this.row[1];try{await Sr(e)}catch(t){await Za(e)}}get elementsLeft(){const e=Object.entries(this.optionsManager.options.jlpts).filter((([e,t])=>t)).map((([e,t])=>e));return this.data.filter((t=>e.includes(`jlpt${t[2]}`)))}getRemainingOverTotal(e){const t=("kanji"==this.domain?Pa:Na).filter((t=>t[2]==e)).map((e=>e[0])),o=this.validatedKanjis.filter((e=>e[0]==this.domain[0]&&t.includes(parseInt(e.slice(1)))));return`${t.length-o.length}/${t.length}`}get revealed(){var e;return null===(e=this.kanjiFrame)||void 0===e?void 0:e.revealed}refillJlpt(e){const t=("kanji"==this.domain?Pa:Na).filter((t=>t[2]==e)).map((e=>e[0]));this.validatedKanjis=this.validatedKanjis.filter((e=>!(e[0]==this.domain[0]&&t.includes(parseInt(e.slice(1))))))}async firstUpdated(e){await this.textfield.updateComplete,this.textfield.shadowRoot.querySelector("i").style.color="transparent"}onCasinoButtonClick(){this.kanjiFrame.conceal(),this.textfield.value="",0==this.candidatesListSize&&this.textfield.focus(),this.row=this.pickNewRow()}onTextFieldPress(e){"Enter"===e.key&&this.submitButton.click()}validateAnswer(){if(this.kanjiFrame.revealed)this.onCasinoButtonClick();else{if(this.kanjiFrame.reveal(),this.textfield.value===this.row[1])return this.kanjiFrame.success=!0,this.playIncomeAudio&&this.playSuccessSound(),this.rowHistory.addToHistory(this.domain[0],this.row[0],!0),this.data.splice(this.data.indexOf(this.row),1),this.requestUpdate(),void this.addToValidatedList(this.domain,this.row[0]);this.playIncomeAudio&&this.playFailureSound(),this.rowHistory.addToHistory(this.domain[0],this.row[0],!1),this.requestUpdate(),this.optionsManager.enableAudioHint&&this.playAudioHint()}}submit(){this.validateAnswer()}playSuccessSound(){this._successAudio.play()}playFailureSound(){this._failureAudio.play()}addToValidatedList(e,t){this.validatedKanjis.push(`${e[0]}${t}`),this.validatedKanjis=[...new Set(this.validatedKanjis)],this.saveValidated()}loadValidated(){const e=localStorage.getItem("kanji-practice:validated");e&&(this.validatedKanjis=JSON.parse(e),this.validatedKanjis[0]&&"k"!==this.validatedKanjis[0][0]&&"w"!==this.validatedKanjis[0][0]&&(this.validatedKanjis=[]))}saveValidated(){localStorage.setItem("kanji-practice:validated",JSON.stringify(this.validatedKanjis))}saveDomain(){localStorage.setItem("kanji-practice:domain",this.domain)}};on.styles=[en,qa],r([s()],on.prototype,"domain",void 0),r([l({reflect:!0})],on.prototype,"mode",void 0),r([s()],on.prototype,"row",void 0),r([s()],on.prototype,"candidatesListSize",void 0),r([f("mwc-textfield")],on.prototype,"textfield",void 0),r([f("#submit-button")],on.prototype,"submitButton",void 0),r([f("notes-dialog")],on.prototype,"notesDialog",void 0),on=r([a("app-container")],on);let rn=class extends Ft{async updated(e){await this.updateComplete,this.shadowRoot.querySelector("button").style.height=`${this.height}px`}};rn.styles=Ft.styles.concat(me`
     :host {
       --mdc-typography-button-font-size:1.5em;
       --mdc-typography-button-font-family: 'Sawarabi Mincho';
       --mdc-button-horizontal-padding:18px;
     }
-  `),r([l({type:Number})],on.prototype,"height",void 0),on=r([a("app-button")],on);
+  `),r([l({type:Number})],rn.prototype,"height",void 0),rn=r([a("app-button")],rn);
 /**
  * @license
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-const rn={fromAttribute:e=>null!==e&&(""===e||e),toAttribute:e=>"boolean"==typeof e?e?"":null:e};class an extends Io{constructor(){super(...arguments),this.rows=2,this.cols=20,this.charCounter=!1}render(){const e=this.charCounter&&-1!==this.maxLength,t=e&&"internal"===this.charCounter,o=e&&!t,r=!!this.helper||!!this.validationMessage||o,i={"mdc-text-field--disabled":this.disabled,"mdc-text-field--no-label":!this.label,"mdc-text-field--filled":!this.outlined,"mdc-text-field--outlined":this.outlined,"mdc-text-field--end-aligned":this.endAligned,"mdc-text-field--with-internal-counter":t};return W`
+const an={fromAttribute:e=>null!==e&&(""===e||e),toAttribute:e=>"boolean"==typeof e?e?"":null:e};class nn extends Io{constructor(){super(...arguments),this.rows=2,this.cols=20,this.charCounter=!1}render(){const e=this.charCounter&&-1!==this.maxLength,t=e&&"internal"===this.charCounter,o=e&&!t,r=!!this.helper||!!this.validationMessage||o,i={"mdc-text-field--disabled":this.disabled,"mdc-text-field--no-label":!this.label,"mdc-text-field--filled":!this.outlined,"mdc-text-field--outlined":this.outlined,"mdc-text-field--end-aligned":this.endAligned,"mdc-text-field--with-internal-counter":t};return W`
       <label class="mdc-text-field mdc-text-field--textarea ${Qe(i)}">
         ${this.renderRipple()}
         ${this.outlined?this.renderOutline():this.renderLabel()}
@@ -2296,18 +2323,18 @@ const rn={fromAttribute:e=>null!==e&&(""===e||e),toAttribute:e=>"boolean"==typeo
           autocapitalize="${qt(r)}"
           @input="${this.handleInputChange}"
           @blur="${this.onInputBlur}">
-      </textarea>`}}r([f("textarea")],an.prototype,"formElement",void 0),r([l({type:Number})],an.prototype,"rows",void 0),r([l({type:Number})],an.prototype,"cols",void 0),r([l({converter:rn})],an.prototype,"charCounter",void 0);
+      </textarea>`}}r([f("textarea")],nn.prototype,"formElement",void 0),r([l({type:Number})],nn.prototype,"rows",void 0),r([l({type:Number})],nn.prototype,"cols",void 0),r([l({converter:an})],nn.prototype,"charCounter",void 0);
 /**
  * @license
  * Copyright 2021 Google LLC
  * SPDX-LIcense-Identifier: Apache-2.0
  */
-const nn=me`.mdc-text-field{height:100%}.mdc-text-field__input{resize:none}`
+const ln=me`.mdc-text-field{height:100%}.mdc-text-field__input{resize:none}`
 /**
  * @license
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: Apache-2.0
- */;let ln=class extends an{};ln.styles=[jo,nn],ln=r([a("mwc-textarea")],ln);let sn=class extends Se{render(){return W`
+ */;let sn=class extends nn{};sn.styles=[jo,ln],sn=r([a("mwc-textarea")],sn);let cn=class extends Se{render(){return W`
     <mwc-dialog heading=Notes style="--mdc-dialog-min-width:calc(100vw - 32px);">
 
       <mwc-textarea style="width:100%" rows=12
@@ -2315,5 +2342,5 @@ const nn=me`.mdc-text-field{height:100%}.mdc-text-field__input{resize:none}`
 
       <mwc-button outlined slot=secondaryAction dialogAction=close>close</mwc-button>
     </mwc-dialog>
-    `}firstUpdated(e){this.loadContent()}onKeyUp(){this.saveContent()}loadContent(){let e=localStorage.getItem("translation-practice:notes");e&&(this.textarea.value=e)}saveContent(){localStorage.setItem("translation-practice:notes",this.textarea.value)}show(){this.dialog.show()}};r([f("mwc-dialog")],sn.prototype,"dialog",void 0),r([f("mwc-textarea")],sn.prototype,"textarea",void 0),sn=r([a("notes-dialog")],sn);
+    `}firstUpdated(e){this.loadContent()}onKeyUp(){this.saveContent()}loadContent(){let e=localStorage.getItem("translation-practice:notes");e&&(this.textarea.value=e)}saveContent(){localStorage.setItem("translation-practice:notes",this.textarea.value)}show(){this.dialog.show()}};r([f("mwc-dialog")],cn.prototype,"dialog",void 0),r([f("mwc-textarea")],cn.prototype,"textarea",void 0),cn=r([a("notes-dialog")],cn);
 //# sourceMappingURL=app.js.map
