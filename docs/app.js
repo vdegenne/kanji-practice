@@ -1851,7 +1851,8 @@ const ja=me`mwc-list ::slotted([mwc-list-item]:not([twoline])),mwc-list ::slotte
   min-height: 300px;
   font-size: 12em;
   /* font-family: 'Sawarabi Mincho', serif; */
-  /* font-family: 'Noto Serif JP', serif; */
+  font-family: 'Noto Serif JP', serif;
+  text-shadow: 1px 1px 2px black;
   /* font-weight: 300;
   width: 100%;
   text-align: center;
@@ -1910,7 +1911,7 @@ mwc-icon-button[highlight] {
     <div id=kanji>
       ${J}
       ${this.revealed?W`
-        ${this.success&&this._image?this._image:J}
+        ${!this.success&&this._image?this._image:J}
         <div style="z-index:2;font-size:Min(200px, calc(${e} / ${this.row[1].length} - ${t}px))">${this.row[1]}</div>
         `:W`?`}
     </div>
@@ -1986,7 +1987,7 @@ mwc-icon-button[highlight] {
                         @click=${()=>{this.onCreateButtonClick()}}
             dialogAction="submit">create</mwc-button>
         </mwc-dialog>
-    `}firstUpdated(e){this.dialog.addEventListener("closing",(e=>{"close"==e.detail.action&&this._createReject()})),super.firstUpdated(e)}onCreateButtonClick(){const e=this.textfield.value;if(!e)return void window.toast("Cannot be empty");if(this.manager.getCollection(this.manager.collectionsSelector.domain,e))return void window.toast("This collection already exists");const t=this.manager.addCollection(this.manager.collectionsSelector.domain,e);this._createResolve(t),this.dialog.close()}show(){const e=new Promise(((e,t)=>{this._createResolve=e,this._createReject=t}));return this.dialog.show(),e}};r([f("mwc-dialog")],Ka.prototype,"dialog",void 0),r([f("mwc-textfield")],Ka.prototype,"textfield",void 0),Ka=r([a("create-collection-dialog")],Ka);let Wa=class extends Se{constructor(e){super(),this.manager=e}render(){const e=this.manager.collections[this.domain];return W`
+    `}firstUpdated(e){this.dialog.addEventListener("closing",(e=>{"close"==e.detail.action&&this._createReject()})),super.firstUpdated(e)}onCreateButtonClick(){const e=this.textfield.value;if(!e)return void window.toast("Cannot be empty");if(this.manager.getCollection(this.manager.collectionsSelector.domain,e))return void window.toast("This collection already exists");const t=this.manager.addCollection(this.manager.collectionsSelector.domain,e);this._createResolve(t),this.dialog.close()}show(){const e=new Promise(((e,t)=>{this._createResolve=e,this._createReject=t}));return this.dialog.show(),e}};r([f("mwc-dialog")],Ka.prototype,"dialog",void 0),r([f("mwc-textfield")],Ka.prototype,"textfield",void 0),Ka=r([a("create-collection-dialog")],Ka);let Wa=class extends Se{constructor(e){super(),this.manager=e}render(){const e=this.manager.collections[this.domain].slice(0).sort(((e,t)=>e.name.localeCompare(t.name)));return W`
     <mwc-dialog>
       <header>
         <div>Save ${this.row?this.row[1]:""} to...</div>

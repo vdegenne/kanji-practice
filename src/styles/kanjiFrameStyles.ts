@@ -33,7 +33,8 @@ export const kanjiFrameStyles = css`
   min-height: 300px;
   font-size: 12em;
   /* font-family: 'Sawarabi Mincho', serif; */
-  /* font-family: 'Noto Serif JP', serif; */
+  font-family: 'Noto Serif JP', serif;
+  text-shadow: 1px 1px 2px black;
   /* font-weight: 300;
   width: 100%;
   text-align: center;

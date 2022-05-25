@@ -55,7 +55,7 @@ export class KanjiFrame extends LitElement {
       ` : nothing}
       ${this.revealed ?
         html`
-        ${this.success && this._image ? this._image : nothing}
+        ${!this.success && this._image ? this._image : nothing}
         <div style="z-index:2;font-size:Min(200px, calc(${frameWidth} / ${this.row[1].length} - ${padding}px))">${this.row[1]}</div>
         ` :
         html`?`
