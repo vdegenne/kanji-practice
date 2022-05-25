@@ -22,7 +22,7 @@ export class KanjiFrame extends LitElement {
   row: Row|null = null;
   @state() showText;
 
-  private _imageFeature: boolean = true;
+  public imageFeature: boolean = false;
   private _image?: HTMLImageElement;
 
 
@@ -55,7 +55,7 @@ export class KanjiFrame extends LitElement {
       ` : nothing}
       ${this.revealed ?
         html`
-        ${!this.success && this._image ? this._image : nothing}
+        ${this.imageFeature && !this.success && this._image ? this._image : nothing}
         <div style="z-index:2;font-size:Min(200px, calc(${frameWidth} / ${this.row[1].length} - ${padding}px))">${this.row[1]}</div>
         ` :
         html`?`
@@ -122,7 +122,7 @@ export class KanjiFrame extends LitElement {
       }
       else {
         this.showText = this.app.optionsManager.options.showTextualHint
-        if (this._imageFeature) {
+        if (this.imageFeature) {
           this.preloadImage()
         }
       }
@@ -130,7 +130,7 @@ export class KanjiFrame extends LitElement {
     // console.log(_changedProperties)
   }
 
-  private preloadImage() {
+  preloadImage() {
     this._image = document.createElement('img')
     this._image.src = `https://xxx.vdegenne.com/?${Date.now()}`
   }

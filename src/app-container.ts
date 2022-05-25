@@ -361,6 +361,16 @@ export class AppContainer extends LitElement {
    */
   validateAnswer () {
     // @TODO : the user can submit some commands (e.g. image feature)
+    switch (this.textfield.value) {
+      case 'ero':
+        this.kanjiFrame.imageFeature = !this.kanjiFrame.imageFeature
+        if (this.kanjiFrame.imageFeature) {
+          this.kanjiFrame.preloadImage()
+        }
+        this.textfield.value = ''
+        return
+    }
+
     if (!this.kanjiFrame.revealed) {
       this.kanjiFrame.reveal()
       /* -- SUCCESS -- */

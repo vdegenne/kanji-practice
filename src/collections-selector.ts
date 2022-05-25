@@ -42,10 +42,13 @@ export class CollectionsSelector extends LitElement {
   `
 
   render() {
-    const collections = this.manager.collections[this.domain].slice(0).sort((a, b) => {
-      // sorted alphabetically
-      return a.name.localeCompare(b.name);
-    })
+    let collections
+    try {
+      collections = this.manager.collections[this.domain].slice(0).sort((a, b) => {
+        // sorted alphabetically
+        return a.name.localeCompare(b.name);
+      })
+    } catch (e) {}
 
     return html`
     <mwc-dialog>
