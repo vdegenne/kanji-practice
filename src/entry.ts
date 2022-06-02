@@ -21,6 +21,7 @@ import './create-collection-dialog'
 import './collection-viewer'
 import './notes-dialog'
 import './row-history'
+import './tatoeba-dialog'
 
 /* global */
 import { CollectionsSelector } from './collections-selector'

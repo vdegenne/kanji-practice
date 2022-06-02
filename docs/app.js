@@ -1928,6 +1928,8 @@ mwc-icon-button[highlight] {
         @click=${()=>{this.app.collectionsManager.collectionsSelector.show(this.app.domain,Ha(this.app.domain,this.row[0]))}}></mwc-icon-button>
       <mwc-icon-button icon=search
         @click=${()=>{window.searchManager.show(this.row[1],"words")}}></mwc-icon-button>
+      <mwc-icon-button icon=image
+        @click=${()=>{Tr(this.row[1])}}></mwc-icon-button>
       <mwc-icon-button icon=more_horiz
         @click=${()=>{this.menu.show()}}></mwc-icon-button>
       <!-- <mwc-icon-button><img src="./img/tatoeba.svg" width=24 height=24
@@ -1953,8 +1955,12 @@ mwc-icon-button[highlight] {
           <span>naver</span>
           <img src="./img/naver.ico" slot=graphic>
         </mwc-list-item>
-        <!-- <li divider role="separator" padded></li>
-        <mwc-list-item graphic=icon
+        <li divider role="separator" padded></li>
+        <mwc-list-item graphic=icon @click=${()=>{this.app.tatoebaDialog.show(this.row[1])}}>
+          <span>Examples</span>
+          <mwc-icon slot="graphic">format_quote</mwc-icon>
+        </mwc-list-item>
+        <!-- <mwc-list-item graphic=icon
             @click=${()=>{window.searchManager.show(this.row[1],"words")}}>
           <span>words search</span>
           <mwc-icon slot=graphic>search</mwc-icon>
@@ -2284,9 +2290,9 @@ kanji-frame {
     ${this.optionsManager}
     ${this.rowHistory}
 
-
+    <tatoeba-dialog></tatoeba-dialog>
     <notes-dialog></notes-dialog>
-    `}onMDCTabBarActivated(e){const t=Ya[e.detail.index];this.domain=t,this.initializeData(),this.reset(),this.saveDomain()}initializeData(){switch(this.mode){case"discovery":this.data="kanji"==this.domain?Pa.slice(0):Na.slice(0);const e=this.validatedKanjis.filter((e=>e[0]==this.domain[0])).map((e=>parseInt(e.slice(1))));this.data=this.data.filter((t=>!e.includes(t[0])));break;case"practice":this.data=window.collectionsManager.collection.kanjis.map((e=>_kanjis.find((t=>t[1]===e))))}}pickNewRow(){const e=this.elementsLeft;if(0===e.length)return window.toast("You've run out of Kanji 😲 Try to refill from the options",-1),null;window.toast("",0);const t=e[~~(Math.random()*e.length)];return this.hintSearch=window.searchManager.searchData(t[1],["words"]).filter((e=>"not found"!=e.dictionary)).sort((function(e,t){return(t.frequency||-9999)-(e.frequency||-9999)})),setTimeout((()=>{this.optionsManager.enableAudioHint&&this.playAudioHint()}),200),t}changeDomain(e){this.domain=e,this.reset()}async playAudioHint(){if("kanji"==this.domain&&!this.hintSearch[0])return;const e="kanji"==this.domain?this.hintSearch[0].hiragana||this.hintSearch[0].word:this.row[4]||this.row[1];try{await Sr(e)}catch(t){await Za(e)}}get elementsLeft(){const e=Object.entries(this.optionsManager.options.jlpts).filter((([e,t])=>t)).map((([e,t])=>e));return this.data.filter((t=>e.includes(`jlpt${t[2]}`)))}getRemainingOverTotal(e){const t=("kanji"==this.domain?Pa:Na).filter((t=>t[2]==e)).map((e=>e[0])),o=this.validatedKanjis.filter((e=>e[0]==this.domain[0]&&t.includes(parseInt(e.slice(1)))));return`${t.length-o.length}/${t.length}`}get revealed(){var e;return null===(e=this.kanjiFrame)||void 0===e?void 0:e.revealed}refillJlpt(e){const t=("kanji"==this.domain?Pa:Na).filter((t=>t[2]==e)).map((e=>e[0]));this.validatedKanjis=this.validatedKanjis.filter((e=>!(e[0]==this.domain[0]&&t.includes(parseInt(e.slice(1))))))}async firstUpdated(e){await this.textfield.updateComplete,this.textfield.shadowRoot.querySelector("i").style.color="transparent"}onCasinoButtonClick(){this.kanjiFrame.conceal(),this.textfield.value="",0==this.candidatesListSize&&this.textfield.focus(),this.row=this.pickNewRow()}onTextFieldPress(e){"Enter"===e.key&&this.submitButton.click()}validateAnswer(){if("ero"===this.textfield.value)return this.kanjiFrame.imageFeature=!this.kanjiFrame.imageFeature,this.kanjiFrame.imageFeature&&this.kanjiFrame.preloadImage(),void(this.textfield.value="");if(this.kanjiFrame.revealed)this.onCasinoButtonClick();else{if(this.kanjiFrame.reveal(),this.textfield.value===this.row[1])return this.kanjiFrame.success=!0,this.playIncomeAudio&&this.playSuccessSound(),this.rowHistory.addToHistory(this.domain[0],this.row[0],!0),this.data.splice(this.data.indexOf(this.row),1),this.requestUpdate(),void this.addToValidatedList(this.domain,this.row[0]);this.playIncomeAudio&&this.playFailureSound(),this.rowHistory.addToHistory(this.domain[0],this.row[0],!1),this.requestUpdate(),this.optionsManager.enableAudioHint&&this.playAudioHint()}}submit(){this.validateAnswer()}playSuccessSound(){this._successAudio.play()}playFailureSound(){this._failureAudio.play()}addToValidatedList(e,t){this.validatedKanjis.push(`${e[0]}${t}`),this.validatedKanjis=[...new Set(this.validatedKanjis)],this.saveValidated()}loadValidated(){const e=localStorage.getItem("kanji-practice:validated");e&&(this.validatedKanjis=JSON.parse(e),this.validatedKanjis[0]&&"k"!==this.validatedKanjis[0][0]&&"w"!==this.validatedKanjis[0][0]&&(this.validatedKanjis=[]))}saveValidated(){localStorage.setItem("kanji-practice:validated",JSON.stringify(this.validatedKanjis))}saveDomain(){localStorage.setItem("kanji-practice:domain",this.domain)}};on.styles=[en,qa],r([s()],on.prototype,"domain",void 0),r([l({reflect:!0})],on.prototype,"mode",void 0),r([s()],on.prototype,"row",void 0),r([s()],on.prototype,"candidatesListSize",void 0),r([f("mwc-textfield")],on.prototype,"textfield",void 0),r([f("#submit-button")],on.prototype,"submitButton",void 0),r([f("notes-dialog")],on.prototype,"notesDialog",void 0),on=r([a("app-container")],on);let rn=class extends Ft{async updated(e){await this.updateComplete,this.shadowRoot.querySelector("button").style.height=`${this.height}px`}};rn.styles=Ft.styles.concat(me`
+    `}onMDCTabBarActivated(e){const t=Ya[e.detail.index];this.domain=t,this.initializeData(),this.reset(),this.saveDomain()}initializeData(){switch(this.mode){case"discovery":this.data="kanji"==this.domain?Pa.slice(0):Na.slice(0);const e=this.validatedKanjis.filter((e=>e[0]==this.domain[0])).map((e=>parseInt(e.slice(1))));this.data=this.data.filter((t=>!e.includes(t[0])));break;case"practice":this.data=window.collectionsManager.collection.kanjis.map((e=>_kanjis.find((t=>t[1]===e))))}}pickNewRow(){const e=this.elementsLeft;if(0===e.length)return window.toast("You've run out of Kanji 😲 Try to refill from the options",-1),null;window.toast("",0);const t=e[~~(Math.random()*e.length)];return this.hintSearch=window.searchManager.searchData(t[1],["words"]).filter((e=>"not found"!=e.dictionary)).sort((function(e,t){return(t.frequency||-9999)-(e.frequency||-9999)})),setTimeout((()=>{this.optionsManager.enableAudioHint&&this.playAudioHint()}),200),t}changeDomain(e){this.domain=e,this.reset()}async playAudioHint(){if("kanji"==this.domain&&!this.hintSearch[0])return;const e="kanji"==this.domain?this.hintSearch[0].hiragana||this.hintSearch[0].word:this.row[4]||this.row[1];try{await Sr(e)}catch(t){await Za(e)}}get elementsLeft(){const e=Object.entries(this.optionsManager.options.jlpts).filter((([e,t])=>t)).map((([e,t])=>e));return this.data.filter((t=>e.includes(`jlpt${t[2]}`)))}getRemainingOverTotal(e){const t=("kanji"==this.domain?Pa:Na).filter((t=>t[2]==e)).map((e=>e[0])),o=this.validatedKanjis.filter((e=>e[0]==this.domain[0]&&t.includes(parseInt(e.slice(1)))));return`${t.length-o.length}/${t.length}`}get revealed(){var e;return null===(e=this.kanjiFrame)||void 0===e?void 0:e.revealed}refillJlpt(e){const t=("kanji"==this.domain?Pa:Na).filter((t=>t[2]==e)).map((e=>e[0]));this.validatedKanjis=this.validatedKanjis.filter((e=>!(e[0]==this.domain[0]&&t.includes(parseInt(e.slice(1))))))}async firstUpdated(e){await this.textfield.updateComplete,this.textfield.shadowRoot.querySelector("i").style.color="transparent"}onCasinoButtonClick(){this.kanjiFrame.conceal(),this.textfield.value="",0==this.candidatesListSize&&this.textfield.focus(),this.row=this.pickNewRow()}onTextFieldPress(e){"Enter"===e.key&&this.submitButton.click()}validateAnswer(){if("ero"===this.textfield.value)return this.kanjiFrame.imageFeature=!this.kanjiFrame.imageFeature,this.kanjiFrame.imageFeature&&this.kanjiFrame.preloadImage(),void(this.textfield.value="");if(this.kanjiFrame.revealed)this.onCasinoButtonClick();else{if(this.kanjiFrame.reveal(),this.textfield.value===this.row[1])return this.kanjiFrame.success=!0,this.playIncomeAudio&&this.playSuccessSound(),this.rowHistory.addToHistory(this.domain[0],this.row[0],!0),this.data.splice(this.data.indexOf(this.row),1),this.requestUpdate(),void this.addToValidatedList(this.domain,this.row[0]);this.playIncomeAudio&&this.playFailureSound(),this.rowHistory.addToHistory(this.domain[0],this.row[0],!1),this.requestUpdate(),this.optionsManager.enableAudioHint&&this.playAudioHint()}}submit(){this.validateAnswer()}playSuccessSound(){this._successAudio.play()}playFailureSound(){this._failureAudio.play()}addToValidatedList(e,t){this.validatedKanjis.push(`${e[0]}${t}`),this.validatedKanjis=[...new Set(this.validatedKanjis)],this.saveValidated()}loadValidated(){const e=localStorage.getItem("kanji-practice:validated");e&&(this.validatedKanjis=JSON.parse(e),this.validatedKanjis[0]&&"k"!==this.validatedKanjis[0][0]&&"w"!==this.validatedKanjis[0][0]&&(this.validatedKanjis=[]))}saveValidated(){localStorage.setItem("kanji-practice:validated",JSON.stringify(this.validatedKanjis))}saveDomain(){localStorage.setItem("kanji-practice:domain",this.domain)}};on.styles=[en,qa],r([s()],on.prototype,"domain",void 0),r([l({reflect:!0})],on.prototype,"mode",void 0),r([s()],on.prototype,"row",void 0),r([s()],on.prototype,"candidatesListSize",void 0),r([f("mwc-textfield")],on.prototype,"textfield",void 0),r([f("#submit-button")],on.prototype,"submitButton",void 0),r([f("notes-dialog")],on.prototype,"notesDialog",void 0),r([f("tatoeba-dialog")],on.prototype,"tatoebaDialog",void 0),on=r([a("app-container")],on);let rn=class extends Ft{async updated(e){await this.updateComplete,this.shadowRoot.querySelector("button").style.height=`${this.height}px`}};rn.styles=Ft.styles.concat(me`
     :host {
       --mdc-typography-button-font-size:1.5em;
       --mdc-typography-button-font-family: 'Sawarabi Mincho';
@@ -2344,5 +2350,27 @@ const ln=me`.mdc-text-field{height:100%}.mdc-text-field__input{resize:none}`
 
       <mwc-button outlined slot=secondaryAction dialogAction=close>close</mwc-button>
     </mwc-dialog>
-    `}firstUpdated(e){this.loadContent()}onKeyUp(){this.saveContent()}loadContent(){let e=localStorage.getItem("translation-practice:notes");e&&(this.textarea.value=e)}saveContent(){localStorage.setItem("translation-practice:notes",this.textarea.value)}show(){this.dialog.show()}};r([f("mwc-dialog")],cn.prototype,"dialog",void 0),r([f("mwc-textarea")],cn.prototype,"textarea",void 0),cn=r([a("notes-dialog")],cn);
+    `}firstUpdated(e){this.loadContent()}onKeyUp(){this.saveContent()}loadContent(){let e=localStorage.getItem("translation-practice:notes");e&&(this.textarea.value=e)}saveContent(){localStorage.setItem("translation-practice:notes",this.textarea.value)}show(){this.dialog.show()}};r([f("mwc-dialog")],cn.prototype,"dialog",void 0),r([f("mwc-textarea")],cn.prototype,"textarea",void 0),cn=r([a("notes-dialog")],cn);let dn=class extends Se{constructor(){super(...arguments),this.fetching=!1,this.search="",this.result=[]}render(){return W`
+    <mwc-dialog heading=Examples>
+      ${this.fetching?W`fetching...`:J}
+
+      ${this.result.map((e=>W`
+        <div class="example">
+          <span>${e.j}</span>
+          <span>${e.e}</span>
+        </div>
+        `))}
+
+      <mwc-button outlined slot=secondaryAction dialogAction=close>close</mwc-button>
+    </mwc-dialog>
+    `}async performSearch(e=this.search){this.fetching=!0;try{const t=await fetch(`https://assiets.vdegenne.com/japanese/tatoeba/${encodeURIComponent(e)}`);this.result=await t.json(),console.log(this.result)}catch(e){window.toast("Something went wrong while fetching the search")}finally{this.fetching=!1}}async show(e){e!=this.search&&(this.search=e,this.performSearch()),this.dialog.show()}};dn.styles=me`
+  .example {
+    display: flex;
+    flex-direction: column;
+    margin: 18px 0;
+  }
+  .example > span:first-of-type {
+    /* border-bottom: 1px solid black; */
+  }
+  `,r([s()],dn.prototype,"fetching",void 0),r([f("mwc-dialog")],dn.prototype,"dialog",void 0),dn=r([a("tatoeba-dialog")],dn);
 //# sourceMappingURL=app.js.map

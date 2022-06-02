@@ -74,6 +74,8 @@ export class KanjiFrame extends LitElement {
         @click=${()=>{this.app.collectionsManager.collectionsSelector.show(this.app.domain, getRowFromId(this.app.domain, this.row![0]))}}></mwc-icon-button>
       <mwc-icon-button icon=search
         @click=${()=>{window.searchManager.show(this.row![1], 'words')}}></mwc-icon-button>
+      <mwc-icon-button icon=image
+        @click=${()=>{googleImageSearch(this.row![1])}}></mwc-icon-button>
       <mwc-icon-button icon=more_horiz
         @click=${()=>{this.menu.show()}}></mwc-icon-button>
       <!-- <mwc-icon-button><img src="./img/tatoeba.svg" width=24 height=24
@@ -99,8 +101,12 @@ export class KanjiFrame extends LitElement {
           <span>naver</span>
           <img src="./img/naver.ico" slot=graphic>
         </mwc-list-item>
-        <!-- <li divider role="separator" padded></li>
-        <mwc-list-item graphic=icon
+        <li divider role="separator" padded></li>
+        <mwc-list-item graphic=icon @click=${()=>{this.app.tatoebaDialog.show(this.row![1])}}>
+          <span>Examples</span>
+          <mwc-icon slot="graphic">format_quote</mwc-icon>
+        </mwc-list-item>
+        <!-- <mwc-list-item graphic=icon
             @click=${()=>{window.searchManager.show(this.row![1], 'words')}}>
           <span>words search</span>
           <mwc-icon slot=graphic>search</mwc-icon>

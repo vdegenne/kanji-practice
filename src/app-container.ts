@@ -14,6 +14,7 @@ import { playJapaneseAudio } from './util.js';
 import { CollectionsManager } from './collections-manager.js';
 import { NotesDialog } from './notes-dialog.js';
 import { RowHistory } from './row-history.js';
+import { TatoebaDialog } from './tatoeba-dialog.js';
 
 @customElement('app-container')
 export class AppContainer extends LitElement {
@@ -49,6 +50,7 @@ export class AppContainer extends LitElement {
   @query('mwc-textfield') textfield!: TextField;
   @query('#submit-button') submitButton!: Button;
   @query('notes-dialog') notesDialog!: NotesDialog;
+  @query('tatoeba-dialog') tatoebaDialog!: TatoebaDialog;
   // @query('options-manager') optionsManager!: OptionsManager;
 
 
@@ -200,7 +202,7 @@ export class AppContainer extends LitElement {
     ${this.optionsManager}
     ${this.rowHistory}
 
-
+    <tatoeba-dialog></tatoeba-dialog>
     <notes-dialog></notes-dialog>
     `
   }
