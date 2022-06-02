@@ -5,7 +5,7 @@ export const searchManagerStyles = css`
   display: block;
   font-family: Roboto;
   position: relative;
-  z-index: 9999999999;
+  /* z-index: 9999999999; */
   /* --mdc-theme-surface: white; */
   --mdc-typography-body1-font-size: 16px;
   --mdc-typography-body1-line-height: 24px;

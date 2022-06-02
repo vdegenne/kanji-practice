@@ -1001,7 +1001,7 @@ let ur=class extends pr{};ur.styles=[Po],ur=r([a("mwc-slider")],ur);var hr=[[1,"
   display: block;
   font-family: Roboto;
   position: relative;
-  z-index: 9999999999;
+  /* z-index: 9999999999; */
   /* --mdc-theme-surface: white; */
   --mdc-typography-body1-font-size: 16px;
   --mdc-typography-body1-line-height: 24px;
@@ -1699,13 +1699,13 @@ const ja=me`mwc-list ::slotted([mwc-list-item]:not([twoline])),mwc-list ::slotte
 
         <li divider role=separator padded></li>
         ${"kanji"==this.item.type?W`
-        <mwc-list-item graphic="icon" @click=${()=>{window.app.collectionsManager.collectionsSelector.show("kanji",Ha("kanji",this.item.rowId))}}>
+        <mwc-list-item graphic="icon" @click=${()=>{window.app.collectionSelector.show("kanji",Ha("kanji",this.item.rowId))}}>
           <span>Add to collection</span>
           <mwc-icon slot=graphic>playlist_add</mwc-icon>
         </mwc-list-item>
         `:J}
         ${"words"==this.item.type?W`
-        <mwc-list-item graphic="icon" @click=${()=>{window.app.collectionsManager.collectionsSelector.show("words",Ha("words",this.item.rowId))}}>
+        <mwc-list-item graphic="icon" @click=${()=>{window.app.collectionSelector.show("words",Ha("words",this.item.rowId))}}>
           <span>Add to collection</span>
           <mwc-icon slot=graphic>playlist_add</mwc-icon>
         </mwc-list-item>
@@ -2014,6 +2014,9 @@ mwc-icon-button[highlight] {
         @click=${()=>{this.onCreateNewCollectionButtonClick()}}>new collection</mwc-button>
     </mwc-dialog>
     `}async onCreateNewCollectionButtonClick(){try{const e=await this.manager.createCollectionDialog.show();this.requestUpdate(),await this.updateComplete,[...this.checkboxes].find((t=>t.parentElement.label==e.name)).click()}catch(e){}}onCheckboxClick(e,t){t.target.checked?e.elements.push(this.row[0]):e.elements.splice(e.elements.indexOf(this.row[0]),1),this.manager.saveCollections(),window.toast("Saved",2e3)}show(e,t){console.log(t),this.domain=e,this.row=t,this.dialog.show()}};Wa.styles=me`
+  :host {
+    display: block;
+  }
   header {
     text-align:right;
     display: flex;
@@ -2030,29 +2033,13 @@ mwc-icon-button[highlight] {
     --mdc-theme-secondary:yellow;
     --mdc-checkbox-ink-color: black;
   }
-  `,r([s()],Wa.prototype,"row",void 0),r([s()],Wa.prototype,"domain",void 0),r([f("mwc-dialog")],Wa.prototype,"dialog",void 0),r([p("mwc-checkbox")],Wa.prototype,"checkboxes",void 0),Wa=r([a("collections-selector")],Wa);let Ga=class extends Se{render(){var e,t;return W`
-    <mwc-dialog heading="${(null===(e=this.collection)||void 0===e?void 0:e.name)||""}">
-
-      ${this.collection?null===(t=this.collection)||void 0===t?void 0:t.elements.map((e=>{const t=Ha(window.app.domain,e);return this.wordTemplate(t[1])})):J}
-
-      <mwc-button outlined slot=secondaryAction dialogAction=close>close</mwc-button>
-    </mwc-dialog>
-    `}show(e){this.collection=e,this.dialog.show()}wordTemplate(e){return W`
-    <div class=word>
-      <span class="jp-font" @click=${()=>{window.searchManager.show(e,"words")}}>${e}</span>
-    </div>
-    `}};Ga.styles=[qa,me`
-  .word {
-    font-size: 2em;
-    margin: 25px 0;
-  }
-  `],r([s()],Ga.prototype,"collection",void 0),r([f("mwc-dialog")],Ga.prototype,"dialog",void 0),Ga=r([a("collection-viewer")],Ga);let Ja=class extends Se{constructor(e){if(super(),localStorage.getItem("kanji-practice:collections")){let e=JSON.parse(localStorage.getItem("kanji-practice:collections"));e instanceof Array&&(e={kanji:e.map((e=>({name:e.name,elements:e.kanjis}))),words:[]}),e.kanji.forEach((e=>{e.elements=e.elements.map((e=>"string"==typeof e?Pa.find((t=>t[1]==e))[0]:e))})),e.words.forEach((e=>{e.elements=e.elements.map((e=>"string"==typeof e?Na.find((t=>t[1]==e))[0]:e))})),this.collections=e}else this.collections={kanji:[{name:"My Kanjis",elements:[]}],words:[{name:"My Words",elements:[]}]};this.app=e,this.collectionsSelector=new Wa(this),this.createCollectionDialog=new Ka(this),this.collectionViewer=new Ga}render(){return W`
+  `,r([s()],Wa.prototype,"row",void 0),r([s()],Wa.prototype,"domain",void 0),r([f("mwc-dialog")],Wa.prototype,"dialog",void 0),r([p("mwc-checkbox")],Wa.prototype,"checkboxes",void 0),Wa=r([a("collections-selector")],Wa);let Ga=class extends Se{constructor(e){if(super(),localStorage.getItem("kanji-practice:collections")){let e=JSON.parse(localStorage.getItem("kanji-practice:collections"));e instanceof Array&&(e={kanji:e.map((e=>({name:e.name,elements:e.kanjis}))),words:[]}),e.kanji.forEach((e=>{e.elements=e.elements.map((e=>"string"==typeof e?Pa.find((t=>t[1]==e))[0]:e))})),e.words.forEach((e=>{e.elements=e.elements.map((e=>"string"==typeof e?Na.find((t=>t[1]==e))[0]:e))})),this.collections=e}else this.collections={kanji:[{name:"My Kanjis",elements:[]}],words:[{name:"My Words",elements:[]}]};this.app=e,this.collectionsSelector=new Wa(this),this.createCollectionDialog=new Ka(this)}render(){return W`
     <mwc-dialog heading="Collections">
      ${this.collections[this.app.domain].map((e=>W`
           <div class="collection-row">
             <span>${e.name} (${e.elements.length})</span>
             <mwc-icon-button icon=remove_red_eye
-              @click=${()=>{this.collectionViewer.show(e)}}
+              @click=${()=>{this.app.collectionViewer.show(e)}}
             ></mwc-icon-button>
             <mwc-icon-button icon=replay
               @click=${()=>{window.open(`./?collection=${encodeURIComponent(e.name)}`)}}></mwc-icon-button>
@@ -2062,20 +2049,15 @@ mwc-icon-button[highlight] {
             @click=${()=>{this.showCreateDialog()}}>new</mwc-button>
     </mwc-dialog>
 
-    <!-- COLLECTION SELECTOR -->
-    ${this.collectionsSelector}
-
     <!-- CREATE COLLECTION DIALOG -->
     ${this.createCollectionDialog}
-
-    ${this.collectionViewer}
-    `}get URLCollectionName(){return new URLSearchParams(window.location.search).get("collection")}getCollection(e,t){return this.collections[e].find((e=>e.name==t))}IsElementInACollection(e,t){return this.collections[e].some((e=>e.elements.includes(t)))}addCollection(e,t){let o;return this.collections[e].push(o={name:t,elements:[]}),o}show(){this.requestUpdate(),this.dialog.show()}async showCreateDialog(){try{await this.createCollectionDialog.show(),this.requestUpdate()}catch(e){}}saveCollections(){localStorage.setItem("kanji-practice:collections",JSON.stringify(this.collections))}};Ja.styles=me`
+    `}get URLCollectionName(){return new URLSearchParams(window.location.search).get("collection")}getCollection(e,t){return this.collections[e].find((e=>e.name==t))}IsElementInACollection(e,t){return this.collections[e].some((e=>e.elements.includes(t)))}addCollection(e,t){let o;return this.collections[e].push(o={name:t,elements:[]}),o}show(){this.requestUpdate(),this.dialog.show()}async showCreateDialog(){try{await this.createCollectionDialog.show(),this.requestUpdate()}catch(e){}}saveCollections(){localStorage.setItem("kanji-practice:collections",JSON.stringify(this.collections))}};Ga.styles=me`
     .collection-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-  `,r([f("mwc-dialog")],Ja.prototype,"dialog",void 0),Ja=r([a("collections-manager")],Ja);let Xa=class extends Se{constructor(e){super(),this.app=e,this.loadOptions()}render(){return W`
+  `,r([f("mwc-dialog")],Ga.prototype,"dialog",void 0),Ga=r([a("collections-manager")],Ga);let Ja=class extends Se{constructor(e){super(),this.app=e,this.loadOptions()}render(){return W`
     <mwc-dialog heading=Options
       @change=${()=>this.onOptionsChanged()}>
 
@@ -2127,7 +2109,7 @@ mwc-icon-button[highlight] {
 
       <mwc-button outlined slot="primaryAction" dialogAction="close">close</mwc-button>
     </mwc-dialog>
-    `}get showTextualHint(){return this.shadowRoot.querySelector('mwc-formfield[label="Show textual hint"]').firstElementChild.checked}get enableAudioHint(){return this.shadowRoot.querySelector('mwc-formfield[label="Play audio word hint"]').firstElementChild.checked}firstUpdated(e){this.dialog.addEventListener("opened",(()=>{this.shadowRoot.querySelector("mwc-slider").value=this.app.candidatesListSize,this.shadowRoot.querySelector("mwc-slider").layout(),this.requestUpdate()})),super.firstUpdated(e)}onOptionsChanged(){this.saveOptions()}show(){this.dialog.show()}onRefillClick(){}forwardShowTextualHint(){this.options.showTextualHint=this.showTextualHint,this.app.kanjiFrame.showText=this.showTextualHint}loadOptions(){let e;null!==localStorage.getItem("kanji-practice:options")?(e=JSON.parse(localStorage.getItem("kanji-practice:options")),"jlpt1"in e&&(e={jlpts:e,showTextualHint:!0,enableAudioHint:!0})):e={jlpts:{jlpt5:!0,jlpt4:!1,jlpt3:!1,jlpt2:!1,jlpt1:!1},showTextualHint:!0,enableAudioHint:!0},this.options=e}saveOptions(){const e={jlpts:this.options.jlpts,showTextualHint:this.showTextualHint,enableAudioHint:this.enableAudioHint};localStorage.setItem("kanji-practice:options",JSON.stringify(e))}};Xa.styles=me`
+    `}get showTextualHint(){return this.shadowRoot.querySelector('mwc-formfield[label="Show textual hint"]').firstElementChild.checked}get enableAudioHint(){return this.shadowRoot.querySelector('mwc-formfield[label="Play audio word hint"]').firstElementChild.checked}firstUpdated(e){this.dialog.addEventListener("opened",(()=>{this.shadowRoot.querySelector("mwc-slider").value=this.app.candidatesListSize,this.shadowRoot.querySelector("mwc-slider").layout(),this.requestUpdate()})),super.firstUpdated(e)}onOptionsChanged(){this.saveOptions()}show(){this.dialog.show()}onRefillClick(){}forwardShowTextualHint(){this.options.showTextualHint=this.showTextualHint,this.app.kanjiFrame.showText=this.showTextualHint}loadOptions(){let e;null!==localStorage.getItem("kanji-practice:options")?(e=JSON.parse(localStorage.getItem("kanji-practice:options")),"jlpt1"in e&&(e={jlpts:e,showTextualHint:!0,enableAudioHint:!0})):e={jlpts:{jlpt5:!0,jlpt4:!1,jlpt3:!1,jlpt2:!1,jlpt1:!1},showTextualHint:!0,enableAudioHint:!0},this.options=e}saveOptions(){const e={jlpts:this.options.jlpts,showTextualHint:this.showTextualHint,enableAudioHint:this.enableAudioHint};localStorage.setItem("kanji-practice:options",JSON.stringify(e))}};Ja.styles=me`
   .jlpt-row {
     display: flex;
     justify-content: space-between;
@@ -2140,7 +2122,7 @@ mwc-icon-button[highlight] {
       text-align: center;
       //margin: 0 48px;
     }
-  `,r([f("mwc-dialog")],Xa.prototype,"dialog",void 0),Xa=r([a("options-manager")],Xa);const Ya=["kanji","words"],Qa=speechSynthesis;function Za(e,t=1,o=.9){const r=function(e,t){const o=Qa.getVoices().filter((t=>e.includes(t.lang)));return o.sort(((e,o)=>{const r=t.indexOf(e.voiceURI),i=t.indexOf(o.voiceURI);return(r>=0?r:99)-(i>=0?i:99)})),o}(["ja-JP","ja_JP"],["Google 日本語","Microsoft Sayaka - Japanese (Japan)","Microsoft Ayumi - Japanese (Japan)","Microsoft Haruka - Japanese (Japan)","Microsoft Ichiro - Japanese (Japan)","Japanese Japan"]);return function(e,t,o=.5,r=.7){return new Promise(((i,a)=>{const n=new SpeechSynthesisUtterance;Object.assign(n,{voice:e,text:t,volume:o,rate:r}),n.lang=e.lang.replace(/_/,"-"),n.onend=()=>{i()},Qa.speak(n)}))}(r[0],e,t,o)}window.speechSynthesis.addEventListener("voiceschanged",(()=>{})),speechSynthesis.getVoices();const en=me`
+  `,r([f("mwc-dialog")],Ja.prototype,"dialog",void 0),Ja=r([a("options-manager")],Ja);const Xa=["kanji","words"],Ya=speechSynthesis;function Qa(e,t=1,o=.9){const r=function(e,t){const o=Ya.getVoices().filter((t=>e.includes(t.lang)));return o.sort(((e,o)=>{const r=t.indexOf(e.voiceURI),i=t.indexOf(o.voiceURI);return(r>=0?r:99)-(i>=0?i:99)})),o}(["ja-JP","ja_JP"],["Google 日本語","Microsoft Sayaka - Japanese (Japan)","Microsoft Ayumi - Japanese (Japan)","Microsoft Haruka - Japanese (Japan)","Microsoft Ichiro - Japanese (Japan)","Japanese Japan"]);return function(e,t,o=.5,r=.7){return new Promise(((i,a)=>{const n=new SpeechSynthesisUtterance;Object.assign(n,{voice:e,text:t,volume:o,rate:r}),n.lang=e.lang.replace(/_/,"-"),n.onend=()=>{i()},Ya.speak(n)}))}(r[0],e,t,o)}window.speechSynthesis.addEventListener("voiceschanged",(()=>{})),speechSynthesis.getVoices();const Za=me`
 :host {
   display: block;
   display: flex;
@@ -2178,7 +2160,7 @@ header > mwc-icon-button {
 kanji-frame {
   width: 100%;
 }
-`;let tn=class extends Se{constructor(e){super(),this._history=[],this.app=e,this.loadHistory()}render(){return W`
+`;let en=class extends Se{constructor(e){super(),this._history=[],this.app=e,this.loadHistory()}render(){return W`
     <mwc-dialog heading=History>
 
       <div id="history-list">
@@ -2194,7 +2176,11 @@ kanji-frame {
 
       <mwc-button outlined slot=secondaryAction dialogAction=close>close</mwc-button>
     </mwc-dialog>
-    `}addToHistory(e,t,o){this._history=[[e,t,o?1:0],...this._history],this.requestUpdate(),this.saveHistory()}loadHistory(){let e=localStorage.getItem("kanji-practice:history");e&&(this._history=JSON.parse(e))}saveHistory(e=50){localStorage.setItem("kanji-practice:history",JSON.stringify(this._history.slice(0,e)))}async show(){this.requestUpdate(),await this.updateComplete,this.dialog.show()}};tn.styles=me`
+    `}addToHistory(e,t,o){this._history=[[e,t,o?1:0],...this._history],this.requestUpdate(),this.saveHistory()}loadHistory(){let e=localStorage.getItem("kanji-practice:history");e&&(this._history=JSON.parse(e))}saveHistory(e=50){localStorage.setItem("kanji-practice:history",JSON.stringify(this._history.slice(0,e)))}async show(){this.requestUpdate(),await this.updateComplete,this.dialog.show()}};en.styles=me`
+  :host {
+    /* display: block;
+    z-index: 2; */
+  }
   .item {
     display: flex;
     align-items: center;
@@ -2203,10 +2189,10 @@ kanji-frame {
   .item > span {
     font-size: 1.3em;
   }
-  `,r([f("mwc-dialog")],tn.prototype,"dialog",void 0),tn=r([a("row-history")],tn);let on=class extends Se{constructor(){if(super(),this.domain="kanji",this.mode="discovery",this.data=[],this.candidatesListSize=0,this.playIncomeAudio=!0,this.hintSearch=[],this.validatedKanjis=[],this.collectionsManager=new Ja(this),this.optionsManager=new Xa(this),this.kanjiFrame=new Ua(this),this.rowHistory=new tn(this),this.reset=this.onCasinoButtonClick,this._successAudio=new Audio("./audio/success.mp3"),this._failureAudio=new Audio("./audio/wrong.mp3"),this.collectionsManager.URLCollectionName&&(this.mode="practice"),"practice"==this.mode);else{const e=localStorage.getItem("kanji-practice:domain");this.domain=e||"kanji"}this.loadValidated()}render(){var e,t;return this.kanjiFrame.row=this.row,W`
+  `,r([f("mwc-dialog")],en.prototype,"dialog",void 0),en=r([a("row-history")],en);let tn=class extends Se{constructor(){if(super(),this.domain="kanji",this.mode="discovery",this.data=[],this.candidatesListSize=0,this.playIncomeAudio=!0,this.hintSearch=[],this.validatedKanjis=[],this.collectionsManager=new Ga(this),this.collectionSelector=new Wa(this.collectionsManager),this.optionsManager=new Ja(this),this.kanjiFrame=new Ua(this),this.rowHistory=new en(this),this.reset=this.onCasinoButtonClick,this._successAudio=new Audio("./audio/success.mp3"),this._failureAudio=new Audio("./audio/wrong.mp3"),this.collectionsManager.URLCollectionName&&(this.mode="practice"),"practice"==this.mode);else{const e=localStorage.getItem("kanji-practice:domain");this.domain=e||"kanji"}this.loadValidated()}render(){var e,t;return this.kanjiFrame.row=this.row,W`
     <mwc-tab-bar style="width:100%"
         @MDCTabBar:activated=${e=>{this.onMDCTabBarActivated(e)}}
-        activeIndex=${Ya.indexOf(this.domain)}>
+        activeIndex=${Xa.indexOf(this.domain)}>
       <mwc-tab label=kanji></mwc-tab>
       <mwc-tab label=words></mwc-tab>
     </mwc-tab-bar>
@@ -2286,19 +2272,39 @@ kanji-frame {
           @click=${()=>{this.validateAnswer()}}>next</mwc-button>
     </div>
 
-    ${this.collectionsManager}
-    ${this.optionsManager}
     ${this.rowHistory}
-
     <tatoeba-dialog></tatoeba-dialog>
+
+    ${this.collectionsManager}
+    <collection-viewer></collection-viewer>
+    <search-manager></search-manager>
+    ${this.collectionSelector}
+    ${this.optionsManager}
+
     <notes-dialog></notes-dialog>
-    `}onMDCTabBarActivated(e){const t=Ya[e.detail.index];this.domain=t,this.initializeData(),this.reset(),this.saveDomain()}initializeData(){switch(this.mode){case"discovery":this.data="kanji"==this.domain?Pa.slice(0):Na.slice(0);const e=this.validatedKanjis.filter((e=>e[0]==this.domain[0])).map((e=>parseInt(e.slice(1))));this.data=this.data.filter((t=>!e.includes(t[0])));break;case"practice":this.data=window.collectionsManager.collection.kanjis.map((e=>_kanjis.find((t=>t[1]===e))))}}pickNewRow(){const e=this.elementsLeft;if(0===e.length)return window.toast("You've run out of Kanji 😲 Try to refill from the options",-1),null;window.toast("",0);const t=e[~~(Math.random()*e.length)];return this.hintSearch=window.searchManager.searchData(t[1],["words"]).filter((e=>"not found"!=e.dictionary)).sort((function(e,t){return(t.frequency||-9999)-(e.frequency||-9999)})),setTimeout((()=>{this.optionsManager.enableAudioHint&&this.playAudioHint()}),200),t}changeDomain(e){this.domain=e,this.reset()}async playAudioHint(){if("kanji"==this.domain&&!this.hintSearch[0])return;const e="kanji"==this.domain?this.hintSearch[0].hiragana||this.hintSearch[0].word:this.row[4]||this.row[1];try{await Sr(e)}catch(t){await Za(e)}}get elementsLeft(){const e=Object.entries(this.optionsManager.options.jlpts).filter((([e,t])=>t)).map((([e,t])=>e));return this.data.filter((t=>e.includes(`jlpt${t[2]}`)))}getRemainingOverTotal(e){const t=("kanji"==this.domain?Pa:Na).filter((t=>t[2]==e)).map((e=>e[0])),o=this.validatedKanjis.filter((e=>e[0]==this.domain[0]&&t.includes(parseInt(e.slice(1)))));return`${t.length-o.length}/${t.length}`}get revealed(){var e;return null===(e=this.kanjiFrame)||void 0===e?void 0:e.revealed}refillJlpt(e){const t=("kanji"==this.domain?Pa:Na).filter((t=>t[2]==e)).map((e=>e[0]));this.validatedKanjis=this.validatedKanjis.filter((e=>!(e[0]==this.domain[0]&&t.includes(parseInt(e.slice(1))))))}async firstUpdated(e){await this.textfield.updateComplete,this.textfield.shadowRoot.querySelector("i").style.color="transparent"}onCasinoButtonClick(){this.kanjiFrame.conceal(),this.textfield.value="",0==this.candidatesListSize&&this.textfield.focus(),this.row=this.pickNewRow()}onTextFieldPress(e){"Enter"===e.key&&this.submitButton.click()}validateAnswer(){if("ero"===this.textfield.value)return this.kanjiFrame.imageFeature=!this.kanjiFrame.imageFeature,this.kanjiFrame.imageFeature&&this.kanjiFrame.preloadImage(),void(this.textfield.value="");if(this.kanjiFrame.revealed)this.onCasinoButtonClick();else{if(this.kanjiFrame.reveal(),this.textfield.value===this.row[1])return this.kanjiFrame.success=!0,this.playIncomeAudio&&this.playSuccessSound(),this.rowHistory.addToHistory(this.domain[0],this.row[0],!0),this.data.splice(this.data.indexOf(this.row),1),this.requestUpdate(),void this.addToValidatedList(this.domain,this.row[0]);this.playIncomeAudio&&this.playFailureSound(),this.rowHistory.addToHistory(this.domain[0],this.row[0],!1),this.requestUpdate(),this.optionsManager.enableAudioHint&&this.playAudioHint()}}submit(){this.validateAnswer()}playSuccessSound(){this._successAudio.play()}playFailureSound(){this._failureAudio.play()}addToValidatedList(e,t){this.validatedKanjis.push(`${e[0]}${t}`),this.validatedKanjis=[...new Set(this.validatedKanjis)],this.saveValidated()}loadValidated(){const e=localStorage.getItem("kanji-practice:validated");e&&(this.validatedKanjis=JSON.parse(e),this.validatedKanjis[0]&&"k"!==this.validatedKanjis[0][0]&&"w"!==this.validatedKanjis[0][0]&&(this.validatedKanjis=[]))}saveValidated(){localStorage.setItem("kanji-practice:validated",JSON.stringify(this.validatedKanjis))}saveDomain(){localStorage.setItem("kanji-practice:domain",this.domain)}};on.styles=[en,qa],r([s()],on.prototype,"domain",void 0),r([l({reflect:!0})],on.prototype,"mode",void 0),r([s()],on.prototype,"row",void 0),r([s()],on.prototype,"candidatesListSize",void 0),r([f("mwc-textfield")],on.prototype,"textfield",void 0),r([f("#submit-button")],on.prototype,"submitButton",void 0),r([f("notes-dialog")],on.prototype,"notesDialog",void 0),r([f("tatoeba-dialog")],on.prototype,"tatoebaDialog",void 0),on=r([a("app-container")],on);let rn=class extends Ft{async updated(e){await this.updateComplete,this.shadowRoot.querySelector("button").style.height=`${this.height}px`}};rn.styles=Ft.styles.concat(me`
+    `}onMDCTabBarActivated(e){const t=Xa[e.detail.index];this.domain=t,this.initializeData(),this.reset(),this.saveDomain()}initializeData(){switch(this.mode){case"discovery":this.data="kanji"==this.domain?Pa.slice(0):Na.slice(0);const e=this.validatedKanjis.filter((e=>e[0]==this.domain[0])).map((e=>parseInt(e.slice(1))));this.data=this.data.filter((t=>!e.includes(t[0])));break;case"practice":this.data=window.collectionsManager.collection.kanjis.map((e=>_kanjis.find((t=>t[1]===e))))}}pickNewRow(){const e=this.elementsLeft;if(0===e.length)return window.toast("You've run out of Kanji 😲 Try to refill from the options",-1),null;window.toast("",0);const t=e[~~(Math.random()*e.length)];return this.hintSearch=window.searchManager.searchData(t[1],["words"]).filter((e=>"not found"!=e.dictionary)).sort((function(e,t){return(t.frequency||-9999)-(e.frequency||-9999)})),setTimeout((()=>{this.optionsManager.enableAudioHint&&this.playAudioHint()}),200),t}changeDomain(e){this.domain=e,this.reset()}async playAudioHint(){if("kanji"==this.domain&&!this.hintSearch[0])return;const e="kanji"==this.domain?this.hintSearch[0].hiragana||this.hintSearch[0].word:this.row[4]||this.row[1];try{await Sr(e)}catch(t){await Qa(e)}}get elementsLeft(){const e=Object.entries(this.optionsManager.options.jlpts).filter((([e,t])=>t)).map((([e,t])=>e));return this.data.filter((t=>e.includes(`jlpt${t[2]}`)))}getRemainingOverTotal(e){const t=("kanji"==this.domain?Pa:Na).filter((t=>t[2]==e)).map((e=>e[0])),o=this.validatedKanjis.filter((e=>e[0]==this.domain[0]&&t.includes(parseInt(e.slice(1)))));return`${t.length-o.length}/${t.length}`}get revealed(){var e;return null===(e=this.kanjiFrame)||void 0===e?void 0:e.revealed}refillJlpt(e){const t=("kanji"==this.domain?Pa:Na).filter((t=>t[2]==e)).map((e=>e[0]));this.validatedKanjis=this.validatedKanjis.filter((e=>!(e[0]==this.domain[0]&&t.includes(parseInt(e.slice(1))))))}async firstUpdated(e){await this.textfield.updateComplete,this.textfield.shadowRoot.querySelector("i").style.color="transparent"}onCasinoButtonClick(){this.kanjiFrame.conceal(),this.textfield.value="",0==this.candidatesListSize&&this.textfield.focus(),this.row=this.pickNewRow()}onTextFieldPress(e){"Enter"===e.key&&this.submitButton.click()}validateAnswer(){if("ero"===this.textfield.value)return this.kanjiFrame.imageFeature=!this.kanjiFrame.imageFeature,this.kanjiFrame.imageFeature&&this.kanjiFrame.preloadImage(),void(this.textfield.value="");if(this.kanjiFrame.revealed)this.onCasinoButtonClick();else{if(this.kanjiFrame.reveal(),this.textfield.value===this.row[1])return this.kanjiFrame.success=!0,this.playIncomeAudio&&this.playSuccessSound(),this.rowHistory.addToHistory(this.domain[0],this.row[0],!0),this.data.splice(this.data.indexOf(this.row),1),this.requestUpdate(),void this.addToValidatedList(this.domain,this.row[0]);this.playIncomeAudio&&this.playFailureSound(),this.rowHistory.addToHistory(this.domain[0],this.row[0],!1),this.requestUpdate(),this.optionsManager.enableAudioHint&&this.playAudioHint()}}submit(){this.validateAnswer()}playSuccessSound(){this._successAudio.play()}playFailureSound(){this._failureAudio.play()}addToValidatedList(e,t){this.validatedKanjis.push(`${e[0]}${t}`),this.validatedKanjis=[...new Set(this.validatedKanjis)],this.saveValidated()}loadValidated(){const e=localStorage.getItem("kanji-practice:validated");e&&(this.validatedKanjis=JSON.parse(e),this.validatedKanjis[0]&&"k"!==this.validatedKanjis[0][0]&&"w"!==this.validatedKanjis[0][0]&&(this.validatedKanjis=[]))}saveValidated(){localStorage.setItem("kanji-practice:validated",JSON.stringify(this.validatedKanjis))}saveDomain(){localStorage.setItem("kanji-practice:domain",this.domain)}};tn.styles=[Za,qa],r([s()],tn.prototype,"domain",void 0),r([l({reflect:!0})],tn.prototype,"mode",void 0),r([s()],tn.prototype,"row",void 0),r([s()],tn.prototype,"candidatesListSize",void 0),r([f("mwc-textfield")],tn.prototype,"textfield",void 0),r([f("#submit-button")],tn.prototype,"submitButton",void 0),r([f("notes-dialog")],tn.prototype,"notesDialog",void 0),r([f("tatoeba-dialog")],tn.prototype,"tatoebaDialog",void 0),r([f("search-manager")],tn.prototype,"searchManager",void 0),r([f("collection-viewer")],tn.prototype,"collectionViewer",void 0),tn=r([a("app-container")],tn);let on=class extends Ft{async updated(e){await this.updateComplete,this.shadowRoot.querySelector("button").style.height=`${this.height}px`}};on.styles=Ft.styles.concat(me`
     :host {
       --mdc-typography-button-font-size:1.5em;
       --mdc-typography-button-font-family: 'Sawarabi Mincho';
       --mdc-button-horizontal-padding:18px;
     }
-  `),r([l({type:Number})],rn.prototype,"height",void 0),rn=r([a("app-button")],rn);
+  `),r([l({type:Number})],on.prototype,"height",void 0),on=r([a("app-button")],on);let rn=class extends Se{render(){var e,t;return W`
+    <mwc-dialog heading="${(null===(e=this.collection)||void 0===e?void 0:e.name)||""}">
+
+      ${this.collection?null===(t=this.collection)||void 0===t?void 0:t.elements.map((e=>{const t=Ha(window.app.domain,e);return this.wordTemplate(t[1])})):J}
+
+      <mwc-button outlined slot=secondaryAction dialogAction=close>close</mwc-button>
+    </mwc-dialog>
+    `}show(e){this.collection=e,this.dialog.show()}wordTemplate(e){return W`
+    <div class=word>
+      <span class="jp-font" @click=${()=>{window.searchManager.show(e,"words")}}>${e}</span>
+    </div>
+    `}};rn.styles=[qa,me`
+  .word {
+    font-size: 2em;
+    margin: 25px 0;
+  }
+  `],r([s()],rn.prototype,"collection",void 0),r([f("mwc-dialog")],rn.prototype,"dialog",void 0),rn=r([a("collection-viewer")],rn);
 /**
  * @license
  * Copyright 2019 Google LLC
@@ -2361,9 +2367,11 @@ const ln=me`.mdc-text-field{height:100%}.mdc-text-field__input{resize:none}`
         </div>
         `))}
 
+      <mwc-button icon="search" slot=secondaryAction
+        @click=${()=>{this.searchSelection()}}>search</mwc-button>
       <mwc-button outlined slot=secondaryAction dialogAction=close>close</mwc-button>
     </mwc-dialog>
-    `}async performSearch(e=this.search){this.fetching=!0;try{const t=await fetch(`https://assiets.vdegenne.com/japanese/tatoeba/${encodeURIComponent(e)}`);this.result=await t.json(),console.log(this.result)}catch(e){window.toast("Something went wrong while fetching the search")}finally{this.fetching=!1}}async show(e){e!=this.search&&(this.search=e,this.performSearch()),this.dialog.show()}};dn.styles=me`
+    `}searchSelection(){let e=window.getSelection();e&&(e=e.toString(),e&&window.searchManager.show(e))}firstUpdated(e){}async performSearch(e=this.search){this.fetching=!0;try{const t=await fetch(`https://assiets.vdegenne.com/japanese/tatoeba/${encodeURIComponent(e)}`);this.result=await t.json(),console.log(this.result)}catch(e){window.toast("Something went wrong while fetching the search")}finally{this.fetching=!1}}async show(e){e!=this.search&&(this.search=e,this.performSearch()),this.dialog.show()}};dn.styles=me`
   .example {
     display: flex;
     flex-direction: column;

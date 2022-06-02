@@ -1,4 +1,4 @@
-import { css, html, LitElement, nothing } from 'lit'
+import { css, html, LitElement, nothing, PropertyValueMap } from 'lit'
 import { customElement, query, state } from 'lit/decorators.js'
 import '@material/mwc-dialog'
 import '@material/mwc-icon-button'
@@ -38,9 +38,27 @@ export class TatoebaDialog extends LitElement {
         `
       })}
 
+      <mwc-button icon="search" slot=secondaryAction
+        @click=${()=>{this.searchSelection()}}>search</mwc-button>
       <mwc-button outlined slot=secondaryAction dialogAction=close>close</mwc-button>
     </mwc-dialog>
     `
+  }
+
+  searchSelection() {
+    let selection: Selection|null|string = window.getSelection()
+    if (selection) {
+      selection = selection.toString()
+      if (selection) {
+        window.searchManager.show(selection)
+      }
+    }
+  }
+
+  protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    // window.addEventListener('selectionchange', e=>{
+    //   console.log(e)
+    // })
   }
 
   async performSearch (search = this.search) {

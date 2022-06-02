@@ -24,6 +24,10 @@ export class RowHistory extends LitElement {
    * Styles
    */
   static styles = css`
+  :host {
+    /* display: block;
+    z-index: 2; */
+  }
   .item {
     display: flex;
     align-items: center;

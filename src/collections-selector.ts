@@ -23,6 +23,9 @@ export class CollectionsSelector extends LitElement {
   }
 
   static styles = css`
+  :host {
+    display: block;
+  }
   header {
     text-align:right;
     display: flex;

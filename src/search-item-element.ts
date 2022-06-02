@@ -88,13 +88,13 @@ export class SearchItemElement extends LitElement {
 
         <li divider role=separator padded></li>
         ${this.item.type == 'kanji' ? html`
-        <mwc-list-item graphic="icon" @click=${()=>{window.app.collectionsManager.collectionsSelector.show('kanji', getRowFromId('kanji', this.item.rowId))}}>
+        <mwc-list-item graphic="icon" @click=${()=>{window.app.collectionSelector.show('kanji', getRowFromId('kanji', this.item.rowId))}}>
           <span>Add to collection</span>
           <mwc-icon slot=graphic>playlist_add</mwc-icon>
         </mwc-list-item>
         ` : nothing}
         ${this.item.type == 'words' ? html`
-        <mwc-list-item graphic="icon" @click=${()=>{window.app.collectionsManager.collectionsSelector.show('words', getRowFromId('words', this.item.rowId))}}>
+        <mwc-list-item graphic="icon" @click=${()=>{window.app.collectionSelector.show('words', getRowFromId('words', this.item.rowId))}}>
           <span>Add to collection</span>
           <mwc-icon slot=graphic>playlist_add</mwc-icon>
         </mwc-list-item>

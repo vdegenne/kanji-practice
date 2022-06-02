@@ -27,7 +27,6 @@ export class CollectionsManager extends LitElement {
   collectionsSelector: CollectionsSelector;
   // @query('create-collection-dialog')
   createCollectionDialog: CreateCollectionDialog;
-  collectionViewer: CollectionViewer;
 
 
   constructor (appInstance: AppContainer) {
@@ -70,8 +69,6 @@ export class CollectionsManager extends LitElement {
     this.app = appInstance;
     this.collectionsSelector = new CollectionsSelector(this)
     this.createCollectionDialog = new CreateCollectionDialog(this)
-    this.collectionViewer = new CollectionViewer()
-    // this.coll
   }
 
   static styles = css`
@@ -90,7 +87,7 @@ export class CollectionsManager extends LitElement {
           <div class="collection-row">
             <span>${c.name} (${c.elements.length})</span>
             <mwc-icon-button icon=remove_red_eye
-              @click=${()=>{this.collectionViewer.show(c)}}
+              @click=${()=>{this.app.collectionViewer.show(c)}}
             ></mwc-icon-button>
             <mwc-icon-button icon=replay
               @click=${()=>{window.open(`./?collection=${encodeURIComponent(c.name)}`)}}></mwc-icon-button>
@@ -101,13 +98,8 @@ export class CollectionsManager extends LitElement {
             @click=${()=>{this.showCreateDialog()}}>new</mwc-button>
     </mwc-dialog>
 
-    <!-- COLLECTION SELECTOR -->
-    ${this.collectionsSelector}
-
     <!-- CREATE COLLECTION DIALOG -->
     ${this.createCollectionDialog}
-
-    ${this.collectionViewer}
     `
   }
 

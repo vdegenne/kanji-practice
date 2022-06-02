@@ -1,4 +1,4 @@
-import {html, LitElement, nothing} from "lit";
+import {css, html, LitElement, nothing} from "lit";
 import {customElement, state} from "lit/decorators.js";
 import {SearchManager, SearchItem} from "./search-manager";
 

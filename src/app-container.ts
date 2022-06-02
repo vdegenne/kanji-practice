@@ -6,7 +6,7 @@ import { Domain, domains, Mode, Row } from './types.js';
 import { speakJapanese } from './speech.js';
 import { mainStyles } from './styles/mainStyles.js';
 import { Kanjis, Words } from './data.js';
-import { SearchItem } from './search-manager.js';
+import { SearchItem, SearchManager } from './search-manager.js';
 import { OptionsManager } from './options-manager.js';
 import { KanjiFrame } from './kanji-frame.js';
 import { sharedStyles } from './styles/sharedStyles.js';
@@ -15,6 +15,8 @@ import { CollectionsManager } from './collections-manager.js';
 import { NotesDialog } from './notes-dialog.js';
 import { RowHistory } from './row-history.js';
 import { TatoebaDialog } from './tatoeba-dialog.js';
+import { CollectionViewer } from './collection-viewer.js';
+import { CollectionsSelector } from './collections-selector.js';
 
 @customElement('app-container')
 export class AppContainer extends LitElement {
@@ -39,9 +41,11 @@ export class AppContainer extends LitElement {
   private validatedKanjis: string[] = []
 
   public collectionsManager: CollectionsManager = new CollectionsManager(this);
+  public collectionSelector: CollectionsSelector = new CollectionsSelector(this.collectionsManager);
   public optionsManager: OptionsManager = new OptionsManager(this);
   public kanjiFrame: KanjiFrame = new KanjiFrame(this)
   public rowHistory: RowHistory = new RowHistory(this)
+  // public collectionViewer: CollectionViewer = new CollectionViewer()
 
   /**
    * Queries
@@ -51,6 +55,8 @@ export class AppContainer extends LitElement {
   @query('#submit-button') submitButton!: Button;
   @query('notes-dialog') notesDialog!: NotesDialog;
   @query('tatoeba-dialog') tatoebaDialog!: TatoebaDialog;
+  @query('search-manager') searchManager!: SearchManager;
+  @query('collection-viewer') collectionViewer!: CollectionViewer;
   // @query('options-manager') optionsManager!: OptionsManager;
 
 
@@ -198,11 +204,15 @@ export class AppContainer extends LitElement {
           @click=${()=>{this.validateAnswer()}}>next</mwc-button>
     </div>
 
-    ${this.collectionsManager}
-    ${this.optionsManager}
     ${this.rowHistory}
-
     <tatoeba-dialog></tatoeba-dialog>
+
+    ${this.collectionsManager}
+    <collection-viewer></collection-viewer>
+    <search-manager></search-manager>
+    ${this.collectionSelector}
+    ${this.optionsManager}
+
     <notes-dialog></notes-dialog>
     `
   }
