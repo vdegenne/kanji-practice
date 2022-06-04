@@ -60,7 +60,7 @@ export class KanjiFrame extends LitElement {
       ${this.revealed ?
         html`
         ${this.backImage}
-        <div style="z-index:2;font-size:Min(200px, calc(${frameWidth} / ${this.row[1].length} - ${padding}px))">${this.row[1]}</div>
+        <div style="z-index:2;font-size:Min(200px, calc(${frameWidth} / ${this.row[1].length} - ${padding}px));pointer-events: none;">${this.row[1]}</div>
         ` :
         html`?`
       }
@@ -75,7 +75,7 @@ export class KanjiFrame extends LitElement {
     <div id=details-strip ?hide=${!this.revealed}>
       <mwc-icon-button icon="playlist_add"
         ?highlight=${this.app.collectionsManager.IsElementInACollection(this.app.domain, this.row![0])}
-        @click=${()=>{this.app.collectionsManager.collectionsSelector.show(this.app.domain, getRowFromId(this.app.domain, this.row![0]))}}></mwc-icon-button>
+        @click=${()=>{this.app.collectionSelector.show(this.app.domain, getRowFromId(this.app.domain, this.row![0]))}}></mwc-icon-button>
       <mwc-icon-button icon=search
         @click=${()=>{window.searchManager.show(this.row![1], 'words')}}></mwc-icon-button>
       <mwc-icon-button icon=image

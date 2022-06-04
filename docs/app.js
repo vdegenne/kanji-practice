@@ -1871,6 +1871,7 @@ const Ra=me`mwc-list ::slotted([mwc-list-item]:not([twoline])),mwc-list ::slotte
   display: flex;
   justify-content: center;
   align-items: center; */
+  -webkit-text-stroke: 0.5px black;
 }
 #kanji > back-image {
   /* height: 500px; */
@@ -1923,7 +1924,7 @@ mwc-icon-button[highlight] {
       ${J}
       ${this.revealed?W`
         ${this.backImage}
-        <div style="z-index:2;font-size:Min(200px, calc(${e} / ${this.row[1].length} - ${t}px))">${this.row[1]}</div>
+        <div style="z-index:2;font-size:Min(200px, calc(${e} / ${this.row[1].length} - ${t}px));pointer-events: none;">${this.row[1]}</div>
         `:W`?`}
     </div>
 
@@ -1936,7 +1937,7 @@ mwc-icon-button[highlight] {
     <div id=details-strip ?hide=${!this.revealed}>
       <mwc-icon-button icon="playlist_add"
         ?highlight=${this.app.collectionsManager.IsElementInACollection(this.app.domain,this.row[0])}
-        @click=${()=>{this.app.collectionsManager.collectionsSelector.show(this.app.domain,Ba(this.app.domain,this.row[0]))}}></mwc-icon-button>
+        @click=${()=>{this.app.collectionSelector.show(this.app.domain,Ba(this.app.domain,this.row[0]))}}></mwc-icon-button>
       <mwc-icon-button icon=search
         @click=${()=>{window.searchManager.show(this.row[1],"words")}}></mwc-icon-button>
       <mwc-icon-button icon=image

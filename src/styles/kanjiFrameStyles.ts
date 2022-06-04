@@ -42,6 +42,7 @@ export const kanjiFrameStyles = css`
   display: flex;
   justify-content: center;
   align-items: center; */
+  -webkit-text-stroke: 0.5px black;
 }
 #kanji > back-image {
   /* height: 500px; */
