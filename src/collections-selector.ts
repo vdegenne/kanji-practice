@@ -106,7 +106,7 @@ export class CollectionsSelector extends LitElement {
   }
 
   show (domain: Domain, rowToAdd: Row) {
-    console.log(rowToAdd)
+    // console.log(rowToAdd)
     this.domain =domain
     this.row = rowToAdd
     this.dialog.show()

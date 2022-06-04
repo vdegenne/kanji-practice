@@ -375,10 +375,11 @@ export class AppContainer extends LitElement {
     // @TODO : the user can submit some commands (e.g. image feature)
     switch (this.textfield.value) {
       case 'ero':
-        this.kanjiFrame.imageFeature = !this.kanjiFrame.imageFeature
-        if (this.kanjiFrame.imageFeature) {
-          this.kanjiFrame.preloadImage()
-        }
+        // this.kanjiFrame.imageFeature = !this.kanjiFrame.imageFeature
+        // if (this.kanjiFrame.imageFeature) {
+          this.kanjiFrame.toggleEro()
+          // this.kanjiFrame.preloadEro()
+        // }
         this.textfield.value = ''
         return
     }

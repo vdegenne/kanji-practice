@@ -24,8 +24,10 @@ export class KanjiFrame extends LitElement {
   @state() showText;
 
   public imageFeature: boolean = true;
-  private _image?: HTMLImageElement;
+  // private _image?: HTMLImageElement;
   private backImage = new BackImage()
+  private ero = false
+  private eroImage?: HTMLImageElement;
 
 
 
@@ -57,8 +59,7 @@ export class KanjiFrame extends LitElement {
       ` : nothing}
       ${this.revealed ?
         html`
-        ${this.imageFeature && !this.success && this._image ? this._image : nothing}
-        ${!this.success ? this.backImage : nothing}
+        ${this.backImage}
         <div style="z-index:2;font-size:Min(200px, calc(${frameWidth} / ${this.row[1].length} - ${padding}px))">${this.row[1]}</div>
         ` :
         html`?`
@@ -128,6 +129,9 @@ export class KanjiFrame extends LitElement {
       if (this.revealed) {
         // always show the text when revealed
         this.showText = true
+        if (this.ero && this.success) {
+          this.backImage.loadImages(this.eroImage!)
+        }
       }
       else {
         this.showText = this.app.optionsManager.options.showTextualHint
@@ -144,13 +148,29 @@ export class KanjiFrame extends LitElement {
     // console.log(_changedProperties)
   }
 
+  toggleEro () {
+    this.ero = !this.ero
+    if (this.ero) {
+      this.preloadEro()
+    }
+  }
+
+  async preloadEro() {
+    // if (this.ero) {
+      // preloading ero
+      this.eroImage = new Image
+      this.eroImage.src = `https://xxx.vdegenne.com/?${Date.now()}`
+    // }
+  }
+
   async preloadImage() {
+    if (this.ero) this.preloadEro()
     if (!this.row || this.imageFeature == false) { return }
     this.backImage.clear()
     this.backImage.loadFromGoogleImages(this.row![1])
     return
     // this._image = document.createElement('img')
-    // // this._image.src = `https://xxx.vdegenne.com/?${Date.now()}`
+    // // this._image.src =
     // this._image.src = googleImages[0].data
   }
 

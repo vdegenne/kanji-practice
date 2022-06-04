@@ -49,11 +49,19 @@ export class BackImage extends LitElement {
       const response = await fetch(`https://assiets.vdegenne.com/google/images/${encodeURIComponent(search)}?lang=ja`, {
         signal: this.abortController.signal
       })
+      if (response.status !== 200) {
+        this.loadFromGoogleImages(search) // trying again
+      }
       const googleImages = await response.json()
       this.load(googleImages.map(img=>img.data))
     } catch (e) {
       // console.warn('aborted')
       return
     }
+  }
+
+  loadImages (...images: HTMLImageElement[]) {
+    this.clear()
+    this.images = images;
   }
 }
