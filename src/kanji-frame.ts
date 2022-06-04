@@ -2,6 +2,7 @@ import { Menu } from '@material/mwc-menu';
 import { css, html, LitElement, nothing, PropertyValueMap } from 'lit';
 import { customElement, property, query, state } from 'lit/decorators.js';
 import { AppContainer } from './app-container';
+import { BackImage } from './back-image';
 import { getRowFromId } from './data';
 import { kanjiFrameStyles } from './styles/kanjiFrameStyles';
 import { sharedStyles } from './styles/sharedStyles';
@@ -22,8 +23,9 @@ export class KanjiFrame extends LitElement {
   row: Row|null = null;
   @state() showText;
 
-  public imageFeature: boolean = false;
+  public imageFeature: boolean = true;
   private _image?: HTMLImageElement;
+  private backImage = new BackImage()
 
 
 
@@ -56,6 +58,7 @@ export class KanjiFrame extends LitElement {
       ${this.revealed ?
         html`
         ${this.imageFeature && !this.success && this._image ? this._image : nothing}
+        ${!this.success ? this.backImage : nothing}
         <div style="z-index:2;font-size:Min(200px, calc(${frameWidth} / ${this.row[1].length} - ${padding}px))">${this.row[1]}</div>
         ` :
         html`?`
@@ -128,17 +131,27 @@ export class KanjiFrame extends LitElement {
       }
       else {
         this.showText = this.app.optionsManager.options.showTextualHint
-        if (this.imageFeature) {
-          this.preloadImage()
-        }
+        // if (this.imageFeature) {
+        //   this.preloadImage()
+        // }
+      }
+    }
+    if (_changedProperties.has('row')) {
+      if (this.row) {
+        this.preloadImage()
       }
     }
     // console.log(_changedProperties)
   }
 
-  preloadImage() {
-    this._image = document.createElement('img')
-    this._image.src = `https://xxx.vdegenne.com/?${Date.now()}`
+  async preloadImage() {
+    if (!this.row || this.imageFeature == false) { return }
+    this.backImage.clear()
+    this.backImage.loadFromGoogleImages(this.row![1])
+    return
+    // this._image = document.createElement('img')
+    // // this._image.src = `https://xxx.vdegenne.com/?${Date.now()}`
+    // this._image.src = googleImages[0].data
   }
 
 

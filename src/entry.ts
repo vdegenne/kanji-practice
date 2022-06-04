@@ -22,6 +22,7 @@ import './collection-viewer'
 import './notes-dialog'
 import './row-history'
 import './tatoeba-dialog'
+import './back-image'
 
 /* global */
 import { CollectionsSelector } from './collections-selector'

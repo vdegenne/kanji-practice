@@ -43,8 +43,8 @@ export const kanjiFrameStyles = css`
   justify-content: center;
   align-items: center; */
 }
-#kanji > img {
-  max-height: 500px;
+#kanji > back-image {
+  /* height: 500px; */
 }
 #kanji > div {
   position: absolute;
