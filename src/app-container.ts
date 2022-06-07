@@ -164,10 +164,10 @@ export class AppContainer extends LitElement {
         <app-button
           outlined
           height=46
-          @click=${()=>{
+          @pointerdown=${()=>{
             if (!this.revealed) {
               this.playAudioHint()
-              this.textfield.focus()
+              // this.textfield.focus()
               return
             }
             else {
@@ -179,7 +179,7 @@ export class AppContainer extends LitElement {
 
       ${this.domain=='words' ? html`
       <mwc-icon-button icon=volume_up
-        @click=${()=>{this.playAudioHint();this.textfield.focus();}}></mwc-icon-button>
+        @pointerdown=${()=>{this.playAudioHint()}}></mwc-icon-button>
       ` : nothing}
     </div>
 
@@ -289,6 +289,11 @@ export class AppContainer extends LitElement {
   }
 
   async playAudioHint() {
+    // @ts-ignore
+    const wasFocused = this.textfield.focused
+    if (wasFocused) {
+      setTimeout(()=>this.textfield.focus(), 5)
+    }
     // if (this.optionsManager.enableAudioHint) {
       if (this.domain=='kanji' && !this.hintSearch[0]) {
         return
@@ -306,6 +311,7 @@ export class AppContainer extends LitElement {
         await speakJapanese(word)
       }
     // }
+
   }
 
   /**
