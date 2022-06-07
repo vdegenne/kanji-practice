@@ -24,9 +24,9 @@ export class CollectionsManager extends LitElement {
   @query('mwc-dialog') dialog!: Dialog;
 
   // @query('collections-selector')
-  collectionsSelector: CollectionsSelector;
+  collectionsSelector!: CollectionsSelector;
   // @query('create-collection-dialog')
-  createCollectionDialog: CreateCollectionDialog;
+  createCollectionDialog!: CreateCollectionDialog;
 
 
   constructor (appInstance: AppContainer) {
@@ -67,8 +67,8 @@ export class CollectionsManager extends LitElement {
     }
 
     this.app = appInstance;
-    this.collectionsSelector = new CollectionsSelector(this)
-    this.createCollectionDialog = new CreateCollectionDialog(this)
+    // this.collectionsSelector = new CollectionsSelector(this)
+    // this.createCollectionDialog = new CreateCollectionDialog(this)
   }
 
   static styles = css`
@@ -98,8 +98,11 @@ export class CollectionsManager extends LitElement {
             @click=${()=>{this.showCreateDialog()}}>new</mwc-button>
     </mwc-dialog>
 
+    <!-- COLLECTION SELECTOR DIALOG -->
+    <!-- ${this.collectionsSelector} -->
+
     <!-- CREATE COLLECTION DIALOG -->
-    ${this.createCollectionDialog}
+    <!-- ${this.createCollectionDialog} -->
     `
   }
 

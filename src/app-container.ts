@@ -17,6 +17,7 @@ import { RowHistory } from './row-history.js';
 import { TatoebaDialog } from './tatoeba-dialog.js';
 import { CollectionViewer } from './collection-viewer.js';
 import { CollectionsSelector } from './collections-selector.js';
+import { CreateCollectionDialog } from './create-collection-dialog.js';
 
 @customElement('app-container')
 export class AppContainer extends LitElement {
@@ -41,7 +42,8 @@ export class AppContainer extends LitElement {
   private validatedKanjis: string[] = []
 
   public collectionsManager: CollectionsManager = new CollectionsManager(this);
-  public collectionSelector: CollectionsSelector = new CollectionsSelector(this.collectionsManager);
+  public collectionsSelector: CollectionsSelector = new CollectionsSelector(this.collectionsManager);
+  public createCollectionDialog: CreateCollectionDialog = new CreateCollectionDialog(this.collectionsManager)
   public optionsManager: OptionsManager = new OptionsManager(this);
   public kanjiFrame: KanjiFrame = new KanjiFrame(this)
   public rowHistory: RowHistory = new RowHistory(this)
@@ -209,8 +211,10 @@ export class AppContainer extends LitElement {
 
     ${this.collectionsManager}
     <collection-viewer></collection-viewer>
+
     <search-manager></search-manager>
-    ${this.collectionSelector}
+    ${this.collectionsSelector}
+    ${this.createCollectionDialog}
     ${this.optionsManager}
 
     <notes-dialog></notes-dialog>
@@ -292,7 +296,7 @@ export class AppContainer extends LitElement {
     // @ts-ignore
     const wasFocused = this.textfield.focused
     if (wasFocused) {
-      setTimeout(()=>this.textfield.focus(), 5)
+      setTimeout(()=>this.textfield.focus(), 100)
     }
     // if (this.optionsManager.enableAudioHint) {
       if (this.domain=='kanji' && !this.hintSearch[0]) {

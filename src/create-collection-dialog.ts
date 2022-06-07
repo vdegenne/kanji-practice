@@ -19,6 +19,7 @@ export class CreateCollectionDialog extends LitElement {
   constructor (collectionsManagerInstance: CollectionsManager) {
     super()
     this.manager = collectionsManagerInstance;
+    this.manager.createCollectionDialog = this;
   }
 
   render() {

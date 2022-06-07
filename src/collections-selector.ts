@@ -20,6 +20,7 @@ export class CollectionsSelector extends LitElement {
   constructor (managerInstance: CollectionsManager) {
     super()
     this.manager = managerInstance;
+    this.manager.collectionsSelector = this;
   }
 
   static styles = css`
