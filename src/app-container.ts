@@ -61,6 +61,7 @@ export class AppContainer extends LitElement {
   @query('collection-viewer') collectionViewer!: CollectionViewer;
   // @query('options-manager') optionsManager!: OptionsManager;
 
+  private _textFieldFocused = false
 
   constructor () {
     super()
@@ -166,10 +167,15 @@ export class AppContainer extends LitElement {
         <app-button
           outlined
           height=46
-          @pointerdown=${()=>{
+          @pointerdown=${()=> {
+            this._textFieldFocused = (this.shadowRoot!.activeElement == this.textfield);
+          }}
+          @click=${()=>{
             if (!this.revealed) {
               this.playAudioHint()
-              // this.textfield.focus()
+              if (this._textFieldFocused) {
+                this.textfield.focus()
+              }
               return
             }
             else {
@@ -181,7 +187,10 @@ export class AppContainer extends LitElement {
 
       ${this.domain=='words' ? html`
       <mwc-icon-button icon=volume_up
-        @pointerdown=${()=>{this.playAudioHint()}}></mwc-icon-button>
+        @pointerdown=${()=> {
+          this._textFieldFocused = (this.shadowRoot!.activeElement == this.textfield);
+        }}
+        @click=${()=>{this.playAudioHint(); this._textFieldFocused && this.textfield.focus()}}></mwc-icon-button>
       ` : nothing}
     </div>
 
@@ -294,10 +303,9 @@ export class AppContainer extends LitElement {
 
   async playAudioHint() {
     // @ts-ignore
-    const wasFocused = this.textfield.focused
-    if (wasFocused) {
-      setTimeout(()=>this.textfield.focus(), 100)
-    }
+    // if (wasFocused) {
+    //   setTimeout(()=>this.textfield.focus(), 100)
+    // }
     // if (this.optionsManager.enableAudioHint) {
       if (this.domain=='kanji' && !this.hintSearch[0]) {
         return

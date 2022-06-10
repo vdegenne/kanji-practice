@@ -66,7 +66,7 @@ export const kanjiFrameStyles = css`
 /* :host([happy]) img { display: initial } */
 
 #meanings {
-  padding: 0 48px 24px 24px;
+  padding: 14px 48px 24px 24px;
   cursor: pointer;
 }
 #meanings[hide] {
@@ -84,6 +84,9 @@ export const kanjiFrameStyles = css`
   position: absolute;
   bottom: 0; right: 0;
   /* float:right; */
+}
+#details-strip {
+  -webkit-text-stroke: 0.5px black;
 }
 
 mwc-icon-button[highlight] {

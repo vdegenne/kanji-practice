@@ -5,8 +5,8 @@ export const sharedStyles = css`
   display: none !important;
 }
 .tag {
-  padding: 0px 14px;
-  border-radius: 12px;
+  padding: 3px 10px;
+  border-radius: 10px;
 }
 .jlpt5-color {
   background-color: #4caf50 !important;
