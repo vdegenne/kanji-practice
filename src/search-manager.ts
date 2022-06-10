@@ -93,8 +93,8 @@ export class SearchManager extends LitElement {
   // private _searchCache: {[query:string]: SearchItem[]} = {}
   // private _searchHistory: SearchHistoryItem[] = [{search: 'test', view: 'words'}]
   // private _history: SearchHistory = new SearchHistory(this)
-  // @query('search-history') _history!: SearchHistory;
-  private _history = new SearchHistory(this)
+  @query('search-history') _history!: SearchHistory;
+  // private _history = new SearchHistory(this)
 
 
   @state() blindMode = false
@@ -214,7 +214,7 @@ export class SearchManager extends LitElement {
         ${wordsResult.map(i=>html`<search-item-element .item=${i} .searchManager=${this} .revealed=${!this.blindMode}></search-item-element>`)}
       </div>
 
-<!--        <search-history .searchManager="${this}" slot=secondaryAction></search-history>-->
+      <search-history .searchManager="${this}" slot=secondaryAction></search-history>
 
       <mwc-formfield slot=secondaryAction label="blind mode" style="--mdc-checkbox-ripple-size:32px;margin-right:10px">
         <mwc-checkbox ?checked=${this.blindMode}
@@ -222,6 +222,7 @@ export class SearchManager extends LitElement {
       </mwc-formfield>
       <mwc-button outlined slot="secondaryAction" dialogAction="close">close</mwc-button>
     </mwc-dialog>
+
     `
   }
 
