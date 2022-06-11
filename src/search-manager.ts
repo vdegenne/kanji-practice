@@ -453,16 +453,16 @@ export function getRandomWord (jlptsArray = [5, 4, 3, 2, 1]) {
   return allWords[~~(Math.random()*allWords.length)]
 }
 
-export function getExactSearch (word: string) {
-  for (const wordEntry of jlpts.flat()) {
-    if (wordEntry[0]==word || wordEntry[1]==word) {
-      return wordEntry
-    }
-  }
-}
-export function wordExists(word: string) {
-  return getExactSearch(word) !== undefined
-}
+// export function getExactSearch (word: string) {
+//   for (const wordEntry of jlpts.flat()) {
+//     if (wordEntry[0]==word || wordEntry[1]==word) {
+//       return wordEntry
+//     }
+//   }
+// }
+// export function wordExists(word: string) {
+//   return getExactSearch(word) !== undefined
+// }
 
 // export function firstWordFoundFromCharacter (character: string) {
 //   for (const jlpt of jlpts) {

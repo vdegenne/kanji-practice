@@ -1703,9 +1703,13 @@ const Ra=me`mwc-list ::slotted([mwc-list-item]:not([twoline])),mwc-list ::slotte
           <span>Naver</span>
           <img src="./img/naver.ico" slot="graphic">
         </mwc-list-item>
-        <mwc-list-item id="tatoeba" graphic=icon @click=${()=>{Er(this.item.word)}}>
+        <!-- <mwc-list-item id="tatoeba" graphic=icon @click=${()=>{Er(this.item.word)}}>
           <span>Tatoeba</span>
           <img src="./img/tatoeba.ico" slot="graphic">
+        </mwc-list-item> -->
+        <mwc-list-item graphic=icon @click=${()=>{this.searchManager.close(),window.app.tatoebaDialog.show(this.item.word)}}>
+          <span>Examples</span>
+          <mwc-icon slot="graphic">format_quote</mwc-icon>
         </mwc-list-item>
 
         <li divider role=separator padded></li>
@@ -1830,7 +1834,7 @@ const Ra=me`mwc-list ::slotted([mwc-list-item]:not([twoline])),mwc-list ::slotte
       <mwc-button outlined slot="secondaryAction" dialogAction="close">close</mwc-button>
     </mwc-dialog>
 
-    `}async updated(){await Promise.all([...this.searchItemElements].map((e=>e.updateComplete)))}firstUpdated(e){const t=()=>{this.dialog.shadowRoot.querySelector(".mdc-dialog__surface").style.minHeight="calc(100% - 32px)",this.dialog.removeEventListener("opened",t)};this.dialog.addEventListener("opened",t),this.textfield.updateComplete.then((()=>{this.textfield.shadowRoot.querySelector("i").style.color="transparent"}))}search(e,t=!0){e!==this.query&&(this.query=e,t&&this._history.pushHistory(e),this.result=this.searchData(e),this.textfield.blur())}searchData(e,t=["words","kanji"]){const o=this._history.getCachedQuery(e);if(o)return t.includes("words")&&t.includes("kanji")?o:o.filter((e=>t.includes(e.type)));let r=[];if(t.includes("words")&&(Da.forEach((t=>{(t[1].includes(e)||t[4]&&t[4].includes(e)||t[3].includes(e))&&r.push(this.attachFrequencyValue({type:"words",dictionary:`jlpt${t[2]}`,word:t[1],english:t[3],hiragana:t[4],exactSearch:t[1]===e,rowId:t[0]}))})),r.some((t=>t.word===e)),r.some((e=>e.exactSearch))||r.unshift({type:"words",dictionary:"not found",word:e,exactSearch:!0,rowId:null})),t.includes("kanji"))if(kr(e))for(const t of e.split("")){if(!kr(t))continue;const o=mr.find((e=>e[1]===t));o?r.push(this.attachFrequencyValue({type:"kanji",dictionary:`jlpt${o[2]}`,word:o[1],english:`${o[3]}//${o[4]}`,exactSearch:o[1]===e,rowId:o[0]})):r.push({type:"kanji",dictionary:"not found",word:t,exactSearch:t===e,rowId:null})}else r.push(...mr.filter((t=>t[3].includes(e)||t[4].includes(e))).sort((function(e,t){return t[2]-e[2]})).map((e=>this.attachFrequencyValue({type:"kanji",dictionary:`jlpt${e[2]}`,word:e[1],english:`${e[3]}//${e[4]}`,rowId:e[0]}))));return t.includes("kanji")&&t.includes("words")&&this._history.addToCache(e,r),r}attachFrequencyValue(e){const t=gr.find((t=>t.l===e.word));return t&&(e.frequency=t.f),e}toggleBlindMode(){this.blindMode=!this.blindMode}show(e,t){e&&this.search(e),t&&(this.view=t),this.dialog.show()}get open(){return this.dialog.open}close(){this.dialog.close()}};Pa.styles=[br,La],r([s()],Pa.prototype,"view",void 0),r([s()],Pa.prototype,"query",void 0),r([s()],Pa.prototype,"result",void 0),r([s()],Pa.prototype,"showKanjiResult",void 0),r([s()],Pa.prototype,"showWordsResult",void 0),r([f("search-history")],Pa.prototype,"_history",void 0),r([s()],Pa.prototype,"blindMode",void 0),r([f("mwc-dialog")],Pa.prototype,"dialog",void 0),r([f("mwc-textfield")],Pa.prototype,"textfield",void 0),r([p("#words-results search-item-element")],Pa.prototype,"searchItemElements",void 0),Pa=r([a("search-manager")],Pa);const Ha=mr;function Ba(e,t){switch(e){case"kanji":return Ha.find((e=>e[0]==t));case"words":return Da.find((e=>e[0]==t))}}const Ua=me`
+    `}async updated(){await Promise.all([...this.searchItemElements].map((e=>e.updateComplete)))}firstUpdated(e){const t=()=>{this.dialog.shadowRoot.querySelector(".mdc-dialog__surface").style.minHeight="calc(100% - 32px)",this.dialog.removeEventListener("opened",t)};this.dialog.addEventListener("opened",t),this.textfield.updateComplete.then((()=>{this.textfield.shadowRoot.querySelector("i").style.color="transparent"}))}search(e,t=!0){e!==this.query&&(this.query=e,t&&this._history.pushHistory(e),this.result=this.searchData(e),this.textfield.blur())}searchData(e,t=["words","kanji"]){const o=this._history.getCachedQuery(e);if(o)return t.includes("words")&&t.includes("kanji")?o:o.filter((e=>t.includes(e.type)));let r=[];if(t.includes("words")&&(Da.forEach((t=>{(t[1].includes(e)||t[4]&&t[4].includes(e)||t[3].includes(e))&&r.push(this.attachFrequencyValue({type:"words",dictionary:`jlpt${t[2]}`,word:t[1],english:t[3],hiragana:t[4],exactSearch:t[1]===e,rowId:t[0]}))})),r.some((t=>t.word===e)),r.some((e=>e.exactSearch))||r.unshift({type:"words",dictionary:"not found",word:e,exactSearch:!0,rowId:null})),t.includes("kanji"))if(kr(e))for(const t of e.split("")){if(!kr(t))continue;const o=mr.find((e=>e[1]===t));o?r.push(this.attachFrequencyValue({type:"kanji",dictionary:`jlpt${o[2]}`,word:o[1],english:`${o[3]}//${o[4]}`,exactSearch:o[1]===e,rowId:o[0]})):r.push({type:"kanji",dictionary:"not found",word:t,exactSearch:t===e,rowId:null})}else r.push(...mr.filter((t=>t[3].includes(e)||t[4].includes(e))).sort((function(e,t){return t[2]-e[2]})).map((e=>this.attachFrequencyValue({type:"kanji",dictionary:`jlpt${e[2]}`,word:e[1],english:`${e[3]}//${e[4]}`,rowId:e[0]}))));return t.includes("kanji")&&t.includes("words")&&this._history.addToCache(e,r),r}attachFrequencyValue(e){const t=gr.find((t=>t.l===e.word));return t&&(e.frequency=t.f),e}toggleBlindMode(){this.blindMode=!this.blindMode}show(e,t){e&&this.search(e),t&&(this.view=t),this.dialog.show()}get open(){return this.dialog.open}close(){this.dialog.close()}};Pa.styles=[br,La],r([s()],Pa.prototype,"view",void 0),r([s()],Pa.prototype,"query",void 0),r([s()],Pa.prototype,"result",void 0),r([s()],Pa.prototype,"showKanjiResult",void 0),r([s()],Pa.prototype,"showWordsResult",void 0),r([f("search-history")],Pa.prototype,"_history",void 0),r([s()],Pa.prototype,"blindMode",void 0),r([f("mwc-dialog")],Pa.prototype,"dialog",void 0),r([f("mwc-textfield")],Pa.prototype,"textfield",void 0),r([p("#words-results search-item-element")],Pa.prototype,"searchItemElements",void 0),Pa=r([a("search-manager")],Pa);const Ha=mr;function Ba(e,t){switch(e){case"kanji":return Ha.find((e=>e[0]==t));case"words":return Da.find((e=>e[0]==t))}}function Ua(e){const t=[];let o=e.split(""),r="",i=null;for(;o.length>0;){let e=o.length;for(;e>0;){if(r=o.slice(0,e).join(""),i=Da.find((e=>e[1]==r||e[4]==r))||Ha.find((e=>e[1]==r||e[4]==r))||null,i){t.push({word:r,meta:i}),o.splice(0,e);break}if(e--,0==e){t.push({word:r,meta:null}),o.splice(0,1);break}}}return t}const Va=me`
 :host {
   display: flex;
   flex-direction: column;
@@ -1922,7 +1926,7 @@ const Ra=me`mwc-list ::slotted([mwc-list-item]:not([twoline])),mwc-list ::slotte
 mwc-icon-button[highlight] {
   color: yellow;
 }
-`;let Va=class extends Se{constructor(e){super(),this.revealed=!1,this.success=!1,this.row=null,this.imageFeature=!0,this.backImage=new hr,this.ero=!1,this.app=e,this.showText=this.app.optionsManager.options.showTextualHint}render(){if(!this.row)return J;const e=parseInt(getComputedStyle(this).width)-48+"px";let t=150-54*this.row[1].length;return t<0&&(t=0),W`
+`;let Ka=class extends Se{constructor(e){super(),this.revealed=!1,this.success=!1,this.row=null,this.imageFeature=!0,this.backImage=new hr,this.ero=!1,this.app=e,this.showText=this.app.optionsManager.options.showTextualHint}render(){if(!this.row)return J;const e=parseInt(getComputedStyle(this).width)-48+"px";let t=150-54*this.row[1].length;return t<0&&(t=0),W`
     <div class="tag jlpt${this.row[2]}-color" id="jlpt-tag">jlpt${this.row[2]}</div>
     <div id=kanji>
       ${J}
@@ -1985,12 +1989,12 @@ mwc-icon-button[highlight] {
     </div>
     <!-- </div> -->
 
-    `}updated(e){this.menu&&(this.menu.anchor=this.menu.parentElement),e.has("revealed")&&(this.revealed?(this.showText=!0,this.ero&&this.success&&this.backImage.loadImages(this.eroImage)):this.showText=this.app.optionsManager.options.showTextualHint),e.has("row")&&this.row&&this.preloadImage()}toggleEro(){this.ero=!this.ero,this.ero&&this.preloadEro()}async preloadEro(){this.eroImage=new Image,this.eroImage.src=`https://xxx.vdegenne.com/?${Date.now()}`}async preloadImage(){this.ero&&this.preloadEro(),this.row&&0!=this.imageFeature&&(this.backImage.clear(),this.backImage.loadFromGoogleImages(this.row[1]))}reveal(){this.revealed=!0}conceal(){this.revealed=!1,this.success=!1}};Va.styles=[Ua,La],r([l({type:Boolean,reflect:!0})],Va.prototype,"revealed",void 0),r([l({type:Boolean,reflect:!0})],Va.prototype,"success",void 0),r([l({type:Array})],Va.prototype,"row",void 0),r([s()],Va.prototype,"showText",void 0),r([f("mwc-menu")],Va.prototype,"menu",void 0),Va=r([a("kanji-frame")],Va);let Ka=class extends Se{render(){return W`
+    `}updated(e){this.menu&&(this.menu.anchor=this.menu.parentElement),e.has("revealed")&&(this.revealed?(this.showText=!0,this.ero&&this.success&&this.backImage.loadImages(this.eroImage)):this.showText=this.app.optionsManager.options.showTextualHint),e.has("row")&&this.row&&this.preloadImage()}toggleEro(){this.ero=!this.ero,this.ero&&this.preloadEro()}async preloadEro(){this.eroImage=new Image,this.eroImage.src=`https://xxx.vdegenne.com/?${Date.now()}`}async preloadImage(){this.ero&&this.preloadEro(),this.row&&0!=this.imageFeature&&(this.backImage.clear(),this.backImage.loadFromGoogleImages(this.row[1]))}reveal(){this.revealed=!0}conceal(){this.revealed=!1,this.success=!1}};Ka.styles=[Va,La],r([l({type:Boolean,reflect:!0})],Ka.prototype,"revealed",void 0),r([l({type:Boolean,reflect:!0})],Ka.prototype,"success",void 0),r([l({type:Array})],Ka.prototype,"row",void 0),r([s()],Ka.prototype,"showText",void 0),r([f("mwc-menu")],Ka.prototype,"menu",void 0),Ka=r([a("kanji-frame")],Ka);let Wa=class extends Se{render(){return W`
         ${this.generateCandidatesList(this.size).map((e=>W`
             <app-button outlined
                 height=50
                 @click=${e=>{this.onButtonClick(e)}}>${e}</app-button>`))}
-    `}async updated(e){await this.updateComplete,this.shadowRoot.querySelectorAll("mwc-icon-button").forEach((e=>{e.shadowRoot.querySelector("button").style.fontFamily='"Sawarabi Mincho", serif'})),super.updated(e)}generateCandidatesList(e){if(0==e)return[];const t=Array(e).fill(0).map((()=>mr[~~(Math.random()*mr.length)][1]));return t[~~(Math.random()*e)]=this.answer,t}onButtonClick(e){this.dispatchEvent(new CustomEvent("candidate-click",{bubbles:!1,composed:!0,detail:{candidate:e.target.textContent.trim()}}))}};Ka.styles=me`
+    `}async updated(e){await this.updateComplete,this.shadowRoot.querySelectorAll("mwc-icon-button").forEach((e=>{e.shadowRoot.querySelector("button").style.fontFamily='"Sawarabi Mincho", serif'})),super.updated(e)}generateCandidatesList(e){if(0==e)return[];const t=Array(e).fill(0).map((()=>mr[~~(Math.random()*mr.length)][1]));return t[~~(Math.random()*e)]=this.answer,t}onButtonClick(e){this.dispatchEvent(new CustomEvent("candidate-click",{bubbles:!1,composed:!0,detail:{candidate:e.target.textContent.trim()}}))}};Wa.styles=me`
   :host {
     display: block;
     margin: 24px  0;
@@ -2001,7 +2005,7 @@ mwc-icon-button[highlight] {
   mwc-icon-button {
     --mdc-icon-font: 'Sawarabi Mincho' !important;
   }
-  `,r([l({type:Number})],Ka.prototype,"size",void 0),r([l()],Ka.prototype,"answer",void 0),Ka=r([a("candidates-row")],Ka);let Wa=class extends Se{constructor(e){if(super(),localStorage.getItem("kanji-practice:collections")){let e=JSON.parse(localStorage.getItem("kanji-practice:collections"));e instanceof Array&&(e={kanji:e.map((e=>({name:e.name,elements:e.kanjis}))),words:[]}),e.kanji.forEach((e=>{e.elements=e.elements.map((e=>"string"==typeof e?Ha.find((t=>t[1]==e))[0]:e))})),e.words.forEach((e=>{e.elements=e.elements.map((e=>"string"==typeof e?Da.find((t=>t[1]==e))[0]:e))})),this.collections=e}else this.collections={kanji:[{name:"My Kanjis",elements:[]}],words:[{name:"My Words",elements:[]}]};this.app=e}render(){return W`
+  `,r([l({type:Number})],Wa.prototype,"size",void 0),r([l()],Wa.prototype,"answer",void 0),Wa=r([a("candidates-row")],Wa);let Ga=class extends Se{constructor(e){if(super(),localStorage.getItem("kanji-practice:collections")){let e=JSON.parse(localStorage.getItem("kanji-practice:collections"));e instanceof Array&&(e={kanji:e.map((e=>({name:e.name,elements:e.kanjis}))),words:[]}),e.kanji.forEach((e=>{e.elements=e.elements.map((e=>"string"==typeof e?Ha.find((t=>t[1]==e))[0]:e))})),e.words.forEach((e=>{e.elements=e.elements.map((e=>"string"==typeof e?Da.find((t=>t[1]==e))[0]:e))})),this.collections=e}else this.collections={kanji:[{name:"My Kanjis",elements:[]}],words:[{name:"My Words",elements:[]}]};this.app=e}render(){return W`
     <mwc-dialog heading="Collections">
      ${this.collections[this.app.domain].map((e=>W`
           <div class="collection-row">
@@ -2022,13 +2026,13 @@ mwc-icon-button[highlight] {
 
     <!-- CREATE COLLECTION DIALOG -->
     <!-- ${this.createCollectionDialog} -->
-    `}get URLCollectionName(){return new URLSearchParams(window.location.search).get("collection")}getCollection(e,t){return this.collections[e].find((e=>e.name==t))}IsElementInACollection(e,t){return this.collections[e].some((e=>e.elements.includes(t)))}addCollection(e,t){let o;return this.collections[e].push(o={name:t,elements:[]}),o}show(){this.requestUpdate(),this.dialog.show()}async showCreateDialog(){try{await this.createCollectionDialog.show(),this.requestUpdate()}catch(e){}}saveCollections(){localStorage.setItem("kanji-practice:collections",JSON.stringify(this.collections))}};Wa.styles=me`
+    `}get URLCollectionName(){return new URLSearchParams(window.location.search).get("collection")}getCollection(e,t){return this.collections[e].find((e=>e.name==t))}IsElementInACollection(e,t){return this.collections[e].some((e=>e.elements.includes(t)))}addCollection(e,t){let o;return this.collections[e].push(o={name:t,elements:[]}),o}show(){this.requestUpdate(),this.dialog.show()}async showCreateDialog(){try{await this.createCollectionDialog.show(),this.requestUpdate()}catch(e){}}saveCollections(){localStorage.setItem("kanji-practice:collections",JSON.stringify(this.collections))}};Ga.styles=me`
     .collection-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-  `,r([f("mwc-dialog")],Wa.prototype,"dialog",void 0),Wa=r([a("collections-manager")],Wa);let Ga=class extends Se{constructor(e){super(),this.manager=e,this.manager.collectionsSelector=this}render(){let e;try{e=this.manager.collections[this.domain].slice(0).sort(((e,t)=>e.name.localeCompare(t.name)))}catch(e){}return W`
+  `,r([f("mwc-dialog")],Ga.prototype,"dialog",void 0),Ga=r([a("collections-manager")],Ga);let Ja=class extends Se{constructor(e){super(),this.manager=e,this.manager.collectionsSelector=this}render(){let e;try{e=this.manager.collections[this.domain].slice(0).sort(((e,t)=>e.name.localeCompare(t.name)))}catch(e){}return W`
     <mwc-dialog>
       <header>
         <div>Save ${this.row?this.row[1]:""} to...</div>
@@ -2048,7 +2052,7 @@ mwc-icon-button[highlight] {
       <mwc-button outlined slot="secondaryAction" icon=add style="--mdc-theme-primary:grey"
         @click=${()=>{this.onCreateNewCollectionButtonClick()}}>new collection</mwc-button>
     </mwc-dialog>
-    `}async onCreateNewCollectionButtonClick(){try{const e=await this.manager.createCollectionDialog.show();this.requestUpdate(),await this.updateComplete,[...this.checkboxes].find((t=>t.parentElement.label==e.name)).click()}catch(e){}}onCheckboxClick(e,t){t.target.checked?e.elements.push(this.row[0]):e.elements.splice(e.elements.indexOf(this.row[0]),1),this.manager.saveCollections(),window.toast("Saved",2e3)}show(e,t){this.domain=e,this.row=t,this.dialog.show()}};Ga.styles=me`
+    `}async onCreateNewCollectionButtonClick(){try{const e=await this.manager.createCollectionDialog.show();this.requestUpdate(),await this.updateComplete,[...this.checkboxes].find((t=>t.parentElement.label==e.name)).click()}catch(e){}}onCheckboxClick(e,t){t.target.checked?e.elements.push(this.row[0]):e.elements.splice(e.elements.indexOf(this.row[0]),1),this.manager.saveCollections(),window.toast("Saved",2e3)}show(e,t){this.domain=e,this.row=t,this.dialog.show()}};Ja.styles=me`
   :host {
     display: block;
   }
@@ -2068,7 +2072,7 @@ mwc-icon-button[highlight] {
     --mdc-theme-secondary:yellow;
     --mdc-checkbox-ink-color: black;
   }
-  `,r([s()],Ga.prototype,"row",void 0),r([s()],Ga.prototype,"domain",void 0),r([f("mwc-dialog")],Ga.prototype,"dialog",void 0),r([p("mwc-checkbox")],Ga.prototype,"checkboxes",void 0),Ga=r([a("collections-selector")],Ga);let Ja=class extends Se{constructor(e){super(),this.app=e,this.loadOptions()}render(){return W`
+  `,r([s()],Ja.prototype,"row",void 0),r([s()],Ja.prototype,"domain",void 0),r([f("mwc-dialog")],Ja.prototype,"dialog",void 0),r([p("mwc-checkbox")],Ja.prototype,"checkboxes",void 0),Ja=r([a("collections-selector")],Ja);let Xa=class extends Se{constructor(e){super(),this.app=e,this.loadOptions()}render(){return W`
     <mwc-dialog heading=Options
       @change=${()=>this.onOptionsChanged()}>
 
@@ -2120,7 +2124,7 @@ mwc-icon-button[highlight] {
 
       <mwc-button outlined slot="primaryAction" dialogAction="close">close</mwc-button>
     </mwc-dialog>
-    `}get showTextualHint(){return this.shadowRoot.querySelector('mwc-formfield[label="Show textual hint"]').firstElementChild.checked}get enableAudioHint(){return this.shadowRoot.querySelector('mwc-formfield[label="Play audio word hint"]').firstElementChild.checked}firstUpdated(e){this.dialog.addEventListener("opened",(()=>{this.shadowRoot.querySelector("mwc-slider").value=this.app.candidatesListSize,this.shadowRoot.querySelector("mwc-slider").layout(),this.requestUpdate()})),super.firstUpdated(e)}onOptionsChanged(){this.saveOptions()}show(){this.dialog.show()}onRefillClick(){}forwardShowTextualHint(){this.options.showTextualHint=this.showTextualHint,this.app.kanjiFrame.showText=this.showTextualHint}loadOptions(){let e;null!==localStorage.getItem("kanji-practice:options")?(e=JSON.parse(localStorage.getItem("kanji-practice:options")),"jlpt1"in e&&(e={jlpts:e,showTextualHint:!0,enableAudioHint:!0})):e={jlpts:{jlpt5:!0,jlpt4:!1,jlpt3:!1,jlpt2:!1,jlpt1:!1},showTextualHint:!0,enableAudioHint:!0},this.options=e}saveOptions(){const e={jlpts:this.options.jlpts,showTextualHint:this.showTextualHint,enableAudioHint:this.enableAudioHint};localStorage.setItem("kanji-practice:options",JSON.stringify(e))}};Ja.styles=me`
+    `}get showTextualHint(){return this.shadowRoot.querySelector('mwc-formfield[label="Show textual hint"]').firstElementChild.checked}get enableAudioHint(){return this.shadowRoot.querySelector('mwc-formfield[label="Play audio word hint"]').firstElementChild.checked}firstUpdated(e){this.dialog.addEventListener("opened",(()=>{this.shadowRoot.querySelector("mwc-slider").value=this.app.candidatesListSize,this.shadowRoot.querySelector("mwc-slider").layout(),this.requestUpdate()})),super.firstUpdated(e)}onOptionsChanged(){this.saveOptions()}show(){this.dialog.show()}onRefillClick(){}forwardShowTextualHint(){this.options.showTextualHint=this.showTextualHint,this.app.kanjiFrame.showText=this.showTextualHint}loadOptions(){let e;null!==localStorage.getItem("kanji-practice:options")?(e=JSON.parse(localStorage.getItem("kanji-practice:options")),"jlpt1"in e&&(e={jlpts:e,showTextualHint:!0,enableAudioHint:!0})):e={jlpts:{jlpt5:!0,jlpt4:!1,jlpt3:!1,jlpt2:!1,jlpt1:!1},showTextualHint:!0,enableAudioHint:!0},this.options=e}saveOptions(){const e={jlpts:this.options.jlpts,showTextualHint:this.showTextualHint,enableAudioHint:this.enableAudioHint};localStorage.setItem("kanji-practice:options",JSON.stringify(e))}};Xa.styles=me`
   .jlpt-row {
     display: flex;
     justify-content: space-between;
@@ -2133,7 +2137,7 @@ mwc-icon-button[highlight] {
       text-align: center;
       //margin: 0 48px;
     }
-  `,r([f("mwc-dialog")],Ja.prototype,"dialog",void 0),Ja=r([a("options-manager")],Ja);const Xa=["kanji","words"],Ya=speechSynthesis;function Qa(e,t=1,o=.9){const r=function(e,t){const o=Ya.getVoices().filter((t=>e.includes(t.lang)));return o.sort(((e,o)=>{const r=t.indexOf(e.voiceURI),i=t.indexOf(o.voiceURI);return(r>=0?r:99)-(i>=0?i:99)})),o}(["ja-JP","ja_JP"],["Google 日本語","Microsoft Sayaka - Japanese (Japan)","Microsoft Ayumi - Japanese (Japan)","Microsoft Haruka - Japanese (Japan)","Microsoft Ichiro - Japanese (Japan)","Japanese Japan"]);return function(e,t,o=.5,r=.7){return new Promise(((i,a)=>{const n=new SpeechSynthesisUtterance;Object.assign(n,{voice:e,text:t,volume:o,rate:r}),n.lang=e.lang.replace(/_/,"-"),n.onend=()=>{i()},Ya.speak(n)}))}(r[0],e,t,o)}window.speechSynthesis.addEventListener("voiceschanged",(()=>{})),speechSynthesis.getVoices();const Za=me`
+  `,r([f("mwc-dialog")],Xa.prototype,"dialog",void 0),Xa=r([a("options-manager")],Xa);const Ya=["kanji","words"],Qa=speechSynthesis;function Za(e,t=1,o=.9){const r=function(e,t){const o=Qa.getVoices().filter((t=>e.includes(t.lang)));return o.sort(((e,o)=>{const r=t.indexOf(e.voiceURI),i=t.indexOf(o.voiceURI);return(r>=0?r:99)-(i>=0?i:99)})),o}(["ja-JP","ja_JP"],["Google 日本語","Microsoft Sayaka - Japanese (Japan)","Microsoft Ayumi - Japanese (Japan)","Microsoft Haruka - Japanese (Japan)","Microsoft Ichiro - Japanese (Japan)","Japanese Japan"]);return function(e,t,o=.5,r=.7){return new Promise(((i,a)=>{const n=new SpeechSynthesisUtterance;Object.assign(n,{voice:e,text:t,volume:o,rate:r}),n.lang=e.lang.replace(/_/,"-"),n.onend=()=>{i()},Qa.speak(n)}))}(r[0],e,t,o)}window.speechSynthesis.addEventListener("voiceschanged",(()=>{})),speechSynthesis.getVoices();const en=me`
 :host {
   display: block;
   display: flex;
@@ -2171,7 +2175,7 @@ header > mwc-icon-button {
 kanji-frame {
   width: 100%;
 }
-`;let en=class extends Se{constructor(e){super(),this._history=[],this.app=e,this.loadHistory()}render(){return W`
+`;let tn=class extends Se{constructor(e){super(),this._history=[],this.app=e,this.loadHistory()}render(){return W`
     <mwc-dialog heading=History>
 
       <div id="history-list">
@@ -2187,7 +2191,7 @@ kanji-frame {
 
       <mwc-button outlined slot=secondaryAction dialogAction=close>close</mwc-button>
     </mwc-dialog>
-    `}addToHistory(e,t,o){this._history=[[e,t,o?1:0],...this._history],this.requestUpdate(),this.saveHistory()}loadHistory(){let e=localStorage.getItem("kanji-practice:history");e&&(this._history=JSON.parse(e))}saveHistory(e=50){localStorage.setItem("kanji-practice:history",JSON.stringify(this._history.slice(0,e)))}async show(){this.requestUpdate(),await this.updateComplete,this.dialog.show()}};en.styles=me`
+    `}addToHistory(e,t,o){this._history=[[e,t,o?1:0],...this._history],this.requestUpdate(),this.saveHistory()}loadHistory(){let e=localStorage.getItem("kanji-practice:history");e&&(this._history=JSON.parse(e))}saveHistory(e=50){localStorage.setItem("kanji-practice:history",JSON.stringify(this._history.slice(0,e)))}async show(){this.requestUpdate(),await this.updateComplete,this.dialog.show()}};tn.styles=me`
   :host {
     /* display: block;
     z-index: 2; */
@@ -2200,7 +2204,7 @@ kanji-frame {
   .item > span {
     font-size: 1.3em;
   }
-  `,r([f("mwc-dialog")],en.prototype,"dialog",void 0),en=r([a("row-history")],en);let tn=class extends Se{constructor(e){super(),this.manager=e,this.manager.createCollectionDialog=this}render(){return W`
+  `,r([f("mwc-dialog")],tn.prototype,"dialog",void 0),tn=r([a("row-history")],tn);let on=class extends Se{constructor(e){super(),this.manager=e,this.manager.createCollectionDialog=this}render(){return W`
         <mwc-dialog id="create-dialog" heading="Create new Collection">
             <mwc-textfield style="width:100%" dialogInitialFocus></mwc-textfield>
             <mwc-button outlined slot="secondaryAction" dialogAction="close">cancel</mwc-button>
@@ -2208,10 +2212,10 @@ kanji-frame {
                         @click=${()=>{this.onCreateButtonClick()}}
             dialogAction="submit">create</mwc-button>
         </mwc-dialog>
-    `}firstUpdated(e){this.dialog.addEventListener("closing",(e=>{"close"==e.detail.action&&this._createReject()})),super.firstUpdated(e)}onCreateButtonClick(){const e=this.textfield.value;if(!e)return void window.toast("Cannot be empty");if(this.manager.getCollection(this.manager.collectionsSelector.domain,e))return void window.toast("This collection already exists");const t=this.manager.addCollection(this.manager.collectionsSelector.domain,e);this._createResolve(t),this.dialog.close()}show(){const e=new Promise(((e,t)=>{this._createResolve=e,this._createReject=t}));return this.dialog.show(),e}};r([f("mwc-dialog")],tn.prototype,"dialog",void 0),r([f("mwc-textfield")],tn.prototype,"textfield",void 0),tn=r([a("create-collection-dialog")],tn);let on=class extends Se{constructor(){if(super(),this.domain="kanji",this.mode="discovery",this.data=[],this.candidatesListSize=0,this.playIncomeAudio=!0,this.hintSearch=[],this.validatedKanjis=[],this.collectionsManager=new Wa(this),this.collectionsSelector=new Ga(this.collectionsManager),this.createCollectionDialog=new tn(this.collectionsManager),this.optionsManager=new Ja(this),this.kanjiFrame=new Va(this),this.rowHistory=new en(this),this._textFieldFocused=!1,this.reset=this.onCasinoButtonClick,this._successAudio=new Audio("./audio/success.mp3"),this._failureAudio=new Audio("./audio/wrong.mp3"),this.collectionsManager.URLCollectionName&&(this.mode="practice"),"practice"==this.mode);else{const e=localStorage.getItem("kanji-practice:domain");this.domain=e||"kanji"}this.loadValidated()}render(){var e,t;return this.kanjiFrame.row=this.row,W`
+    `}firstUpdated(e){this.dialog.addEventListener("closing",(e=>{"close"==e.detail.action&&this._createReject()})),super.firstUpdated(e)}onCreateButtonClick(){const e=this.textfield.value;if(!e)return void window.toast("Cannot be empty");if(this.manager.getCollection(this.manager.collectionsSelector.domain,e))return void window.toast("This collection already exists");const t=this.manager.addCollection(this.manager.collectionsSelector.domain,e);this._createResolve(t),this.dialog.close()}show(){const e=new Promise(((e,t)=>{this._createResolve=e,this._createReject=t}));return this.dialog.show(),e}};r([f("mwc-dialog")],on.prototype,"dialog",void 0),r([f("mwc-textfield")],on.prototype,"textfield",void 0),on=r([a("create-collection-dialog")],on);let rn=class extends Se{constructor(){if(super(),this.domain="kanji",this.mode="discovery",this.data=[],this.candidatesListSize=0,this.playIncomeAudio=!0,this.hintSearch=[],this.validatedKanjis=[],this.collectionsManager=new Ga(this),this.collectionsSelector=new Ja(this.collectionsManager),this.createCollectionDialog=new on(this.collectionsManager),this.optionsManager=new Xa(this),this.kanjiFrame=new Ka(this),this.rowHistory=new tn(this),this._textFieldFocused=!1,this.reset=this.onCasinoButtonClick,this._successAudio=new Audio("./audio/success.mp3"),this._failureAudio=new Audio("./audio/wrong.mp3"),this.collectionsManager.URLCollectionName&&(this.mode="practice"),"practice"==this.mode);else{const e=localStorage.getItem("kanji-practice:domain");this.domain=e||"kanji"}this.loadValidated()}render(){var e,t;return this.kanjiFrame.row=this.row,W`
     <mwc-tab-bar style="width:100%"
         @MDCTabBar:activated=${e=>{this.onMDCTabBarActivated(e)}}
-        activeIndex=${Xa.indexOf(this.domain)}>
+        activeIndex=${Ya.indexOf(this.domain)}>
       <mwc-tab label=kanji></mwc-tab>
       <mwc-tab label=words></mwc-tab>
     </mwc-tab-bar>
@@ -2305,13 +2309,13 @@ kanji-frame {
     ${this.optionsManager}
 
     <notes-dialog></notes-dialog>
-    `}onMDCTabBarActivated(e){const t=Xa[e.detail.index];this.domain=t,this.initializeData(),this.reset(),this.saveDomain()}initializeData(){switch(this.mode){case"discovery":this.data="kanji"==this.domain?Ha.slice(0):Da.slice(0);const e=this.validatedKanjis.filter((e=>e[0]==this.domain[0])).map((e=>parseInt(e.slice(1))));this.data=this.data.filter((t=>!e.includes(t[0])));break;case"practice":this.data=window.collectionsManager.collection.kanjis.map((e=>_kanjis.find((t=>t[1]===e))))}}pickNewRow(){const e=this.elementsLeft;if(0===e.length)return window.toast("You've run out of Kanji 😲 Try to refill from the options",-1),null;window.toast("",0);const t=e[~~(Math.random()*e.length)];return this.hintSearch=window.searchManager.searchData(t[1],["words"]).filter((e=>"not found"!=e.dictionary)).sort((function(e,t){return(t.frequency||-9999)-(e.frequency||-9999)})),setTimeout((()=>{this.optionsManager.enableAudioHint&&this.playAudioHint()}),200),t}changeDomain(e){this.domain=e,this.reset()}async playAudioHint(){if("kanji"==this.domain&&!this.hintSearch[0])return;const e="kanji"==this.domain?this.hintSearch[0].hiragana||this.hintSearch[0].word:this.row[4]||this.row[1];try{await Cr(e)}catch(t){await Qa(e)}}get elementsLeft(){const e=Object.entries(this.optionsManager.options.jlpts).filter((([e,t])=>t)).map((([e,t])=>e));return this.data.filter((t=>e.includes(`jlpt${t[2]}`)))}getRemainingOverTotal(e){const t=("kanji"==this.domain?Ha:Da).filter((t=>t[2]==e)).map((e=>e[0])),o=this.validatedKanjis.filter((e=>e[0]==this.domain[0]&&t.includes(parseInt(e.slice(1)))));return`${t.length-o.length}/${t.length}`}get revealed(){var e;return null===(e=this.kanjiFrame)||void 0===e?void 0:e.revealed}refillJlpt(e){const t=("kanji"==this.domain?Ha:Da).filter((t=>t[2]==e)).map((e=>e[0]));this.validatedKanjis=this.validatedKanjis.filter((e=>!(e[0]==this.domain[0]&&t.includes(parseInt(e.slice(1))))))}async firstUpdated(e){await this.textfield.updateComplete,this.textfield.shadowRoot.querySelector("i").style.color="transparent"}onCasinoButtonClick(){this.kanjiFrame.conceal(),this.textfield.value="",0==this.candidatesListSize&&this.textfield.focus(),this.row=this.pickNewRow()}onTextFieldPress(e){"Enter"===e.key&&this.submitButton.click()}validateAnswer(){if("ero"===this.textfield.value)return this.kanjiFrame.toggleEro(),void(this.textfield.value="");if(this.kanjiFrame.revealed)this.onCasinoButtonClick();else{if(this.kanjiFrame.reveal(),this.textfield.value===this.row[1])return this.kanjiFrame.success=!0,this.playIncomeAudio&&this.playSuccessSound(),this.rowHistory.addToHistory(this.domain[0],this.row[0],!0),this.data.splice(this.data.indexOf(this.row),1),this.requestUpdate(),void this.addToValidatedList(this.domain,this.row[0]);this.playIncomeAudio&&this.playFailureSound(),this.rowHistory.addToHistory(this.domain[0],this.row[0],!1),this.requestUpdate(),this.optionsManager.enableAudioHint&&this.playAudioHint()}}submit(){this.validateAnswer()}playSuccessSound(){this._successAudio.play()}playFailureSound(){this._failureAudio.play()}addToValidatedList(e,t){this.validatedKanjis.push(`${e[0]}${t}`),this.validatedKanjis=[...new Set(this.validatedKanjis)],this.saveValidated()}loadValidated(){const e=localStorage.getItem("kanji-practice:validated");e&&(this.validatedKanjis=JSON.parse(e),this.validatedKanjis[0]&&"k"!==this.validatedKanjis[0][0]&&"w"!==this.validatedKanjis[0][0]&&(this.validatedKanjis=[]))}saveValidated(){localStorage.setItem("kanji-practice:validated",JSON.stringify(this.validatedKanjis))}saveDomain(){localStorage.setItem("kanji-practice:domain",this.domain)}};on.styles=[Za,La],r([s()],on.prototype,"domain",void 0),r([l({reflect:!0})],on.prototype,"mode",void 0),r([s()],on.prototype,"row",void 0),r([s()],on.prototype,"candidatesListSize",void 0),r([f("mwc-textfield")],on.prototype,"textfield",void 0),r([f("#submit-button")],on.prototype,"submitButton",void 0),r([f("notes-dialog")],on.prototype,"notesDialog",void 0),r([f("tatoeba-dialog")],on.prototype,"tatoebaDialog",void 0),r([f("search-manager")],on.prototype,"searchManager",void 0),r([f("collection-viewer")],on.prototype,"collectionViewer",void 0),on=r([a("app-container")],on);let rn=class extends Ft{async updated(e){await this.updateComplete,this.shadowRoot.querySelector("button").style.height=`${this.height}px`}};rn.styles=Ft.styles.concat(me`
+    `}onMDCTabBarActivated(e){const t=Ya[e.detail.index];this.domain=t,this.initializeData(),this.reset(),this.saveDomain()}initializeData(){switch(this.mode){case"discovery":this.data="kanji"==this.domain?Ha.slice(0):Da.slice(0);const e=this.validatedKanjis.filter((e=>e[0]==this.domain[0])).map((e=>parseInt(e.slice(1))));this.data=this.data.filter((t=>!e.includes(t[0])));break;case"practice":this.data=window.collectionsManager.collection.kanjis.map((e=>_kanjis.find((t=>t[1]===e))))}}pickNewRow(){const e=this.elementsLeft;if(0===e.length)return window.toast("You've run out of Kanji 😲 Try to refill from the options",-1),null;window.toast("",0);const t=e[~~(Math.random()*e.length)];return this.hintSearch=window.searchManager.searchData(t[1],["words"]).filter((e=>"not found"!=e.dictionary)).sort((function(e,t){return(t.frequency||-9999)-(e.frequency||-9999)})),setTimeout((()=>{this.optionsManager.enableAudioHint&&this.playAudioHint()}),200),t}changeDomain(e){this.domain=e,this.reset()}async playAudioHint(){if("kanji"==this.domain&&!this.hintSearch[0])return;const e="kanji"==this.domain?this.hintSearch[0].hiragana||this.hintSearch[0].word:this.row[4]||this.row[1];try{await Cr(e)}catch(t){await Za(e)}}get elementsLeft(){const e=Object.entries(this.optionsManager.options.jlpts).filter((([e,t])=>t)).map((([e,t])=>e));return this.data.filter((t=>e.includes(`jlpt${t[2]}`)))}getRemainingOverTotal(e){const t=("kanji"==this.domain?Ha:Da).filter((t=>t[2]==e)).map((e=>e[0])),o=this.validatedKanjis.filter((e=>e[0]==this.domain[0]&&t.includes(parseInt(e.slice(1)))));return`${t.length-o.length}/${t.length}`}get revealed(){var e;return null===(e=this.kanjiFrame)||void 0===e?void 0:e.revealed}refillJlpt(e){const t=("kanji"==this.domain?Ha:Da).filter((t=>t[2]==e)).map((e=>e[0]));this.validatedKanjis=this.validatedKanjis.filter((e=>!(e[0]==this.domain[0]&&t.includes(parseInt(e.slice(1))))))}async firstUpdated(e){await this.textfield.updateComplete,this.textfield.shadowRoot.querySelector("i").style.color="transparent"}onCasinoButtonClick(){this.kanjiFrame.conceal(),this.textfield.value="",0==this.candidatesListSize&&this.textfield.focus(),this.row=this.pickNewRow()}onTextFieldPress(e){"Enter"===e.key&&this.submitButton.click()}validateAnswer(){if("ero"===this.textfield.value)return this.kanjiFrame.toggleEro(),void(this.textfield.value="");if(this.kanjiFrame.revealed)this.onCasinoButtonClick();else{if(this.kanjiFrame.reveal(),this.textfield.value===this.row[1])return this.kanjiFrame.success=!0,this.playIncomeAudio&&this.playSuccessSound(),this.rowHistory.addToHistory(this.domain[0],this.row[0],!0),this.data.splice(this.data.indexOf(this.row),1),this.requestUpdate(),void this.addToValidatedList(this.domain,this.row[0]);this.playIncomeAudio&&this.playFailureSound(),this.rowHistory.addToHistory(this.domain[0],this.row[0],!1),this.requestUpdate(),this.optionsManager.enableAudioHint&&this.playAudioHint()}}submit(){this.validateAnswer()}playSuccessSound(){this._successAudio.play()}playFailureSound(){this._failureAudio.play()}addToValidatedList(e,t){this.validatedKanjis.push(`${e[0]}${t}`),this.validatedKanjis=[...new Set(this.validatedKanjis)],this.saveValidated()}loadValidated(){const e=localStorage.getItem("kanji-practice:validated");e&&(this.validatedKanjis=JSON.parse(e),this.validatedKanjis[0]&&"k"!==this.validatedKanjis[0][0]&&"w"!==this.validatedKanjis[0][0]&&(this.validatedKanjis=[]))}saveValidated(){localStorage.setItem("kanji-practice:validated",JSON.stringify(this.validatedKanjis))}saveDomain(){localStorage.setItem("kanji-practice:domain",this.domain)}};rn.styles=[en,La],r([s()],rn.prototype,"domain",void 0),r([l({reflect:!0})],rn.prototype,"mode",void 0),r([s()],rn.prototype,"row",void 0),r([s()],rn.prototype,"candidatesListSize",void 0),r([f("mwc-textfield")],rn.prototype,"textfield",void 0),r([f("#submit-button")],rn.prototype,"submitButton",void 0),r([f("notes-dialog")],rn.prototype,"notesDialog",void 0),r([f("tatoeba-dialog")],rn.prototype,"tatoebaDialog",void 0),r([f("search-manager")],rn.prototype,"searchManager",void 0),r([f("collection-viewer")],rn.prototype,"collectionViewer",void 0),rn=r([a("app-container")],rn);let an=class extends Ft{async updated(e){await this.updateComplete,this.shadowRoot.querySelector("button").style.height=`${this.height}px`}};an.styles=Ft.styles.concat(me`
     :host {
       --mdc-typography-button-font-size:1.5em;
       --mdc-typography-button-font-family: 'Sawarabi Mincho';
       --mdc-button-horizontal-padding:18px;
     }
-  `),r([l({type:Number})],rn.prototype,"height",void 0),rn=r([a("app-button")],rn);let an=class extends Se{render(){var e,t;return W`
+  `),r([l({type:Number})],an.prototype,"height",void 0),an=r([a("app-button")],an);let nn=class extends Se{render(){var e,t;return W`
     <mwc-dialog heading="${(null===(e=this.collection)||void 0===e?void 0:e.name)||""}">
 
       ${this.collection?null===(t=this.collection)||void 0===t?void 0:t.elements.map((e=>{const t=Ba(window.app.domain,e);return this.wordTemplate(t[1])})):J}
@@ -2322,18 +2326,18 @@ kanji-frame {
     <div class=word>
       <span class="jp-font" @click=${()=>{window.searchManager.show(e,"words")}}>${e}</span>
     </div>
-    `}};an.styles=[La,me`
+    `}};nn.styles=[La,me`
   .word {
     font-size: 2em;
     margin: 25px 0;
   }
-  `],r([s()],an.prototype,"collection",void 0),r([f("mwc-dialog")],an.prototype,"dialog",void 0),an=r([a("collection-viewer")],an);
+  `],r([s()],nn.prototype,"collection",void 0),r([f("mwc-dialog")],nn.prototype,"dialog",void 0),nn=r([a("collection-viewer")],nn);
 /**
  * @license
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-const nn={fromAttribute:e=>null!==e&&(""===e||e),toAttribute:e=>"boolean"==typeof e?e?"":null:e};class ln extends Io{constructor(){super(...arguments),this.rows=2,this.cols=20,this.charCounter=!1}render(){const e=this.charCounter&&-1!==this.maxLength,t=e&&"internal"===this.charCounter,o=e&&!t,r=!!this.helper||!!this.validationMessage||o,i={"mdc-text-field--disabled":this.disabled,"mdc-text-field--no-label":!this.label,"mdc-text-field--filled":!this.outlined,"mdc-text-field--outlined":this.outlined,"mdc-text-field--end-aligned":this.endAligned,"mdc-text-field--with-internal-counter":t};return W`
+const ln={fromAttribute:e=>null!==e&&(""===e||e),toAttribute:e=>"boolean"==typeof e?e?"":null:e};class sn extends Io{constructor(){super(...arguments),this.rows=2,this.cols=20,this.charCounter=!1}render(){const e=this.charCounter&&-1!==this.maxLength,t=e&&"internal"===this.charCounter,o=e&&!t,r=!!this.helper||!!this.validationMessage||o,i={"mdc-text-field--disabled":this.disabled,"mdc-text-field--no-label":!this.label,"mdc-text-field--filled":!this.outlined,"mdc-text-field--outlined":this.outlined,"mdc-text-field--end-aligned":this.endAligned,"mdc-text-field--with-internal-counter":t};return W`
       <label class="mdc-text-field mdc-text-field--textarea ${Qe(i)}">
         ${this.renderRipple()}
         ${this.outlined?this.renderOutline():this.renderLabel()}
@@ -2360,18 +2364,18 @@ const nn={fromAttribute:e=>null!==e&&(""===e||e),toAttribute:e=>"boolean"==typeo
           autocapitalize="${qt(r)}"
           @input="${this.handleInputChange}"
           @blur="${this.onInputBlur}">
-      </textarea>`}}r([f("textarea")],ln.prototype,"formElement",void 0),r([l({type:Number})],ln.prototype,"rows",void 0),r([l({type:Number})],ln.prototype,"cols",void 0),r([l({converter:nn})],ln.prototype,"charCounter",void 0);
+      </textarea>`}}r([f("textarea")],sn.prototype,"formElement",void 0),r([l({type:Number})],sn.prototype,"rows",void 0),r([l({type:Number})],sn.prototype,"cols",void 0),r([l({converter:ln})],sn.prototype,"charCounter",void 0);
 /**
  * @license
  * Copyright 2021 Google LLC
  * SPDX-LIcense-Identifier: Apache-2.0
  */
-const sn=me`.mdc-text-field{height:100%}.mdc-text-field__input{resize:none}`
+const cn=me`.mdc-text-field{height:100%}.mdc-text-field__input{resize:none}`
 /**
  * @license
  * Copyright 2019 Google LLC
  * SPDX-License-Identifier: Apache-2.0
- */;let cn=class extends ln{};cn.styles=[jo,sn],cn=r([a("mwc-textarea")],cn);let dn=class extends Se{render(){return W`
+ */;let dn=class extends sn{};dn.styles=[jo,cn],dn=r([a("mwc-textarea")],dn);let fn=class extends Se{render(){return W`
     <mwc-dialog heading=Notes style="--mdc-dialog-min-width:calc(100vw - 32px);">
 
       <mwc-textarea style="width:100%" rows=12
@@ -2379,14 +2383,18 @@ const sn=me`.mdc-text-field{height:100%}.mdc-text-field__input{resize:none}`
 
       <mwc-button outlined slot=secondaryAction dialogAction=close>close</mwc-button>
     </mwc-dialog>
-    `}firstUpdated(e){this.loadContent()}onKeyUp(){this.saveContent()}loadContent(){let e=localStorage.getItem("translation-practice:notes");e&&(this.textarea.value=e)}saveContent(){localStorage.setItem("translation-practice:notes",this.textarea.value)}show(){this.dialog.show()}};r([f("mwc-dialog")],dn.prototype,"dialog",void 0),r([f("mwc-textarea")],dn.prototype,"textarea",void 0),dn=r([a("notes-dialog")],dn);let fn=class extends Se{constructor(){super(...arguments),this.fetching=!1,this.search="",this.result=[]}render(){return W`
+    `}firstUpdated(e){this.loadContent()}onKeyUp(){this.saveContent()}loadContent(){let e=localStorage.getItem("translation-practice:notes");e&&(this.textarea.value=e)}saveContent(){localStorage.setItem("translation-practice:notes",this.textarea.value)}show(){this.dialog.show()}};r([f("mwc-dialog")],fn.prototype,"dialog",void 0),r([f("mwc-textarea")],fn.prototype,"textarea",void 0),fn=r([a("notes-dialog")],fn);let pn=class extends Se{constructor(){super(...arguments),this.fetching=!1,this.search="",this.result=[]}render(){return W`
     <mwc-dialog heading=Examples>
       ${this.fetching?W`fetching...`:J}
 
       ${this.result.map((e=>W`
         <div class="example">
-          <span>${e.j}</span>
-          <span>${e.e}</span>
+          <div class=sentence>
+            ${e.j.map((e=>e.meta?W`<span class=searchable
+                      @click=${()=>{window.searchManager.show(e.word,"words")}}
+                      title=${e.meta[4]}>${e.word}</span>`:W`<span>${e.word}</span>`))}
+          </div>
+          <concealable-span concealed>${e.e}</concealable-span>
         </div>
         `))}
 
@@ -2394,14 +2402,23 @@ const sn=me`.mdc-text-field{height:100%}.mdc-text-field__input{resize:none}`
         @click=${()=>{this.searchSelection()}}>search</mwc-button>
       <mwc-button outlined slot=secondaryAction dialogAction=close>close</mwc-button>
     </mwc-dialog>
-    `}searchSelection(){let e=window.getSelection();e&&(e=e.toString(),e&&window.searchManager.show(e))}firstUpdated(e){}async performSearch(e=this.search){this.fetching=!0;try{const t=await fetch(`https://assiets.vdegenne.com/japanese/tatoeba/${encodeURIComponent(e)}`);this.result=await t.json(),console.log(this.result)}catch(e){window.toast("Something went wrong while fetching the search")}finally{this.fetching=!1}}async show(e){e!=this.search&&(this.search=e,this.performSearch()),this.dialog.show()}};fn.styles=me`
+    `}searchSelection(){let e=window.getSelection();e&&(e=e.toString(),e&&window.searchManager.show(e))}firstUpdated(e){}async performSearch(e=this.search){this.result=[],this.search=e,this.fetching=!0;try{const t=await fetch(`https://assiets.vdegenne.com/japanese/tatoeba/${encodeURIComponent(e)}`),o=await t.json();this.result=o.map((e=>({j:Ua(e.j),e:e.e})))}catch(e){window.toast("Something went wrong while fetching the search")}finally{this.fetching=!1}}async show(e){e!=this.search&&this.performSearch(e),this.dialog.show()}};pn.styles=me`
   .example {
     display: flex;
     flex-direction: column;
-    margin: 18px 0;
+    margin: 40px 0;
+    font-size: 1.5em;
+    line-height: 39px;
   }
-  .example > span:first-of-type {
-    /* border-bottom: 1px solid black; */
+  .example .sentence {
+    font-family: 'Noto Serif JP';
+    margin-bottom: 6px;
   }
-  `,r([s()],fn.prototype,"fetching",void 0),r([f("mwc-dialog")],fn.prototype,"dialog",void 0),fn=r([a("tatoeba-dialog")],fn);
+  .example .sentence .searchable {
+    color: #3f51b5;
+    border-bottom: 2px solid #0000ff40;
+    cursor: pointer;
+    margin: 0 3px;
+  }
+  `,r([s()],pn.prototype,"fetching",void 0),r([f("mwc-dialog")],pn.prototype,"dialog",void 0),pn=r([a("tatoeba-dialog")],pn);
 //# sourceMappingURL=app.js.map

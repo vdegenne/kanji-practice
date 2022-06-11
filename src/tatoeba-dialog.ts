@@ -3,13 +3,14 @@ import { customElement, query, state } from 'lit/decorators.js'
 import '@material/mwc-dialog'
 import '@material/mwc-icon-button'
 import { Dialog } from '@material/mwc-dialog';
+import { parseSentence, SentenceMeta } from './data';
 
 @customElement('tatoeba-dialog')
 export class TatoebaDialog extends LitElement {
   @state() fetching = false;
   private search: string = '';
 
-  private result: {e: string, j: string}[] = []
+  private result: {e: string, j: SentenceMeta}[] = []
 
   @query('mwc-dialog') dialog!: Dialog;
 
@@ -17,10 +18,19 @@ export class TatoebaDialog extends LitElement {
   .example {
     display: flex;
     flex-direction: column;
-    margin: 18px 0;
+    margin: 40px 0;
+    font-size: 1.5em;
+    line-height: 39px;
   }
-  .example > span:first-of-type {
-    /* border-bottom: 1px solid black; */
+  .example .sentence {
+    font-family: 'Noto Serif JP';
+    margin-bottom: 6px;
+  }
+  .example .sentence .searchable {
+    color: #3f51b5;
+    border-bottom: 2px solid #0000ff40;
+    cursor: pointer;
+    margin: 0 3px;
   }
   `
 
@@ -32,8 +42,17 @@ export class TatoebaDialog extends LitElement {
       ${this.result.map(r=>{
         return html`
         <div class="example">
-          <span>${r.j}</span>
-          <span>${r.e}</span>
+          <div class=sentence>
+            ${r.j.map(word => {
+              if (word.meta) {
+                return html`<span class=searchable
+                      @click=${()=>{window.searchManager.show(word.word, 'words')}}
+                      title=${word.meta[4]}>${word.word}</span>`
+              }
+              return html`<span>${word.word}</span>`
+            })}
+          </div>
+          <concealable-span concealed>${r.e}</concealable-span>
         </div>
         `
       })}
@@ -62,11 +81,17 @@ export class TatoebaDialog extends LitElement {
   }
 
   async performSearch (search = this.search) {
+    this.result = [];
+    this.search = search;
     this.fetching = true;
     try {
       const res = await fetch(`https://assiets.vdegenne.com/japanese/tatoeba/${encodeURIComponent(search)}`)
-      this.result = await res.json()
-      console.log(this.result)
+      const data = await res.json()
+      // const meta = parseSentence(data[0].j)
+      this.result = data.map(item => ({
+        j: parseSentence(item.j),
+        e: item.e
+      }))
     }
     catch (e) {
       window.toast('Something went wrong while fetching the search')
@@ -78,9 +103,10 @@ export class TatoebaDialog extends LitElement {
 
   async show (search: string) {
     if (search != this.search) {
-      this.search = search
-      this.performSearch()
+      this.performSearch(search)
     }
     this.dialog.show()
   }
 }
+
+

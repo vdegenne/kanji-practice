@@ -81,9 +81,13 @@ export class SearchItemElement extends LitElement {
           <span>Naver</span>
           <img src="./img/naver.ico" slot="graphic">
         </mwc-list-item>
-        <mwc-list-item id="tatoeba" graphic=icon @click=${()=>{tatoeba(this.item.word)}}>
+        <!-- <mwc-list-item id="tatoeba" graphic=icon @click=${()=>{tatoeba(this.item.word)}}>
           <span>Tatoeba</span>
           <img src="./img/tatoeba.ico" slot="graphic">
+        </mwc-list-item> -->
+        <mwc-list-item graphic=icon @click=${()=>{this.searchManager.close(); window.app.tatoebaDialog.show(this.item.word)}}>
+          <span>Examples</span>
+          <mwc-icon slot="graphic">format_quote</mwc-icon>
         </mwc-list-item>
 
         <li divider role=separator padded></li>
