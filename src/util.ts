@@ -33,21 +33,23 @@ export function googleImageSearch (word) {
 //   window.open(`https://www.mdbg.net/chinese/dictionary?page=worddict&wdrst=0&wdqb=${encodeURIComponent(word)}`, '_blank")
 // }
 
-const audioMap: {[word: string]: Blob} = {}
+const audioMap: {[word: string]: Blob|Promise<Response>} = {}
 
 export async function playJapaneseAudio (word, volume = 1) {
   let audio: HTMLAudioElement
   if (word in audioMap) {
-    if (audioMap[word] instanceof Blob) {
-      audio = createAudioElementFromBlob(audioMap[word] as Blob)
+    if (audioMap[word] instanceof Promise) {
+      // wait for the blob
+      const response = await audioMap[word]
+      await new Promise((resolve, reject) => { setTimeout(resolve, 100) })
     }
-    else {
-      // audio = audioMap[word] as HTMLAudioElement
-    }
-    // audio = audioMap[word]
+
+    audio = createAudioElementFromBlob(audioMap[word] as Blob)
   }
   else {
-    const response = await fetch(`https://assiets.vdegenne.com/data/japanese/audio/${encodeURIComponent(word)}`)
+    const responsePromise = fetch(`https://assiets.vdegenne.com/data/japanese/audio/${encodeURIComponent(word)}`)
+    audioMap[word] = responsePromise
+    const response = await responsePromise
     const blob = audioMap[word] = await response.blob()
     audio = createAudioElementFromBlob(blob)
     // audio = new Audio(`https://assiets.vdegenne.com/data/japanese/audio/${encodeURIComponent(word)}`)
