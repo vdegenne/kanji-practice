@@ -4,6 +4,7 @@ import '@material/mwc-dialog'
 import '@material/mwc-icon-button'
 import { Dialog } from '@material/mwc-dialog';
 import { parseSentence, SentenceMeta } from './data';
+import { speakJapanese } from './speech';
 
 @customElement('tatoeba-dialog')
 export class TatoebaDialog extends LitElement {
@@ -64,7 +65,8 @@ export class TatoebaDialog extends LitElement {
                 </div>`
               }
               return html`<div>${word.word}</div>`
-            })}
+            })}<mwc-icon-button icon=volume_up
+              @click=${()=>{speakJapanese(r.j.map(w=>w.word).join(''))}}></mwc-icon-button>
           </div>
           <concealable-span concealed>${r.e}</concealable-span>
         </div>

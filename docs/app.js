@@ -2396,7 +2396,8 @@ const cn=me`.mdc-text-field{height:100%}.mdc-text-field__input{resize:none}`
                       title=${e.meta[4]}>
                         <span>${e.word}</span>
                         <div class="bottomBorder"></div>
-                </div>`:W`<div>${e.word}</div>`))}
+                </div>`:W`<div>${e.word}</div>`))}<mwc-icon-button icon=volume_up
+              @click=${()=>{Za(e.j.map((e=>e.word)).join(""))}}></mwc-icon-button>
           </div>
           <concealable-span concealed>${e.e}</concealable-span>
         </div>
