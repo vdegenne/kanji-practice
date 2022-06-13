@@ -2387,7 +2387,7 @@ const cn=me`.mdc-text-field{height:100%}.mdc-text-field__input{resize:none}`
 
       <mwc-button outlined slot=secondaryAction dialogAction=close>close</mwc-button>
     </mwc-dialog>
-    `}firstUpdated(e){this.loadContent()}onKeyUp(){this.saveContent()}loadContent(){let e=localStorage.getItem("translation-practice:notes");e&&(this.textarea.value=e)}saveContent(){localStorage.setItem("translation-practice:notes",this.textarea.value)}show(){this.dialog.show()}};r([f("mwc-dialog")],fn.prototype,"dialog",void 0),r([f("mwc-textarea")],fn.prototype,"textarea",void 0),fn=r([a("notes-dialog")],fn);let pn=class extends Se{constructor(){super(...arguments),this.fetching=!1,this.search="",this.result=[]}render(){return W`
+    `}firstUpdated(e){this.loadContent()}onKeyUp(){this.saveContent()}loadContent(){let e=localStorage.getItem("translation-practice:notes");e&&(this.textarea.value=e)}saveContent(){localStorage.setItem("translation-practice:notes",this.textarea.value)}show(){this.dialog.show()}};r([f("mwc-dialog")],fn.prototype,"dialog",void 0),r([f("mwc-textarea")],fn.prototype,"textarea",void 0),fn=r([a("notes-dialog")],fn);let pn=class extends Se{constructor(){super(...arguments),this.fetching=!1,this.search="",this.result=[],this._playingPromise=null}render(){return W`
     <mwc-dialog heading=Examples>
       ${this.fetching?W`fetching...`:J}
 
@@ -2400,7 +2400,7 @@ const cn=me`.mdc-text-field{height:100%}.mdc-text-field__input{resize:none}`
                         <span>${e.word}</span>
                         <div class="bottomBorder"></div>
                 </div>`:W`<div>${e.word}</div>`))}<mwc-icon-button icon=volume_up
-              @click=${()=>{Za(e.j.map((e=>e.word)).join(""))}}></mwc-icon-button>
+              @click=${()=>{this.togglePlayExample(e.j.map((e=>e.word)).join(""))}}></mwc-icon-button>
           </div>
           <concealable-span concealed>${e.e}</concealable-span>
         </div>
@@ -2410,7 +2410,7 @@ const cn=me`.mdc-text-field{height:100%}.mdc-text-field__input{resize:none}`
         @click=${()=>{this.searchSelection()}}>search</mwc-button>
       <mwc-button outlined slot=secondaryAction dialogAction=close>close</mwc-button>
     </mwc-dialog>
-    `}searchSelection(){let e=window.getSelection();e&&(e=e.toString(),e&&window.searchManager.show(e))}firstUpdated(e){}async performSearch(e=this.search){this.result=[],this.search=e,this.fetching=!0;try{const t=await fetch(`https://assiets.vdegenne.com/japanese/tatoeba/${encodeURIComponent(e)}`),o=await t.json();this.result=o.map((e=>({j:Ua(e.j),e:e.e})))}catch(e){window.toast("Something went wrong while fetching the search")}finally{this.fetching=!1}}async show(e){e!=this.search&&this.performSearch(e),this.dialog.show()}};pn.styles=me`
+    `}async togglePlayExample(e){this._playingPromise?Qa.cancel():(this._playingPromise=Za(e),await this._playingPromise,this._playingPromise=null)}searchSelection(){let e=window.getSelection();e&&(e=e.toString(),e&&window.searchManager.show(e))}firstUpdated(e){}async performSearch(e=this.search){this.result=[],this.search=e,this.fetching=!0;try{const t=await fetch(`https://assiets.vdegenne.com/japanese/tatoeba/${encodeURIComponent(e)}`),o=await t.json();this.result=o.map((e=>({j:Ua(e.j),e:e.e})))}catch(e){window.toast("Something went wrong while fetching the search")}finally{this.fetching=!1}}async show(e){e!=this.search&&this.performSearch(e),this.dialog.show()}};pn.styles=me`
   .example {
     display: flex;
     flex-direction: column;

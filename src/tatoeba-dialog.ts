@@ -4,7 +4,7 @@ import '@material/mwc-dialog'
 import '@material/mwc-icon-button'
 import { Dialog } from '@material/mwc-dialog';
 import { parseSentence, SentenceMeta } from './data';
-import { speakJapanese } from './speech';
+import { cancelSpeech, speakJapanese } from './speech';
 
 @customElement('tatoeba-dialog')
 export class TatoebaDialog extends LitElement {
@@ -66,7 +66,7 @@ export class TatoebaDialog extends LitElement {
               }
               return html`<div>${word.word}</div>`
             })}<mwc-icon-button icon=volume_up
-              @click=${()=>{speakJapanese(r.j.map(w=>w.word).join(''))}}></mwc-icon-button>
+              @click=${()=>{this.togglePlayExample(r.j.map(w=>w.word).join(''))}}></mwc-icon-button>
           </div>
           <concealable-span concealed>${r.e}</concealable-span>
         </div>
@@ -78,6 +78,20 @@ export class TatoebaDialog extends LitElement {
       <mwc-button outlined slot=secondaryAction dialogAction=close>close</mwc-button>
     </mwc-dialog>
     `
+  }
+
+  private _playingPromise: Promise<void>|null = null;
+  async togglePlayExample (sentence: string) {
+    if (this._playingPromise) {
+      cancelSpeech()
+      // this._playingPromise = null
+      return
+    }
+    else {
+      this._playingPromise = speakJapanese(sentence)
+      await this._playingPromise
+      this._playingPromise = null
+    }
   }
 
   searchSelection() {
