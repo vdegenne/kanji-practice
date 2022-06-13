@@ -69,7 +69,15 @@ export class KanjiFrame extends LitElement {
     <div id=meanings ?hide=${!this.showText}
       @click=${()=>{this.showText=!this.showText}}>
       <div style="margin-bottom:3px"><span class=tag style="background-color:#870000;margin-right:5px">On</span><span>${this.row[3]}</span></div>
-      <div><span class=tag style="background-color:crimson;margin-right:5px;">Kun</span><span>${this.row[4]}</span></div>
+      <div>
+        <span class=tag style="background-color:crimson;margin-right:5px;">Kun</span>
+        <span
+          @click=${(e)=>{
+            if (this.app.domain == 'words' && this.row![4]) {
+              e.stopPropagation();
+              this.app.searchManager.show(this.row![4], 'words')
+            }
+          }}>${this.row[4]}</span></div>
     </div>
 
     <div id=details-strip ?hide=${!this.revealed}>
