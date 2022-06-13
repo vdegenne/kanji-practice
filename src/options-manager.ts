@@ -98,7 +98,8 @@ export class OptionsManager extends LitElement {
                 min="0"
                 max="20"
                 step="1"
-                @change=${e=>{this.app.candidatesListSize = e.detail.value}}
+                value=${this.options.candidatesListSize}
+                @change=${()=>{this.app.requestUpdate()}}
         ></mwc-slider>
 
         <p>Others</p>
@@ -118,10 +119,13 @@ export class OptionsManager extends LitElement {
   get enableAudioHint () {
     return (this.shadowRoot!.querySelector('mwc-formfield[label="Play audio word hint"]')!.firstElementChild as Checkbox).checked
   }
+  get candidatesListSize () {
+    return this.shadowRoot!.querySelector('mwc-slider')!.value
+  }
 
   protected firstUpdated(_changedProperties: PropertyValues) {
     this.dialog.addEventListener('opened', ()=>{
-      ;(this.shadowRoot!.querySelector('mwc-slider') as Slider).value = this.app.candidatesListSize
+      // ;(this.shadowRoot!.querySelector('mwc-slider') as Slider).value = this.app.candidatesListSize
       ;(this.shadowRoot!.querySelector('mwc-slider') as Slider).layout()
 
       // update the interface every time it opens
@@ -164,8 +168,12 @@ export class OptionsManager extends LitElement {
         options = {
           jlpts: <unknown>options as Jlpts,
           showTextualHint: true,
-          enableAudioHint: true
+          enableAudioHint: true,
+          candidatesListSize: 0
         }
+      }
+      if (!('candidatesListSize' in options)) {
+        options.candidatesListSize = 3
       }
     }
     else {
@@ -179,7 +187,8 @@ export class OptionsManager extends LitElement {
           jlpt1: false,
         },
         showTextualHint: true,
-        enableAudioHint: true
+        enableAudioHint: true,
+        candidatesListSize: 0
       }
     }
 
@@ -191,7 +200,8 @@ export class OptionsManager extends LitElement {
     const options: Options = {
       jlpts: this.options.jlpts,
       showTextualHint: this.showTextualHint,
-      enableAudioHint: this.enableAudioHint
+      enableAudioHint: this.enableAudioHint,
+      candidatesListSize: this.candidatesListSize
     }
     localStorage.setItem('kanji-practice:options', JSON.stringify(options))
   }

@@ -26,11 +26,22 @@ export class TatoebaDialog extends LitElement {
     font-family: 'Noto Serif JP';
     margin-bottom: 6px;
   }
+  .example .sentence > div {
+    display: inline-block;
+    position: relative;
+  }
   .example .sentence .searchable {
-    color: #3f51b5;
-    border-bottom: 2px solid #0000ff40;
+    /* color: #3f51b5; */
+    /* border-bottom: 2px solid #0000ff40; */
     cursor: pointer;
-    margin: 0 3px;
+    /* margin: 0 3px; */
+  }
+  .bottomBorder {
+    position: absolute;
+    bottom: 0;
+    left: 0; right: 0;
+    border-bottom: 2px solid #00000040;
+    margin: 0 5px;
   }
   `
 
@@ -45,11 +56,14 @@ export class TatoebaDialog extends LitElement {
           <div class=sentence>
             ${r.j.map(word => {
               if (word.meta) {
-                return html`<span class=searchable
+                return html`<div class=searchable
                       @click=${()=>{window.searchManager.show(word.word, 'words')}}
-                      title=${word.meta[4]}>${word.word}</span>`
+                      title=${word.meta[4]}>
+                        <span>${word.word}</span>
+                        <div class="bottomBorder"></div>
+                </div>`
               }
-              return html`<span>${word.word}</span>`
+              return html`<div>${word.word}</div>`
             })}
           </div>
           <concealable-span concealed>${r.e}</concealable-span>

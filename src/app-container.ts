@@ -33,7 +33,7 @@ export class AppContainer extends LitElement {
   /** collections */
   // public collections: Collection[];
 
-  @state() candidatesListSize = 0;
+  // @state() candidatesListSize = 0;
 
   // enableAudioHint = true;
   playIncomeAudio = true;
@@ -195,7 +195,7 @@ export class AppContainer extends LitElement {
     </div>
 
     ${this.row ? html`
-    <candidates-row size=${this.candidatesListSize} answer=${this.row[1]}
+    <candidates-row size=${this.optionsManager.candidatesListSize} answer=${this.row[1]}
         @candidate-click=${e=>{
           if (!this.kanjiFrame.revealed) {
             this.textfield.value = e.detail.candidate;
@@ -291,6 +291,12 @@ export class AppContainer extends LitElement {
     // so we can play its content
     setTimeout(() => {
       if (this.optionsManager.enableAudioHint) { this.playAudioHint() }
+      else if (this.optionsManager.candidatesListSize > 0) {
+        /**
+         * We silently play the audio hint (to force preloading the audio data)
+         */
+        this.playAudioHint(0)
+      }
     }, 200)
 
     return element
@@ -301,7 +307,7 @@ export class AppContainer extends LitElement {
     this.reset()
   }
 
-  async playAudioHint() {
+  async playAudioHint(volume = 1) {
     // @ts-ignore
     // if (wasFocused) {
     //   setTimeout(()=>this.textfield.focus(), 100)
@@ -316,11 +322,11 @@ export class AppContainer extends LitElement {
         : this.row![4] || this.row![1];
 
       try {
-        await playJapaneseAudio(word)
+        await playJapaneseAudio(word, volume)
       }
       catch (e) {
         // rollback to the synthetic voice
-        await speakJapanese(word)
+        await speakJapanese(word, volume)
       }
     // }
 
@@ -371,7 +377,7 @@ export class AppContainer extends LitElement {
     this.kanjiFrame.conceal()
     // this.kanjiFrame.success = false
     this.textfield.value =''
-    if (this.candidatesListSize == 0)
+    if (this.optionsManager.candidatesListSize == 0)
       this.textfield.focus()
     this.row = this.pickNewRow()
   }

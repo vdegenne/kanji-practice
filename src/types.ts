@@ -25,5 +25,6 @@ export type Jlpts = {
 export type Options = {
   jlpts: Jlpts,
   showTextualHint: boolean,
-  enableAudioHint: boolean
+  enableAudioHint: boolean,
+  candidatesListSize: number
 }

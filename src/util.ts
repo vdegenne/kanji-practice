@@ -33,16 +33,16 @@ export function googleImageSearch (word) {
 //   window.open(`https://www.mdbg.net/chinese/dictionary?page=worddict&wdrst=0&wdqb=${encodeURIComponent(word)}`, '_blank")
 // }
 
-const audioMap: {[word: string]: HTMLAudioElement|Blob} = {}
+const audioMap: {[word: string]: Blob} = {}
 
-export async function playJapaneseAudio (word) {
+export async function playJapaneseAudio (word, volume = 1) {
   let audio: HTMLAudioElement
   if (word in audioMap) {
     if (audioMap[word] instanceof Blob) {
       audio = createAudioElementFromBlob(audioMap[word] as Blob)
     }
     else {
-      audio = audioMap[word] as HTMLAudioElement
+      // audio = audioMap[word] as HTMLAudioElement
     }
     // audio = audioMap[word]
   }
@@ -54,6 +54,7 @@ export async function playJapaneseAudio (word) {
   }
 
   return new Promise((resolve, reject) => {
+    audio.volume = volume
     audio.onerror = () => reject()
     audio.onended = () => {
       resolve(audio)
