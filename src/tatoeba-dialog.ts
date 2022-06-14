@@ -48,9 +48,13 @@ export class TatoebaDialog extends LitElement {
 
   render() {
     const hiragana = this.search
-    ?
-      getExactSearch(this.search)?.[4]
+    ? getExactSearch(this.search)?.[4]
     : null;
+    // sort sentences by length
+    this.result.sort((i1, i2) => {
+      return i1.j.map(w=>w.word).join('').length - i2.j.map(w=>w.word).join('').length
+    })
+
     return html`
     <mwc-dialog heading="Examples (${this.search})${hiragana ? ` 【　${hiragana}　】`: ''}" escapeKeyAction="">
       ${this.fetching ? html`fetching...` : nothing}
