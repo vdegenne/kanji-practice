@@ -48,7 +48,8 @@ export class LofiPlayer extends LitElement {
     this.dialog.addEventListener('opened', async () => {
       // load the youtube player script
       this.loadYoutubePlayerScript()
-      await this.updateComplete
+      await this.playerReady()
+      this.shadowRoot!.querySelector('mwc-slider')!.layout()
     })
   }
 
@@ -78,11 +79,12 @@ export class LofiPlayer extends LitElement {
     });
   }
 
-  async playerReady () {
-    return new Promise(resolve => {
-      while (this.player) {
-        this.shadowRoot!.querySelector('mwc-slider')!.layout()
+  playerReady () {
+    return new Promise(async resolve => {
+      while (!this.player) {
+        await new Promise(resolve => setTimeout(resolve, 100))
       }
+      resolve(this.player)
     })
   }
 
