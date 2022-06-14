@@ -23,12 +23,14 @@ import './notes-dialog'
 import './row-history'
 import './tatoeba-dialog'
 import './back-image'
+import './lofi-player'
 
 /* global */
 import { CollectionsSelector } from './collections-selector'
 import { CollectionsManager } from './collections-manager'
 import {SearchManager} from './search-manager'
 import { AppContainer } from './app-container'
+import { LofiPlayer } from './lofi-player'
 
 declare global {
   interface Window {
@@ -38,5 +40,6 @@ declare global {
     collectionsManager: CollectionsManager;
     searchManager: SearchManager;
     toast: (labelText: string, timeoutMs?: number) => void;
+    lofiPlayer: LofiPlayer;
   }
 }

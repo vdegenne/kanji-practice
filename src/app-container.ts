@@ -121,6 +121,8 @@ export class AppContainer extends LitElement {
         <span>${this.mode === 'discovery' ? 'discovery' : window.collectionsManager.URLCollectionName}</span>
       </div>
       <div style="font-size: 0.8em;color: #bdbdbd;">kanji left: ${this.elementsLeft.length}</div>
+      <mwc-icon-button icon=self_improvement
+        @click=${()=>{window.lofiPlayer.show()}}></mwc-icon-button>
       <mwc-icon-button icon=inventory
         @click=${()=>{this.collectionsManager.show()}}></mwc-icon-button>
       <mwc-icon-button icon=search
