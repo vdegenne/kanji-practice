@@ -32,6 +32,7 @@ export class AppContainer extends LitElement {
   @state() row!: Row|null;
   /** collections */
   // public collections: Collection[];
+  @state() playTatoebaFeature = true
 
   // @state() candidatesListSize = 0;
 
@@ -188,11 +189,18 @@ export class AppContainer extends LitElement {
       ` : nothing}
 
       ${this.domain=='words' ? html`
-      <mwc-icon-button icon=volume_up
-        @pointerdown=${()=> {
-          this._textFieldFocused = (this.shadowRoot!.activeElement == this.textfield);
-        }}
-        @click=${()=>{this.playAudioHint(); this._textFieldFocused && this.textfield.focus()}}></mwc-icon-button>
+        <div>
+          <mwc-icon-button icon=volume_up
+            @pointerdown=${()=> { this._textFieldFocused = (this.shadowRoot!.activeElement == this.textfield) }}
+            @click=${()=>{this.playAudioHint(); this._textFieldFocused && this.textfield.focus()}}>
+          </mwc-icon-button>
+          ${this.playTatoebaFeature ? html`
+          <mwc-icon-button icon=record_voice_over
+            @pointerdown=${()=> { this._textFieldFocused = (this.shadowRoot!.activeElement == this.textfield) }}
+            @click=${()=>{this.onTatoebaPlayButtonClick(); this._textFieldFocused && this.textfield.focus()}}>
+          </mwc-icon-button>
+          ` : nothing}
+        </div>
       ` : nothing}
     </div>
 
@@ -331,7 +339,14 @@ export class AppContainer extends LitElement {
         await speakJapanese(word, volume)
       }
     // }
+  }
 
+  async onTatoebaPlayButtonClick () {
+    await this.tatoebaDialog.performSearch(this.row![1])
+    const firstListenButton = this.tatoebaDialog.shadowRoot!.querySelector('mwc-icon-button[icon=volume_up]')
+    if (firstListenButton) {
+      ;(firstListenButton as Button).click();
+    }
   }
 
   /**

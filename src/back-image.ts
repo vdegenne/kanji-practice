@@ -15,7 +15,7 @@ export class BackImage extends LitElement {
     overflow: auto;
   }
   img {
-    height: 400px;
+    height: 450px;
   }
   `
 

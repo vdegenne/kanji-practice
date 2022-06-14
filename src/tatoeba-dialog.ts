@@ -9,7 +9,7 @@ import { cancelSpeech, speakJapanese } from './speech';
 @customElement('tatoeba-dialog')
 export class TatoebaDialog extends LitElement {
   @state() fetching = false;
-  private search: string = '';
+  public search: string = '';
 
   private result: {e: string, j: SentenceMeta}[] = []
 
@@ -51,9 +51,9 @@ export class TatoebaDialog extends LitElement {
     ? getExactSearch(this.search)?.[4]
     : null;
     // sort sentences by length
-    this.result.sort((i1, i2) => {
-      return i1.j.map(w=>w.word).join('').length - i2.j.map(w=>w.word).join('').length
-    })
+    // this.result.sort((i1, i2) => {
+    //   return i1.j.map(w=>w.word).join('').length - i2.j.map(w=>w.word).join('').length
+    // })
 
     return html`
     <mwc-dialog heading="Examples (${this.search})${hiragana ? ` 【　${hiragana}　】`: ''}" escapeKeyAction="">
@@ -119,14 +119,16 @@ export class TatoebaDialog extends LitElement {
   }
 
   async performSearch (search = this.search) {
+    if (search == this.search) {
+      return this.result
+    }
     this.result = [];
     this.search = search;
     this.fetching = true;
     try {
       const res = await fetch(`https://assiets.vdegenne.com/japanese/tatoeba/${encodeURIComponent(search)}`)
       const data = await res.json()
-      // const meta = parseSentence(data[0].j)
-      this.result = data.map(item => ({
+      this.result = data.sort((i1, i2) => i1.j.length - i2.j.length).map(item => ({
         j: parseSentence(item.j),
         e: item.e
       }))
@@ -136,6 +138,7 @@ export class TatoebaDialog extends LitElement {
     }
     finally {
       this.fetching = false;
+      return this.result
     }
   }
 
