@@ -1885,10 +1885,18 @@ const Ra=me`mwc-list ::slotted([mwc-list-item]:not([twoline])),mwc-list ::slotte
   position: absolute;
   transition: opacity 0.4s ease-out;
   opacity: 1;
+  user-select: none;
+}
+:host([revealed]) #kanji  div {
+  pointer-events: none;
 }
 #kanji > div[unobtrusive] {
   opacity: 0;
 }
+#kanji .letter[unrevealed] > span:first-of-type { display: inline }
+#kanji .letter[unrevealed] > span:last-of-type { display: none }
+#kanji .letter > span:first-of-type { display: none }
+#kanji .letter > span:last-of-type { display: inline }
 .tag {
   font-size: 0.7em;
   color: white;
@@ -1933,12 +1941,18 @@ mwc-icon-button[highlight] {
 }
 `;let Ka=class extends Se{constructor(e){super(),this.revealed=!1,this.success=!1,this.row=null,this.imageFeature=!0,this.backImage=new hr,this.ero=!1,this.app=e,this.showText=this.app.optionsManager.options.showTextualHint,this.backImage.addEventListener("dblick",(()=>{this.kanjiTextElement.toggleAttribute("unobtrusive")}))}render(){if(!this.row)return J;const e=parseInt(getComputedStyle(this).width)-48+"px";let t=150-54*this.row[1].length;return t<0&&(t=0),W`
     <div class="tag jlpt${this.row[2]}-color" id="jlpt-tag">jlpt${this.row[2]}</div>
+
+    <!-- ======= KANJI ======= -->
     <div id=kanji>
-      ${J}
-      ${this.revealed?W`
-        ${this.backImage}
-        <div style="z-index:2;font-size:Min(200px, calc(${e} / ${this.row[1].length} - ${t}px));pointer-events: none;">${this.row[1]}</div>
-        `:W`?`}
+      ${this.revealed?this.backImage:J}
+      <div style="z-index:2;font-size:min(200px, calc(${e} / ${this.row[1].length} - ${t}px));display:flex;">
+        ${this.row[1].split("").map((e=>W`
+          <div class=letter @click=${e=>{e.target.parentElement.removeAttribute("unrevealed")}} ?unrevealed=${!this.revealed}>
+            <span>?</span>
+            <span>${e}</span>
+          </div>
+          `))}
+      </div>
     </div>
 
     <div id=meanings ?hide=${!this.showText}

@@ -55,17 +55,20 @@ export class KanjiFrame extends LitElement {
 
     return html`
     <div class="tag jlpt${this.row[2]}-color" id="jlpt-tag">jlpt${this.row[2]}</div>
+
+    <!-- ======= KANJI ======= -->
     <div id=kanji>
-      ${false && this.success ? html`
-      <img src="./img/yeh.gif"/>
-      ` : nothing}
-      ${this.revealed ?
-        html`
-        ${this.backImage}
-        <div style="z-index:2;font-size:Min(200px, calc(${frameWidth} / ${this.row[1].length} - ${padding}px));pointer-events: none;">${this.row[1]}</div>
-        ` :
-        html`?`
-      }
+      ${this.revealed ? this.backImage : nothing}
+      <div style="z-index:2;font-size:min(200px, calc(${frameWidth} / ${this.row[1].length} - ${padding}px));display:flex;">
+        ${this.row[1].split('').map(letter => {
+          return html`
+          <div class=letter @click=${(e)=>{e.target.parentElement.removeAttribute('unrevealed')}} ?unrevealed=${!this.revealed}>
+            <span>?</span>
+            <span>${letter}</span>
+          </div>
+          `
+        })}
+      </div>
     </div>
 
     <div id=meanings ?hide=${!this.showText}

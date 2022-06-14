@@ -51,10 +51,18 @@ export const kanjiFrameStyles = css`
   position: absolute;
   transition: opacity 0.4s ease-out;
   opacity: 1;
+  user-select: none;
+}
+:host([revealed]) #kanji  div {
+  pointer-events: none;
 }
 #kanji > div[unobtrusive] {
   opacity: 0;
 }
+#kanji .letter[unrevealed] > span:first-of-type { display: inline }
+#kanji .letter[unrevealed] > span:last-of-type { display: none }
+#kanji .letter > span:first-of-type { display: none }
+#kanji .letter > span:last-of-type { display: inline }
 .tag {
   font-size: 0.7em;
   color: white;
