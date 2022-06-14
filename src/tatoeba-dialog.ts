@@ -3,7 +3,7 @@ import { customElement, query, state } from 'lit/decorators.js'
 import '@material/mwc-dialog'
 import '@material/mwc-icon-button'
 import { Dialog } from '@material/mwc-dialog';
-import { parseSentence, SentenceMeta } from './data';
+import { getExactSearch, parseSentence, SentenceMeta } from './data';
 import { cancelSpeech, speakJapanese } from './speech';
 
 @customElement('tatoeba-dialog')
@@ -47,8 +47,12 @@ export class TatoebaDialog extends LitElement {
   `
 
   render() {
+    const hiragana = this.search
+    ?
+      getExactSearch(this.search)?.[4]
+    : null;
     return html`
-    <mwc-dialog heading=Examples>
+    <mwc-dialog heading="Examples (${this.search})${hiragana ? ` 【　${hiragana}　】`: ''}" escapeKeyAction="">
       ${this.fetching ? html`fetching...` : nothing}
 
       ${this.result.map(r=>{

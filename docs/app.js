@@ -2389,8 +2389,8 @@ const cn=me`.mdc-text-field{height:100%}.mdc-text-field__input{resize:none}`
 
       <mwc-button outlined slot=secondaryAction dialogAction=close>close</mwc-button>
     </mwc-dialog>
-    `}firstUpdated(e){this.loadContent()}onKeyUp(){this.saveContent()}loadContent(){let e=localStorage.getItem("translation-practice:notes");e&&(this.textarea.value=e)}saveContent(){localStorage.setItem("translation-practice:notes",this.textarea.value)}show(){this.dialog.show()}};r([f("mwc-dialog")],fn.prototype,"dialog",void 0),r([f("mwc-textarea")],fn.prototype,"textarea",void 0),fn=r([a("notes-dialog")],fn);let pn=class extends Se{constructor(){super(...arguments),this.fetching=!1,this.search="",this.result=[],this._playingPromise=null}render(){return W`
-    <mwc-dialog heading=Examples>
+    `}firstUpdated(e){this.loadContent()}onKeyUp(){this.saveContent()}loadContent(){let e=localStorage.getItem("translation-practice:notes");e&&(this.textarea.value=e)}saveContent(){localStorage.setItem("translation-practice:notes",this.textarea.value)}show(){this.dialog.show()}};r([f("mwc-dialog")],fn.prototype,"dialog",void 0),r([f("mwc-textarea")],fn.prototype,"textarea",void 0),fn=r([a("notes-dialog")],fn);let pn=class extends Se{constructor(){super(...arguments),this.fetching=!1,this.search="",this.result=[],this._playingPromise=null}render(){var e;const t=this.search?null===(o=this.search,e=Ma.find((e=>e[1]==o||e[4]==o))||null)||void 0===e?void 0:e[4]:null;var o;return W`
+    <mwc-dialog heading="Examples (${this.search})${t?` 【　${t}　】`:""}" escapeKeyAction="">
       ${this.fetching?W`fetching...`:J}
 
       ${this.result.map((e=>W`
