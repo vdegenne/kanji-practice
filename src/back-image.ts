@@ -1,4 +1,4 @@
-import { css, html, LitElement, nothing } from 'lit';
+import { css, html, LitElement, nothing, PropertyValueMap } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
 @customElement('back-image')
@@ -21,6 +21,23 @@ export class BackImage extends LitElement {
 
   render() {
     return this.images
+  }
+
+  private _previouslyClicked = false;
+  protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    this.addEventListener('click', (e) => {
+      if (e.button == 0) {
+        if (this._previouslyClicked) {
+          this.dispatchEvent(new CustomEvent('dblick'))
+          this._previouslyClicked = false
+          return
+        }
+        else {
+          this._previouslyClicked = true
+          setTimeout(() => this._previouslyClicked = false, 500)
+        }
+      }
+    })
   }
 
   load (src: string|string[]) {

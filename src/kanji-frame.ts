@@ -29,9 +29,8 @@ export class KanjiFrame extends LitElement {
   private ero = false
   private eroImage?: HTMLImageElement;
 
-
-
   @query('mwc-menu') menu!: Menu;
+  @query('#kanji > div') kanjiTextElement!: HTMLDivElement;
 
   static styles = [kanjiFrameStyles, sharedStyles]
 
@@ -39,6 +38,9 @@ export class KanjiFrame extends LitElement {
     super()
     this.app = appInstance
     this.showText = this.app.optionsManager.options.showTextualHint
+    this.backImage.addEventListener('dblick', () => {
+      this.kanjiTextElement.toggleAttribute('unobtrusive')
+    })
   }
 
   render () {

@@ -49,6 +49,11 @@ export const kanjiFrameStyles = css`
 }
 #kanji > div {
   position: absolute;
+  transition: opacity 0.4s ease-out;
+  opacity: 1;
+}
+#kanji > div[unobtrusive] {
+  opacity: 0;
 }
 .tag {
   font-size: 0.7em;
