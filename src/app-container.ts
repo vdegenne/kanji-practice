@@ -342,11 +342,14 @@ export class AppContainer extends LitElement {
   }
 
   async onTatoebaPlayButtonClick () {
-    await this.tatoebaDialog.performSearch(this.row![1])
-    const firstListenButton = this.tatoebaDialog.shadowRoot!.querySelector('mwc-icon-button[icon=volume_up]')
-    if (firstListenButton) {
-      ;(firstListenButton as Button).click();
+    const results = await this.tatoebaDialog.performSearch(this.row![1])
+    if (results.length > 0) {
+      await this.tatoebaDialog.togglePlayExample(results[0].j.map(w=>w.word).join(''), 1, 0.5)
     }
+    // const firstListenButton = this.tatoebaDialog.shadowRoot!.querySelector('mwc-icon-button[icon=volume_up]')
+    // if (firstListenButton) {
+    //   ;(firstListenButton as Button).click();
+    // }
   }
 
   /**

@@ -89,14 +89,14 @@ export class TatoebaDialog extends LitElement {
   }
 
   private _playingPromise: Promise<void>|null = null;
-  async togglePlayExample (sentence: string) {
+  async togglePlayExample (sentence: string, volume = 1, rate = 1) {
     if (this._playingPromise) {
       cancelSpeech()
       // this._playingPromise = null
       return
     }
     else {
-      this._playingPromise = speakJapanese(sentence)
+      this._playingPromise = speakJapanese(sentence, volume, rate)
       await this._playingPromise
       this._playingPromise = null
     }
