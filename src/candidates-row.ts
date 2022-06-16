@@ -1,12 +1,20 @@
-import {customElement, property} from "lit/decorators.js";
+import {customElement, property, query, queryAll, state} from "lit/decorators.js";
 import {css, html, LitElement, PropertyValues} from "lit";
 import _kanjis from '../docs/data/kanjis.json'
 import {Row} from "./types";
+import { AppButton } from './app-button';
 
 @customElement('candidates-row')
 export class CandidatesRow extends LitElement {
   @property({type: Number}) size!: number;
   @property() answer!: string;
+
+  @state() selectionIndex = -1
+
+  private _candidates: string[] = [];
+
+  @queryAll('app-button') candidateElements!: AppButton[];
+  @query('app-button[selected]') selectedCandidateElement?: AppButton;
 
   static styles = css`
   :host {
@@ -16,19 +24,23 @@ export class CandidatesRow extends LitElement {
     font-family: 'Sawarabi Mincho', serif;
     text-align: center;
   }
-  mwc-icon-button {
+  /* mwc-icon-button {
     --mdc-icon-font: 'Sawarabi Mincho' !important;
+  } */
+  app-button[selected] {
+    --mdc-theme-primary: yellow;
+    --mdc-theme-on-primary: black;
   }
   `
 
   render() {
     return html`
-        ${this.generateCandidatesList(this.size).map(k=>{
-            return html`
-            <app-button outlined
-                height=50
-                @click=${(e)=>{this.onButtonClick(e)}}>${k}</app-button>`
-        })}
+    ${this._candidates.map((k, i)=>{
+      return html`
+      <app-button raised ?selected=${i == this.selectionIndex}
+        height=50
+        @click=${(e)=>{this.onButtonClick(e)}}>${k}</app-button>`
+    })}
     `
   }
 
@@ -38,7 +50,11 @@ export class CandidatesRow extends LitElement {
       // reach the button and change font-family
       ;(el.shadowRoot!.querySelector('button') as HTMLButtonElement).style.fontFamily = '"Sawarabi Mincho", serif';
     })
-    super.updated(_changedProperties);
+    if (_changedProperties.has('answer') || _changedProperties.has('size')) {
+      this._candidates = this.generateCandidatesList(this.size)
+      this.requestUpdate()
+    }
+    // super.updated(_changedProperties);
   }
 
   generateCandidatesList (size: number) {
@@ -60,5 +76,27 @@ export class CandidatesRow extends LitElement {
       composed: true,
       detail: { candidate: e.target.textContent.trim() }
     }))
+  }
+
+
+  selectPreviousCandidate() {
+    if (this.selectionIndex - 1 >= 0) {
+      this.selectionIndex--;
+      return true
+    }
+    return false
+  }
+  selectNextCandidate() {
+    if (this.selectionIndex + 1 < this.candidateElements.length) {
+      this.selectionIndex++;
+      return true
+    }
+    return false
+  }
+  clickSelectedCandidate () {
+    const candidate = this.selectedCandidateElement;
+    if (candidate) {
+      candidate.click();
+    }
   }
 }

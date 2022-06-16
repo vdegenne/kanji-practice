@@ -18,6 +18,8 @@ import { TatoebaDialog } from './tatoeba-dialog.js';
 import { CollectionViewer } from './collection-viewer.js';
 import { CollectionsSelector } from './collections-selector.js';
 import { CreateCollectionDialog } from './create-collection-dialog.js';
+import { ControllerController } from './ControllerController.js';
+import { CandidatesRow } from './candidates-row.js';
 
 @customElement('app-container')
 export class AppContainer extends LitElement {
@@ -48,6 +50,7 @@ export class AppContainer extends LitElement {
   public optionsManager: OptionsManager = new OptionsManager(this);
   public kanjiFrame: KanjiFrame = new KanjiFrame(this)
   public rowHistory: RowHistory = new RowHistory(this)
+  private controllerController: ControllerController = new ControllerController(this)
   // public collectionViewer: CollectionViewer = new CollectionViewer()
 
   /**
@@ -60,6 +63,7 @@ export class AppContainer extends LitElement {
   @query('tatoeba-dialog') tatoebaDialog!: TatoebaDialog;
   @query('search-manager') searchManager!: SearchManager;
   @query('collection-viewer') collectionViewer!: CollectionViewer;
+  @query('candidates-row') candidatesRow!: CandidatesRow;
   // @query('options-manager') optionsManager!: OptionsManager;
 
   private _textFieldFocused = false
@@ -168,6 +172,7 @@ export class AppContainer extends LitElement {
 
       ${this.domain=='kanji' && this.hintSearch[0] ? html`
         <app-button
+          id="listenButton"
           outlined
           height=46
           @pointerdown=${()=> {
@@ -191,6 +196,7 @@ export class AppContainer extends LitElement {
       ${this.domain=='words' ? html`
         <div>
           <mwc-icon-button icon=volume_up
+            id="listenButton"
             @pointerdown=${()=> { this._textFieldFocused = (this.shadowRoot!.activeElement == this.textfield) }}
             @click=${()=>{this.playAudioHint(); this._textFieldFocused && this.textfield.focus()}}>
           </mwc-icon-button>
@@ -221,7 +227,7 @@ export class AppContainer extends LitElement {
     <!-- <div style="height:100px;margin:50px 0;padding:50px 0;"></div> -->
 
     <div style="width:100%;text-align: center" ?hide=${!this.kanjiFrame?.revealed}>
-      <mwc-button raised icon="arrow_forward"
+      <mwc-button id=nextButton raised icon="arrow_forward"
           @click=${()=>{this.validateAnswer()}}>next</mwc-button>
     </div>
 
@@ -411,6 +417,12 @@ export class AppContainer extends LitElement {
     }
   }
 
+  clickNextButton () {
+    ;(this.shadowRoot!.querySelector('#nextButton') as Button).click()
+  }
+  clickListenButton () {
+    ;(this.shadowRoot!.querySelector('#listenButton') as Button).click()
+  }
 
   /**
    * Validate the answer after the user submit the textfield
