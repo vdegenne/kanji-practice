@@ -30,7 +30,7 @@ export const kanjiFrameStyles = css`
   justify-content: center;
   align-items: center;
   width : 100%;
-  min-height: 300px;
+  min-height: 425px;
   font-size: 12em;
   /* font-family: 'Sawarabi Mincho', serif; */
   font-family: 'Noto Serif JP', serif;
@@ -46,6 +46,7 @@ export const kanjiFrameStyles = css`
 }
 #kanji > back-image {
   /* height: 500px; */
+  height: 425px;
 }
 #kanji > div {
   position: absolute;

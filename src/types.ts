@@ -26,5 +26,7 @@ export type Options = {
   jlpts: Jlpts,
   showTextualHint: boolean,
   enableAudioHint: boolean,
-  candidatesListSize: number
+  candidatesListSize: number,
+  blackBackground: boolean,
+  carouselFeature: boolean
 }

@@ -438,6 +438,16 @@ export class AppContainer extends LitElement {
         // }
         this.textfield.value = ''
         return
+
+      case 'carousel':
+        if (this.optionsManager.carouselFeature) {
+          this.kanjiFrame.deactivateCarouselFeature()
+        }
+        else {
+          this.kanjiFrame.activateCarouselFeature()
+        }
+        this.textfield.value = ''
+        return
     }
 
     if (!this.kanjiFrame.revealed) {

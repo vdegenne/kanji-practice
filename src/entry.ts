@@ -7,6 +7,7 @@ import '@material/mwc-textfield'
 import '@material/mwc-formfield'
 import '@material/mwc-checkbox'
 import '@material/mwc-slider'
+import '@material/mwc-switch'
 
 /* app components */
 import './kanji-frame'

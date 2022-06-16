@@ -1,6 +1,6 @@
 import { Dialog } from '@material/mwc-dialog';
-import {css, html, LitElement, PropertyValues} from 'lit';
-import { customElement, query } from 'lit/decorators.js';
+import {css, html, LitElement, PropertyValueMap, PropertyValues} from 'lit';
+import { customElement, query, state } from 'lit/decorators.js';
 import {Slider} from '@material/mwc-slider'
 import { AppContainer } from './app-container';
 import { Jlpts, Options } from './types';
@@ -14,7 +14,10 @@ export class OptionsManager extends LitElement {
   @query('mwc-dialog') dialog!: Dialog;
 
   options!: Options;
+
+  @state() darkMode = false
   // public jlpts!: Jlpts;
+  @state() carouselFeature = false;
 
   constructor (appInstance: AppContainer) {
     super()
@@ -51,6 +54,12 @@ export class OptionsManager extends LitElement {
     <mwc-dialog heading=Options
       @change=${()=>this.onOptionsChanged()}>
 
+        <mwc-formfield label="black background" style="margin:24px 0">
+          <mwc-switch
+            ?selected=${this.darkMode}
+            @click=${(e)=>{this.darkMode = e.target.selected}}></mwc-switch>
+        </mwc-formfield>
+
         <p>Dictionaries</p>
         ${[5, 4, 3, 2, 1].map(n=>{
           return html`
@@ -73,6 +82,7 @@ export class OptionsManager extends LitElement {
           </div>
           `
         })}
+
 
         <!-- AUDIO OPTIONS -->
         <p>Hint</p>
@@ -102,8 +112,11 @@ export class OptionsManager extends LitElement {
                 @change=${()=>{this.app.requestUpdate()}}
         ></mwc-slider>
 
-        <p>Others</p>
+        <p>On answer revealed</p>
         <mwc-formfield label="play income audio (failure/success)">
+            <mwc-checkbox ?checked=${true}></mwc-checkbox>
+        </mwc-formfield>
+        <mwc-formfield label="show income background color (red/green)">
             <mwc-checkbox ?checked=${true}></mwc-checkbox>
         </mwc-formfield>
 
@@ -121,6 +134,21 @@ export class OptionsManager extends LitElement {
   }
   get candidatesListSize () {
     return this.shadowRoot!.querySelector('mwc-slider')!.value
+  }
+  get blackBackground () {
+    return this.shadowRoot!.querySelector('mwc-switch')!.selected
+  }
+
+  protected updated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+    if (_changedProperties.has('darkMode')) {
+      this.updateBodyBackgroundColor()
+    }
+    if (_changedProperties.has('carouselFeature')) {
+      if (this.carouselFeature) {
+      }
+    }
+    // save the options
+    this.saveOptions()
   }
 
   protected firstUpdated(_changedProperties: PropertyValues) {
@@ -159,6 +187,15 @@ export class OptionsManager extends LitElement {
     this.app.kanjiFrame.showText = this.showTextualHint
   }
 
+  updateBodyBackgroundColor () {
+    if (this.darkMode) {
+      document.body.setAttribute('darkmode', '')
+    }
+    else {
+      document.body.removeAttribute('darkmode')
+    }
+  }
+
   loadOptions () {
     let options: Options;
     if (localStorage.getItem('kanji-practice:options') !== null) {
@@ -169,11 +206,19 @@ export class OptionsManager extends LitElement {
           jlpts: <unknown>options as Jlpts,
           showTextualHint: true,
           enableAudioHint: true,
-          candidatesListSize: 0
+          candidatesListSize: 0,
+          blackBackground: false,
+          carouselFeature: false,
         }
       }
       if (!('candidatesListSize' in options)) {
         options.candidatesListSize = 3
+      }
+      if (!('blackBackground' in options)) {
+        options.blackBackground = false
+      }
+      if (!('carouselFeature' in options)) {
+        options.carouselFeature = false
       }
     }
     else {
@@ -188,12 +233,15 @@ export class OptionsManager extends LitElement {
         },
         showTextualHint: true,
         enableAudioHint: true,
-        candidatesListSize: 0
+        candidatesListSize: 0,
+        blackBackground: false,
+        carouselFeature: false,
       }
     }
 
     this.options = options
-    // this.forwardShowTextualHint()
+    this.darkMode = this.options.blackBackground;
+    this.carouselFeature = this.options.carouselFeature;
   }
 
   saveOptions () {
@@ -201,7 +249,9 @@ export class OptionsManager extends LitElement {
       jlpts: this.options.jlpts,
       showTextualHint: this.showTextualHint,
       enableAudioHint: this.enableAudioHint,
-      candidatesListSize: this.candidatesListSize
+      candidatesListSize: this.candidatesListSize,
+      blackBackground: this.darkMode,
+      carouselFeature: this.carouselFeature
     }
     localStorage.setItem('kanji-practice:options', JSON.stringify(options))
   }

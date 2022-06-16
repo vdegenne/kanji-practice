@@ -10,12 +10,13 @@ export class BackImage extends LitElement {
   :host {
     display: flex;
     align-items: center;
-    flex-wrap: nowrap;
-    max-width: 100%;
+    /* flex-wrap: nowrap;
+    max-width: 100%; */
     overflow: auto;
   }
   img {
-    height: 450px;
+    /* height: 450px; */
+      height: 100%;
   }
   `
 

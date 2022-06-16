@@ -23,7 +23,7 @@ export class KanjiFrame extends LitElement {
   row: Row|null = null;
   @state() showText;
 
-  public imageFeature: boolean = true;
+  // public imageFeature: boolean = false;
   // private _image?: HTMLImageElement;
   private backImage = new BackImage()
   private ero = false
@@ -161,6 +161,15 @@ export class KanjiFrame extends LitElement {
     // console.log(_changedProperties)
   }
 
+  deactivateCarouselFeature () {
+    this.backImage.clear()
+    this.app.optionsManager.carouselFeature = false
+  }
+  activateCarouselFeature () {
+    this.app.optionsManager.carouselFeature = true
+    this.preloadImage()
+  }
+
   toggleEro () {
     this.ero = !this.ero
     if (this.ero) {
@@ -178,7 +187,7 @@ export class KanjiFrame extends LitElement {
 
   async preloadImage() {
     if (this.ero) this.preloadEro()
-    if (!this.row || this.imageFeature == false) { return }
+    if (!this.row || this.app.optionsManager.carouselFeature == false) { return }
     this.backImage.clear()
     this.backImage.loadFromGoogleImages(this.row![1])
     return
