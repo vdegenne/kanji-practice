@@ -104,7 +104,7 @@ export class AppContainer extends LitElement {
     // this.row = this.pickNewRow()
   }
 
-  static styles = [mainStyles, sharedStyles];
+  static styles = [sharedStyles, mainStyles];
 
 
   /**
@@ -150,16 +150,16 @@ export class AppContainer extends LitElement {
 
     <div style="width:100%;display:flex;align-items: center;justify-content:space-between">
       <!-- TEXTFIELD -->
-      <div style="display:inline-block;position:relative;margin-top:18px;max-width:158px">
-        <mwc-textfield label="answer"
+      <div style="display:inline-block;position:relative;max-width:158px">
+        <mwc-textfield placeholder="answer" outlined
+          style="--mdc-shape-small: 0px;background-color:white"
           @keypress=${(e) => {this.onTextFieldPress(e)}  }
-          helper="input and press enter"
           helperPersistent
           iconTrailing="remove_red_eye">
         </mwc-textfield>
         <mwc-icon-button icon=${this.kanjiFrame?.revealed ? 'skip_next' : 'remove_red_eye'}
           id=submit-button
-          style="position:absolute;bottom:23px;right:4px"
+          style="position:absolute;bottom:4px;right:4px"
           @click=${()=>this.validateAnswer()}></mwc-icon-button>
 
         <!-- wrong answer search button -->
@@ -403,8 +403,11 @@ export class AppContainer extends LitElement {
   }
 
   protected async firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>) {
+    // transform the textfield appearance
     await this.textfield.updateComplete
     this.textfield.shadowRoot!.querySelector('i')!.style.color = 'transparent'
+    // this.textfield.shadowRoot!.querySelector('
+
 
     // await this.optionsManager.updateComplete
   }

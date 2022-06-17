@@ -19,7 +19,7 @@ export class CandidatesRow extends LitElement {
   static styles = css`
   :host {
     display: block;
-    margin: 24px  0;
+    margin: 4px 0 54px 0;
     width: 100%;
     font-family: 'Sawarabi Mincho', serif;
     text-align: center;

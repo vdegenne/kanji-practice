@@ -32,7 +32,7 @@ export class KanjiFrame extends LitElement {
   @query('mwc-menu') menu!: Menu;
   @query('#kanji > div') kanjiTextElement!: HTMLDivElement;
 
-  static styles = [kanjiFrameStyles, sharedStyles]
+  static styles = [sharedStyles, kanjiFrameStyles]
 
   constructor (appInstance: AppContainer) {
     super()

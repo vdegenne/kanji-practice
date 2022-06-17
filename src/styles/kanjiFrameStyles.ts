@@ -7,7 +7,7 @@ export const kanjiFrameStyles = css`
   justify-content: center;
   align-items: flex-start;
   /* border: 1px solid #eeeeee; */
-  border-radius: 10px;
+  /* border-radius: 10px; */
   /* padding: 24px; */
   padding-top: 0px;
   min-width: 300px;
@@ -68,12 +68,12 @@ export const kanjiFrameStyles = css`
   font-size: 0.7em;
   color: white;
   padding: 3px 8px;
-  border-radius: 5px;
+  border-radius: 0px;
 }
 #jlpt-tag {
   position: absolute;
-  top: 4px;
-  left: 4px;
+  top: 0px;
+  left: 0px;
   background-color: #455a64;
   color: white;
 }

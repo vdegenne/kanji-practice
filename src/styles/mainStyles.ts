@@ -8,7 +8,7 @@ export const mainStyles = css`
   min-height: 100vh;
   align-items: flex-start;
   justify-content: center;
-  padding: 0 12px;
+  /* padding: 0 12px; */
 }
 header {
   display: flex;
