@@ -26,9 +26,9 @@ export class ControllerController {
       })
 
       .before('button1', ()=>{
-        // window.searchManager.close()
-        this.app.searchManager.close()
         this.app.tatoebaDialog.close()
+        this.app.searchManager.close()
+        window.searchManager.close()
       })
       // .before('button14', ()=>{
       //   this.leftArrowPressed = true
