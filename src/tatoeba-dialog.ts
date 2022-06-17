@@ -135,6 +135,7 @@ export class TatoebaDialog extends LitElement {
         return
       }
       this.examples = [];
+      this.parsedExamples = [];
       this.search = search;
       this.fetching = true;
       try {
