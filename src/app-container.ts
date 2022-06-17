@@ -10,7 +10,7 @@ import { SearchItem, SearchManager } from './search-manager.js';
 import { OptionsManager } from './options-manager.js';
 import { KanjiFrame } from './kanji-frame.js';
 import { sharedStyles } from './styles/sharedStyles.js';
-import { playJapaneseAudio } from './util.js';
+import { playJapaneseAudio, playTick } from './util.js';
 import { CollectionsManager } from './collections-manager.js';
 import { NotesDialog } from './notes-dialog.js';
 import { RowHistory } from './row-history.js';
@@ -20,6 +20,7 @@ import { CollectionsSelector } from './collections-selector.js';
 import { CreateCollectionDialog } from './create-collection-dialog.js';
 import { ControllerController } from './ControllerController.js';
 import { CandidatesRow } from './candidates-row.js';
+import { EventIconButton } from './event-icon-button.js';
 
 @customElement('app-container')
 export class AppContainer extends LitElement {
@@ -201,10 +202,18 @@ export class AppContainer extends LitElement {
             @click=${()=>{this.playAudioHint(); this._textFieldFocused && this.textfield.focus()}}>
           </mwc-icon-button>
           ${this.playTatoebaFeature ? html`
-          <mwc-icon-button icon=record_voice_over
+          <event-icon-button icon=record_voice_over
             @pointerdown=${()=> { this._textFieldFocused = (this.shadowRoot!.activeElement == this.textfield) }}
-            @click=${()=>{this.onTatoebaPlayButtonClick(); this._textFieldFocused && this.textfield.focus()}}>
-          </mwc-icon-button>
+            @click=${(e)=>{
+              if (this.tatoebaDialog.isPlayingAudio) {
+                this.tatoebaDialog.cancelAudio();
+                ;(e.target as EventIconButton).resetState();
+              }
+              return;this.onTatoebaPlayButtonClick(); this._textFieldFocused && this.textfield.focus()}}
+            @nclick=${(e)=>{this.onTatoebaPlayButtonClick(e.detail.clickCount)}}
+            @longpress=${()=>{this.tatoebaDialog.show(this.row![1])}}
+            >
+          </event-icon-button>
           ` : nothing}
         </div>
       ` : nothing}
@@ -347,15 +356,20 @@ export class AppContainer extends LitElement {
     // }
   }
 
-  async onTatoebaPlayButtonClick () {
-    const results = await this.tatoebaDialog.performSearch(this.row![1])
-    if (results.length > 0) {
-      await this.tatoebaDialog.togglePlayExample(results[0].j.map(w=>w.word).join(''), 1, 0.5)
+  async onTatoebaPlayButtonClick (exampleN: number) {
+    const examples = await this.tatoebaDialog.performSearch(this.row![1]) // returns undefined if a search is already initiated
+    if (examples != undefined) {
+      const example = examples[exampleN - 1]
+      if (example) {
+        console.log(example)
+        await this.tatoebaDialog.togglePlayExample(example.j, 1, 0.7)
+        playTick()
+      }
+      else {
+        window.toast('No example to play', 1000)
+      }
     }
-    // const firstListenButton = this.tatoebaDialog.shadowRoot!.querySelector('mwc-icon-button[icon=volume_up]')
-    // if (firstListenButton) {
-    //   ;(firstListenButton as Button).click();
-    // }
+    return;
   }
 
   /**

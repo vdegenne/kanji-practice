@@ -76,3 +76,11 @@ export function createAudioElementFromBlob (blob: Blob) {
 export function getKanjiData (character: string) {
   return (_kanjis as Row[]).find(k => k[1] === character)
 }
+
+
+
+const tick = new Audio('./audio/ding.mp3')
+// tick.src = './audio'
+export function playTick () {
+  tick.play()
+}

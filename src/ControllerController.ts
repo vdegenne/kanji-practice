@@ -1,5 +1,6 @@
 import gameControl from 'gamecontroller.js/src/gamecontrol.js'
 import { AppContainer } from './app-container'
+import { EventIconButton } from './event-icon-button';
 
 export class ControllerController {
   private app: AppContainer;
@@ -24,7 +25,11 @@ export class ControllerController {
         playTick2()
       })
 
-      .before('button1', ()=>{window.searchManager.close()})
+      .before('button1', ()=>{
+        // window.searchManager.close()
+        this.app.searchManager.close()
+        this.app.tatoebaDialog.close()
+      })
       // .before('button14', ()=>{
       //   this.leftArrowPressed = true
       //   this.app.videoElement.stepBack(this.secondary ? 0.1 : 1);
@@ -92,7 +97,15 @@ export class ControllerController {
       //   this.app.togglePlayInterval()
       // })
 
-      .before('button4', () => {this.app.clickListenButton()})
+      .before('button4', () => {
+        const button = this.app.shadowRoot!.querySelector('event-icon-button[icon=record_voice_over]') as EventIconButton
+        button.dispatchEvent(new PointerEvent('pointerdown'))
+      })
+      .after('button4', () => {
+        const button = this.app.shadowRoot!.querySelector('event-icon-button[icon=record_voice_over]') as EventIconButton
+        button.dispatchEvent(new PointerEvent('pointerup'))
+        button.click()
+      })
       .before('button6', ()=>{this.app.clickListenButton()})
       // .before('button4', ()=>{
       //   if (this.secondary) {

@@ -6,12 +6,17 @@ import { Dialog } from '@material/mwc-dialog';
 import { getExactSearch, parseSentence, SentenceMeta } from './data';
 import { cancelSpeech, speakJapanese } from './speech';
 
+type Example = { e: string, j: string }
+type ParsedExample = { e: string, j: SentenceMeta }
+
 @customElement('tatoeba-dialog')
 export class TatoebaDialog extends LitElement {
   @state() fetching = false;
   public search: string = '';
 
-  private result: {e: string, j: SentenceMeta}[] = []
+  private examples: Example[] = []
+  @state()
+  private parsedExamples: ParsedExample[] = []
 
   @query('mwc-dialog') dialog!: Dialog;
 
@@ -59,7 +64,7 @@ export class TatoebaDialog extends LitElement {
     <mwc-dialog heading="Examples (${this.search})${hiragana ? ` 【　${hiragana}　】`: ''}" escapeKeyAction="">
       ${this.fetching ? html`fetching...` : nothing}
 
-      ${this.result.map(r=>{
+      ${this.parsedExamples.map(r=>{
         return html`
         <div class="example">
           <div class=sentence>
@@ -89,7 +94,8 @@ export class TatoebaDialog extends LitElement {
   }
 
   private _playingPromise: Promise<void>|null = null;
-  async togglePlayExample (sentence: string, volume = 1, rate = 1) {
+  get isPlayingAudio () { return this._playingPromise }
+  async togglePlayExample (sentence: string, volume = 1, rate = 0.8) {
     if (this._playingPromise) {
       cancelSpeech()
       // this._playingPromise = null
@@ -100,6 +106,9 @@ export class TatoebaDialog extends LitElement {
       await this._playingPromise
       this._playingPromise = null
     }
+  }
+  cancelAudio () {
+    cancelSpeech()
   }
 
   searchSelection() {
@@ -118,28 +127,42 @@ export class TatoebaDialog extends LitElement {
     // })
   }
 
-  async performSearch (search = this.search) {
-    if (search == this.search) {
-      return this.result
-    }
-    this.result = [];
-    this.search = search;
-    this.fetching = true;
-    try {
-      const res = await fetch(`https://assiets.vdegenne.com/japanese/tatoeba/${encodeURIComponent(search)}`)
-      const data = await res.json()
-      this.result = data.sort((i1, i2) => i1.j.length - i2.j.length).map(item => ({
-        j: parseSentence(item.j),
-        e: item.e
-      }))
-    }
-    catch (e) {
-      window.toast('Something went wrong while fetching the search')
-    }
-    finally {
-      this.fetching = false;
-      return this.result
-    }
+  performSearch (search = this.search): Promise<Example[]>|undefined {
+    if (this.fetching) { return }
+    return new Promise(async (resolve, reject) => {
+      if (search == this.search) {
+        resolve(this.examples)
+        return
+      }
+      this.examples = [];
+      this.search = search;
+      this.fetching = true;
+      try {
+        window.toast('Fetching examples, please wait...', -1)
+        let now
+        now = Date.now()
+        const res = await fetch(`https://assiets.vdegenne.com/japanese/tatoeba/${encodeURIComponent(search)}`)
+        const data = await res.json()
+        resolve(data)
+        this.examples = data
+        this.parsedExamples = this.examples.map(item => ({
+          j: parseSentence(item.j),
+          e: item.e
+        }))
+        // this.result = data.sort((i1, i2) => i1.j.length - i2.j.length).map(item => ({
+        //   j: parseSentence(item.j),
+        //   e: item.e
+        // }))
+        window.toast(`Fetched successfully (${(Date.now() - now) / 1000}s)`, 2000)
+      }
+      catch (e) {
+        reject()
+        window.toast('Something went wrong while fetching the search');
+      }
+      finally {
+        this.fetching = false
+      }
+    })
   }
 
   async show (search: string) {
@@ -147,6 +170,10 @@ export class TatoebaDialog extends LitElement {
       this.performSearch(search)
     }
     this.dialog.show()
+  }
+
+  close () {
+    this.dialog.close()
   }
 }
 

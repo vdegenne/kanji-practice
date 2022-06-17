@@ -25,6 +25,7 @@ import './row-history'
 import './tatoeba-dialog'
 import './back-image'
 import './lofi-player'
+import './event-icon-button'
 
 /* global */
 import { CollectionsSelector } from './collections-selector'
